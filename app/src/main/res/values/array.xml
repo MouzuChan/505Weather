@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="entries_preference">
+        <item>30分钟</item>
+        <item>1个小时</item>
+        <item>2个小时</item>
+        <item>4个小时</item>
+        <item>6个小时</item>
+
+    </string-array>
+
+    <string-array name="style_color">
+        <item>蓝色</item>
+        <item>青色</item>
+        <item>灰色</item>
+        <item>绿色</item>
+        <item>黑色</item>
+        <item>咖啡色</item>
+
+    </string-array>
+
+</resources>

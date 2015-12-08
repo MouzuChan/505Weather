@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/color_primary"
+    android:orientation="vertical"
+    android:id="@+id/relative_layout"
+    >
+    <android.support.v4.widget.DrawerLayout
+
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:fitsSystemWindows="true"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    app:titleTextColor="@color/white"
+                    app:title="天气"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </android.support.v7.widget.Toolbar>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                />
+
+            </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <Button
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:id="@+id/add"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/ic_add_white_48dp"/>
+
+            <TextView
+                android:id="@+id/tip_text"
+                android:text="点击按钮添加城市"
+                android:textColor="#ffffff"
+                android:textSize="22sp"
+                android:layout_width="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/add"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/navigation_view"
+            android:layout_width="wrap_content"
+            android:layout_gravity="start"
+            android:layout_height="match_parent"
+            app:itemTextColor="#222222"
+            app:itemIconTint="#222222"
+            app:menu="@menu/menu_drawer"
+            app:headerLayout="@layout/header_drawer"
+
+            >
+        </android.support.design.widget.NavigationView>
+
+    </android.support.v4.widget.DrawerLayout>
+
+
+
+
+
+
+
+</RelativeLayout>

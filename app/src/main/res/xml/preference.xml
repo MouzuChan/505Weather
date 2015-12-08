@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <PreferenceCategory
+        android:title="基本设置">
+        <SwitchPreference
+            android:key="full_screen"
+            android:defaultValue="false"
+            android:title="全屏显示7天预报"
+            android:summaryOn="当前为全屏显示"
+            android:summaryOff="当前为窗口显示"
+            />
+
+
+        <SwitchPreference
+            android:key="update_switch"
+            android:defaultValue="false"
+            android:title="自动更新桌面小部件"
+            android:summaryOff="已关闭"
+            android:summaryOn="已开启"
+            />
+        <ListPreference
+            android:id="@+id/list_preference"
+            android:key="update_rate"
+            android:title="更新频率"
+            android:dialogTitle="更新频率"
+            android:entryValues="@array/entries_preference"
+            android:entries="@array/entries_preference"
+            android:defaultValue="1个小时"
+            />
+
+        <ListPreference
+            android:id="@+id/list_preference"
+            android:key="style_color"
+            android:title="主题颜色"
+            android:dialogTitle="请选择"
+            android:entryValues="@array/style_color"
+            android:entries="@array/style_color"
+            android:defaultValue="蓝色"
+            />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="卡片管理">
+        <SwitchPreference
+            android:key="life_switch"
+            android:defaultValue="true"
+            android:title="显示生活指数卡片"
+            android:summaryOff="已隐藏"
+            android:summaryOn="已显示"
+            />
+        <SwitchPreference
+            android:key="qita_switch"
+            android:defaultValue="true"
+            android:title="显示其他信息卡片"
+            android:summaryOff="已隐藏"
+            android:summaryOn="已显示"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

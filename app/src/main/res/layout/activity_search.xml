@@ -1,0 +1,65 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.l.myweather.SearchActivity"
+    android:orientation="vertical"
+
+    >
+
+
+
+
+        <RelativeLayout
+            android:id="@id/relative_layout"
+            android:orientation="horizontal"
+            android:background="@color/color_primary"
+            android:paddingLeft="36dp"
+            android:paddingRight="36dp"
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+
+            <LinearLayout
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/edit_text"
+                    android:drawableLeft="@drawable/ic_search_black_24dp"
+                    android:hint="搜索城市"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+                <Button
+
+                    android:id="@+id/location"
+                    android:text="定位"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+
+            </LinearLayout>
+
+
+
+
+
+        </RelativeLayout>
+
+
+        <ListView
+            android:paddingLeft="36dp"
+            android:paddingRight="36dp"
+            android:paddingTop="10dp"
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+
+
+
+</LinearLayout>

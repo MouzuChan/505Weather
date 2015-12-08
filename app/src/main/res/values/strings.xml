@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">505天气</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_search">SearchActivity</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_city_manager">CityManager</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_day_table">DayTable</string>
+    <string name="title_activity_hour_table">HourTable</string>
+
+</resources>
