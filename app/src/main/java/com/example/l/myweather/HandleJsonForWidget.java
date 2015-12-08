@@ -12,9 +12,10 @@ public class HandleJsonForWidget {
     private String weather_txt;
     private String qlty;
     private String loc_time;
-    private String weather_pic;
+    private String weather_pic,err_code;
     public void handleJson(JSONObject jsonObject){
         try {
+            err_code = jsonObject.getString("showapi_res_code");
             if (jsonObject.has("showapi_res_body")){
                 JSONObject all = jsonObject.getJSONObject("showapi_res_body");
                 if (all.has("cityInfo")){
@@ -55,8 +56,8 @@ public class HandleJsonForWidget {
     }
 
 
-    public String getWeather_pic() {
-        return weather_pic;
+    public String getErr_code() {
+        return err_code;
     }
 
     public String getCity() {
