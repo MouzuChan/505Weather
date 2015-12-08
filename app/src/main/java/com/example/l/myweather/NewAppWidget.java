@@ -79,52 +79,52 @@ public class NewAppWidget extends AppWidgetProvider {
 
     static void updateAppWidget(final Context context,final AppWidgetManager appWidgetManager,final int appWidgetId){
 
-            final String city_id;
-            Log.d("NewAppWidget", "updateAppWidget");
-            CityDataBase cityDataBase = new CityDataBase(context,"CITY_LIST",null,1);
-            SQLiteDatabase db = cityDataBase.getWritableDatabase();
-            Cursor cursor = db.query("city",null,null,null,null,null,null);
-            if (cursor.moveToFirst()){
-                city_id = cursor.getString(cursor.getColumnIndex("city_id"));
-                if (isConnected()){
-                    String url = "http://apis.baidu.com/showapi_open_bus/weather_showapi/address?&areaid=" + city_id + "&needMoreDay=1&needIndex=1";
-                    HttpUtil.makeBaiduHttpRequest(url, new CallBackListener() {
-                        @Override
-                        public void onFinish(JSONObject jsonObject) {
-                            setWidgetViews(context, appWidgetManager, appWidgetId, jsonObject);
-                            setOnClick(context, appWidgetManager, appWidgetId);
-                            FileHandle.saveJSONObject(jsonObject,city_id);
-                        }
-
-                        @Override
-                        public void onError(String e) {
-                            JSONObject jsonObject = FileHandle.getJSONObject(city_id);
-                            if (jsonObject != null){
-                                setWidgetViews(context,appWidgetManager,appWidgetId,jsonObject);
-                                setOnClick(context, appWidgetManager, appWidgetId);
-                            }
-                        }
-                    });
-                } else {
-                    JSONObject jsonObject = FileHandle.getJSONObject(city_id);
-                    if (jsonObject != null){
-                        setWidgetViews(context,appWidgetManager,appWidgetId,jsonObject);
+        final String city_id;
+        Log.d("NewAppWidget", "updateAppWidget");
+        CityDataBase cityDataBase = new CityDataBase(context,"CITY_LIST",null,1);
+        SQLiteDatabase db = cityDataBase.getWritableDatabase();
+        Cursor cursor = db.query("city",null,null,null,null,null,null);
+        if (cursor.moveToFirst()){
+            city_id = cursor.getString(cursor.getColumnIndex("city_id"));
+            if (isConnected()){
+                String url = "http://apis.baidu.com/showapi_open_bus/weather_showapi/address?&areaid=" + city_id + "&needMoreDay=1&needIndex=1";
+                HttpUtil.makeBaiduHttpRequest(url, new CallBackListener() {
+                    @Override
+                    public void onFinish(JSONObject jsonObject) {
+                        setWidgetViews(context, appWidgetManager, appWidgetId, jsonObject);
                         setOnClick(context, appWidgetManager, appWidgetId);
                     }
-                }
-                cursor.close();
+
+                    @Override
+                    public void onError(String e) {
+                        JSONObject jsonObject = FileHandle.getJSONObject(city_id);
+                        if (jsonObject != null){
+                            setWidgetViews(context,appWidgetManager,appWidgetId,jsonObject);
+                            setOnClick(context, appWidgetManager, appWidgetId);
+                        }
+                    }
+                });
             } else {
-                RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
-                views.setTextViewText(R.id.date,"未找到已添加的城市...");
-                views.setTextViewText(R.id.aqi,"");
-                views.setTextViewText(R.id.chinese_calendar,"");
-                views.setTextViewText(R.id.weather_txt,"");
-                views.setTextViewText(R.id.temp,"");
-                views.setTextViewText(R.id.city,"");
-                appWidgetManager.updateAppWidget(appWidgetId,views);
-                cursor.close();
+                JSONObject jsonObject = FileHandle.getJSONObject(city_id);
+                if (jsonObject != null){
+                    setWidgetViews(context,appWidgetManager,appWidgetId,jsonObject);
+                    setOnClick(context, appWidgetManager, appWidgetId);
+                }
             }
+        } else {
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
+            views.setTextViewText(R.id.date,"未找到已添加的城市...");
+            views.setTextViewText(R.id.aqi,"");
+            views.setTextViewText(R.id.chinese_calendar,"");
+            views.setTextViewText(R.id.weather_txt,"");
+            views.setTextViewText(R.id.temp,"");
+            views.setTextViewText(R.id.city,"");
+            appWidgetManager.updateAppWidget(appWidgetId,views);
         }
+        if (cursor != null){
+            cursor.close();
+        }
+    }
 
 
 
@@ -168,8 +168,6 @@ public class NewAppWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
         if (aqi != null && !aqi.equals("null")){
             views.setTextViewText(R.id.aqi,"   " + aqi + handleJsonForWidget.getQlty());
-        } else{
-            views.setTextViewText(R.id.aqi," ");
         }
         if (weather_txt != null){
             views.setTextViewText(R.id.weather_txt, weather_txt);
