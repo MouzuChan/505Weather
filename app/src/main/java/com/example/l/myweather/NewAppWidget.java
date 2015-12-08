@@ -121,9 +121,7 @@ public class NewAppWidget extends AppWidgetProvider {
             views.setTextViewText(R.id.city,"");
             appWidgetManager.updateAppWidget(appWidgetId,views);
         }
-        if (cursor != null){
-            cursor.close();
-        }
+        cursor.close();
     }
 
 
@@ -180,11 +178,8 @@ public class NewAppWidget extends AppWidgetProvider {
             }
             FileHandle.saveJSONObject(jsonObject,id);
         }
-
         views.setTextViewText(R.id.date,month + "月" + day + "日" + " " + _week);
         views.setTextViewText(R.id.chinese_calendar,"更新于:" + handleJsonForWidget.getLoc_time());
         appWidgetManager.updateAppWidget(appWidgetId, views);
-
-
     }
 }
