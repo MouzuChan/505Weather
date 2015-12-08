@@ -91,7 +91,7 @@ public class NewAppWidget extends AppWidgetProvider {
                 HttpUtil.makeBaiduHttpRequest(url, new CallBackListener() {
                     @Override
                     public void onFinish(JSONObject jsonObject) {
-                        setWidgetViews(context, appWidgetManager, appWidgetId, jsonObject);
+                        setWidgetViews(context, appWidgetManager, appWidgetId, jsonObject,city_id);
                         setOnClick(context, appWidgetManager, appWidgetId);
                     }
 
@@ -99,7 +99,7 @@ public class NewAppWidget extends AppWidgetProvider {
                     public void onError(String e) {
                         JSONObject jsonObject = FileHandle.getJSONObject(city_id);
                         if (jsonObject != null){
-                            setWidgetViews(context,appWidgetManager,appWidgetId,jsonObject);
+                            setWidgetViews(context,appWidgetManager,appWidgetId,jsonObject,city_id);
                             setOnClick(context, appWidgetManager, appWidgetId);
                         }
                     }
@@ -107,7 +107,7 @@ public class NewAppWidget extends AppWidgetProvider {
             } else {
                 JSONObject jsonObject = FileHandle.getJSONObject(city_id);
                 if (jsonObject != null){
-                    setWidgetViews(context,appWidgetManager,appWidgetId,jsonObject);
+                    setWidgetViews(context,appWidgetManager,appWidgetId,jsonObject,city_id);
                     setOnClick(context, appWidgetManager, appWidgetId);
                 }
             }
@@ -136,7 +136,7 @@ public class NewAppWidget extends AppWidgetProvider {
     }
 
 
-    static void setWidgetViews(Context context,AppWidgetManager appWidgetManager,int appWidgetId,JSONObject jsonObject){
+    static void setWidgetViews(Context context,AppWidgetManager appWidgetManager,int appWidgetId,JSONObject jsonObject,String id){
 
         String _week = "";
         Calendar calendar = Calendar.getInstance();
@@ -158,28 +158,33 @@ public class NewAppWidget extends AppWidgetProvider {
         }else if (week == 7){
             _week = "周六";
         }
-
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
         HandleJsonForWidget handleJsonForWidget = new HandleJsonForWidget();
         handleJsonForWidget.handleJson(jsonObject);
-        String temp = handleJsonForWidget.getTemp();
-        String city = handleJsonForWidget.getCity();
-        String aqi = handleJsonForWidget.getAqi();
-        String weather_txt = handleJsonForWidget.getWeather_txt();
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
-        if (aqi != null && !aqi.equals("null")){
-            views.setTextViewText(R.id.aqi,"   " + aqi + handleJsonForWidget.getQlty());
+        if (handleJsonForWidget.getErr_code().equals("0")){
+            String temp = handleJsonForWidget.getTemp();
+            String city = handleJsonForWidget.getCity();
+            String aqi = handleJsonForWidget.getAqi();
+            String weather_txt = handleJsonForWidget.getWeather_txt();
+            if (aqi != null && !aqi.equals("null")){
+                views.setTextViewText(R.id.aqi,"   " + aqi + handleJsonForWidget.getQlty());
+            }
+            if (weather_txt != null){
+                views.setTextViewText(R.id.weather_txt, weather_txt);
+            }
+            if (temp != null){
+                views.setTextViewText(R.id.temp, temp + "°");
+            }
+            if (city != null){
+                views.setTextViewText(R.id.city, city);
+            }
+            FileHandle.saveJSONObject(jsonObject,id);
         }
-        if (weather_txt != null){
-            views.setTextViewText(R.id.weather_txt, weather_txt);
-        }
-        if (temp != null){
-            views.setTextViewText(R.id.temp, temp + "°");
-        }
-        if (city != null){
-            views.setTextViewText(R.id.city, city);
-        }
+
         views.setTextViewText(R.id.date,month + "月" + day + "日" + " " + _week);
         views.setTextViewText(R.id.chinese_calendar,"更新于:" + handleJsonForWidget.getLoc_time());
         appWidgetManager.updateAppWidget(appWidgetId, views);
+
+
     }
 }
