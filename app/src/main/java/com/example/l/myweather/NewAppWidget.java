@@ -179,7 +179,7 @@ public class NewAppWidget extends AppWidgetProvider {
             FileHandle.saveJSONObject(jsonObject,id);
         }
         views.setTextViewText(R.id.date,month + "月" + day + "日" + " " + _week);
-        views.setTextViewText(R.id.chinese_calendar,"更新于:" + handleJsonForWidget.getLoc_time());
+        views.setTextViewText(R.id.chinese_calendar,"发布于:" + handleJsonForWidget.getLoc_time());
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 }
