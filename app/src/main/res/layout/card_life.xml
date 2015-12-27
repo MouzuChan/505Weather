@@ -60,7 +60,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <TextView
-                            android:text="N/A"
+                            android:text="暂无"
                             android:textSize="18sp"
                             android:id="@+id/shushidu"
                             android:gravity="left"
@@ -71,7 +71,7 @@
                             android:gravity="left"
                             android:textColor="#9a9a9a"
                             android:textSize="13sp"
-                            android:text="舒适度"
+                            android:text="心情"
                             android:layout_gravity="center_vertical"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
@@ -97,6 +97,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content">
                         <TextView
+                            android:text="暂无"
                             android:layout_gravity="center_vertical"
                             android:textSize="18sp"
                             android:gravity="right"
@@ -149,7 +150,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                         <TextView
-                            android:text="N/A"
+                            android:text="暂无"
                             android:textSize="18sp"
                             android:id="@+id/chuanyi"
                             android:layout_gravity="center_vertical"
@@ -182,6 +183,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content">
                         <TextView
+                            android:text="暂无"
                             android:layout_gravity="center_vertical"
                             android:textSize="18sp"
                             android:id="@+id/yundong"
@@ -192,14 +194,14 @@
                             android:textColor="#9a9a9a"
                             android:textSize="13sp"
                             android:layout_gravity="center_vertical"
-                            android:text="运动"
+                            android:text="晾晒"
                             android:gravity="right"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
 
                     </LinearLayout>
                     <ImageView
-                        android:background="@drawable/yd1"
+                        android:background="@drawable/ls1"
                         android:layout_width="40dp"
                         android:layout_height="match_parent" />
 
@@ -232,7 +234,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                         <TextView
-                            android:text="N/A"
+                            android:text="暂无"
                             android:textSize="18sp"
                             android:id="@+id/chuxing"
 
@@ -268,6 +270,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent">
                         <TextView
+                            android:text="暂无"
                             android:layout_gravity="center_vertical"
                             android:textSize="18sp"
                             android:id="@+id/xiche"

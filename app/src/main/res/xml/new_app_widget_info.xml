@@ -3,5 +3,5 @@
     android:minWidth="250dp" android:minHeight="40dp" android:updatePeriodMillis="0"
     android:previewImage="@drawable/ic_appwidget"
     android:initialLayout="@layout/new_app_widget"
-    android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"
+    android:resizeMode="none" android:widgetCategory="home_screen"
     android:initialKeyguardLayout="@layout/new_app_widget"></appwidget-provider>

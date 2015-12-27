@@ -31,6 +31,7 @@ public class FileHandle {
     private static Context context = MyApplication.getContext();
 
 
+
     static JSONObject getJSONObject(final String city_id){
         JSONObject jsonObject = null;
         BufferedReader reader = null;

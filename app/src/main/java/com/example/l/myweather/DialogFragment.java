@@ -29,7 +29,7 @@ public class DialogFragment extends android.support.v4.app.DialogFragment{
         title_view.setText(title);
         content_view.setText(content);
         switch (title){
-            case "舒适度" :
+            case "心情" :
                 life_image.setImageResource(R.drawable.co1);
                 break;
             case "感冒":
@@ -41,8 +41,8 @@ public class DialogFragment extends android.support.v4.app.DialogFragment{
             case "洗车":
                 life_image.setImageResource(R.drawable.xc1);
                 break;
-            case "运动":
-                life_image.setImageResource(R.drawable.yd1);
+            case "晾晒":
+                life_image.setImageResource(R.drawable.ls1);
                 break;
             case "穿衣":
                 life_image.setImageResource(R.drawable.ct1);

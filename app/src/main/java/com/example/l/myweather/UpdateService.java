@@ -44,7 +44,7 @@ public class UpdateService extends Service {
         Log.d("UpdateService", "onStartCommand");
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String update_rate = sharedPreferences.getString("update_rate","");
+        String update_rate = sharedPreferences.getString("update_rate","1个小时");
         switch (update_rate){
             case "30分钟":
                 i = 30 * 60 * 1000;
@@ -65,18 +65,8 @@ public class UpdateService extends Service {
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                Log.d("UpdateService","update");
                 if (isConnected()){
-                    Context context = MyApplication.getContext();
-                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(MyApplication.getContext());
-                    int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context,NewAppWidget.class));
-                    Log.d("Length",appWidgetIds.length +"");
-                    if (appWidgetIds.length == 0){
-                        UpdateService.this.stopSelf();
-                    }
-                    for (int in = 0; in < appWidgetIds.length; in++){
-                        NewAppWidget.updateAppWidget(context,appWidgetManager,appWidgetIds[in]);
-                    }
+                    NewAppWidget.updateWidget();
                 }
             }
         };

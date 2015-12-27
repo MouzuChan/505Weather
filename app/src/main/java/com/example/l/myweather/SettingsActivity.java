@@ -105,24 +105,30 @@ public class SettingsActivity extends PreferenceActivity {
     protected void onResume() {
         super.onResume();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.getContext());
-        String color = sharedPreferences.getString("style_color", "");
+        String color = sharedPreferences.getString("style_color", "青色");
         switch (color){
             case "蓝色":
                 toolbar.setBackgroundColor(Color.parseColor("#104d8e"));
+                setTheme(R.style.lanseTheme);
                 break;
             case "灰色":
+                setTheme(R.style.huiseTheme);
                 toolbar.setBackgroundColor(Color.GRAY);
                 break;
             case "青色":
+                setTheme(R.style.qingseTheme);
                 toolbar.setBackgroundColor(Color.parseColor("#FF00786F"));
                 break;
             case "绿色":
+                setTheme(R.style.lvseTheme);
                 toolbar.setBackgroundColor(Color.parseColor("#2e8b57"));
                 break;
             case "黑色":
+                setTheme(R.style.heiseTheme);
                 toolbar.setBackgroundColor(Color.BLACK);
                 break;
             case "咖啡色":
+                setTheme(R.style.kafeiseTheme);
                 toolbar.setBackgroundColor(Color.parseColor("#5f4421"));
                 break;
         }

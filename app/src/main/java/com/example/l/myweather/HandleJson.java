@@ -1,6 +1,8 @@
 package com.example.l.myweather;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -58,10 +60,10 @@ public class HandleJson {
     private String sixth_night_temp;
     private String seventh_night_temp;
 
-    private String shushidu;
+    private String xinqing;
     private String ganmao;
     private String chuanyi;
-    private String yundong;
+    private String liangshai;
     private String chuxing;
     private String xiche;
     private String fifth_night_weather_txt;
@@ -75,14 +77,15 @@ public class HandleJson {
     private String err_code;
     private String err_msg;
 
-    private String shushidu_content,ganmao_content,xiche_content,chuanyi_content,chuxing_content,yundong_content;
+    private String xinqing_content,ganmao_content,xiche_content,chuanyi_content,chuxing_content,liangshai_content;
 
 
 
 
 
     public void handleJson(JSONObject jsonObject){
-        Log.d("HandleJson",jsonObject.toString());
+
+        //Log.d("HandleJson",jsonObject.toString());
         try{
             dayWeatherPic = new String[7];
             nightWeatherPic = new String[7];
@@ -141,11 +144,11 @@ public class HandleJson {
                                 chuanyi_content = clothes.getString("desc");
                             }
                         }
-                        if (index.has("comfort")){
-                            JSONObject comfort = index.getJSONObject("comfort");
-                            if (comfort.has("title")){
-                                shushidu = comfort.getString("title");
-                                shushidu_content = comfort.getString("desc");
+                        if (index.has("xq")){
+                            JSONObject xq = index.getJSONObject("xq");
+                            if (xq.has("title")){
+                                xinqing = xq.getString("title");
+                                xinqing_content = xq.getString("desc");
                             }
                         }
                         if (index.has("cold")){
@@ -155,11 +158,11 @@ public class HandleJson {
                                 ganmao_content = cold.getString("desc");
                             }
                         }
-                        if (index.has("sports")){
-                            JSONObject sports = index.getJSONObject("sports");
-                            if (sports.has("title")){
-                                yundong = sports.getString("title");
-                                yundong_content = sports.getString("desc");
+                        if (index.has("ls")){
+                            JSONObject ls = index.getJSONObject("ls");
+                            if (ls.has("title")){
+                                liangshai = ls.getString("title");
+                                liangshai_content = ls.getString("desc");
                             }
                         }
                         if (index.has("travel")){
@@ -296,16 +299,16 @@ public class HandleJson {
         return ganmao_content;
     }
 
-    public String getShushidu_content() {
-        return shushidu_content;
+    public String getXinqing_content() {
+        return xinqing_content;
     }
 
     public String getXiche_content() {
         return xiche_content;
     }
 
-    public String getYundong_content() {
-        return yundong_content;
+    public String getLiangshai_content() {
+        return liangshai_content;
     }
 
     public Boolean getBoolean(){
@@ -348,16 +351,16 @@ public class HandleJson {
         return chuxing;
     }
 
-    public String getShushidu() {
-        return shushidu;
+    public String getXinqing() {
+        return xinqing;
     }
 
     public String getXiche() {
         return xiche;
     }
 
-    public String getYundong() {
-        return yundong;
+    public String getLiangshai() {
+        return liangshai;
     }
 
 

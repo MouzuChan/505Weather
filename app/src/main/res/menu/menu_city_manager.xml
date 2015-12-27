@@ -2,7 +2,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.l.myweather.CityManager">
-    <item android:id="@+id/action_add" android:title="添加城市"
+    <item android:id="@+id/action_edit" android:title="编辑"
+        android:orderInCategory="100" app:showAsAction="always"
+        android:icon="@drawable/ic_create_white_48dp"
+        />
+    <item android:id="@+id/action_add" android:title="添加"
         android:orderInCategory="100" app:showAsAction="always"
         android:icon="@drawable/ic_add_white_48dp"
         />

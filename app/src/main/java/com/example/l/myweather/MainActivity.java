@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private List<TextView> weatherViewList;
     private List<NetworkImageView> networkImageViewList;
     private List<LinearLayout> linearLayoutList;
+    public static int DELETE_FLAG = 0;
+    private SharedPreferences sharedPreferences;
 
 
     @Override
@@ -96,6 +98,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //initViewPager();
         initBroadcast();
         setViewToDrawerLayout();
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (sharedPreferences.getBoolean("update_switch",false)){
+            startService(new Intent(this, UpdateService.class));
+        } else {
+            stopService(new Intent(this,UpdateService.class));
+        }
 }
 
     public void initView(){
@@ -136,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editor.putInt("start_count", start_count);
         editor.apply();
         viewPager.addOnPageChangeListener(onPageChangeListener);
-        viewPager.setOffscreenPageLimit(3);
+        viewPager.setOffscreenPageLimit(10);
         linearLayout = (LinearLayout)findViewById(R.id.linear_layout);
     }
     public void initCityList(){
@@ -159,6 +167,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             adapter.notifyDataSetChanged();
             viewPager.setCurrentItem(0);
             toolbar.setTitle(city_list.get(0));
+        } else {
+            toolbar.setTitle("请添加城市");
         }
 
     }
@@ -169,7 +179,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String city_id;
         String district;
         if (requestCode == 1){
-            Log.d("dd", "GONE");
             switch (resultCode){
                 case 1:
                     city_id = data.getStringExtra("return_id");
@@ -181,6 +190,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     district = data.getStringExtra("district");
                     addData(city_id,district);
                     Toast.makeText(this,"定位成功:   " + district,Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        } else if (requestCode == 2){
+            switch (resultCode){
+                case 1:
+                    int pageSelected = data.getIntExtra("pageSelected",0);
+                    viewPager.setCurrentItem(pageSelected);
                     break;
             }
         }
@@ -302,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (i == R.id.city_manager){
                 drawerLayout.closeDrawers();
                 Intent intent = new Intent(MainActivity.this,CityManager.class);
-                startActivity(intent);
+                startActivityForResult(intent,2);
 
             } else if (i == R.id.add_city){
                 drawerLayout.closeDrawers();
@@ -380,9 +396,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(addBroadcastReceiver);
-        unregisterReceiver(changeBroadCastReceiver);
-        unregisterReceiver(removeBroadcastReceiver);
+        unregisterReceiver(doneBroadCastReceiver);
+        //unregisterReceiver(changeBroadCastReceiver);
+        //unregisterReceiver(removeBroadcastReceiver);
         System.exit(0);
     }
 
@@ -390,20 +406,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStart() {
         super.onStart();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        Log.d("onStart", sharedPreferences.getString("update_rate", "aadf"));
-        if (sharedPreferences.getBoolean("update_switch",false)){
-            startService(new Intent(this, UpdateService.class));
-        } else {
-            stopService(new Intent(this,UpdateService.class));
-        }
+        DELETE_FLAG = 0;
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String color = sharedPreferences.getString("style_color","蓝色");
+        String color = sharedPreferences.getString("style_color","青色");
         switch (color){
             case "蓝色":
                 relativeLayout.setBackgroundColor(Color.parseColor("#104d8e"));
@@ -448,38 +458,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void initBroadcast(){
-        IntentFilter intentFilter = new IntentFilter("com.lha.weather.REMOVE");
-        registerReceiver(removeBroadcastReceiver,intentFilter);
-
-        IntentFilter filter = new IntentFilter("com.lha.weather.CHANGE_DEFAULT");
-        registerReceiver(changeBroadCastReceiver,filter);
-
-        IntentFilter intentFilter1 = new IntentFilter("com.lha.weather.ADD");
-        registerReceiver(addBroadcastReceiver,intentFilter1);
+        IntentFilter intentFilter = new IntentFilter("com.lha.weather.DONE");
+        registerReceiver(doneBroadCastReceiver,intentFilter);
+        IntentFilter addIntentFilter = new IntentFilter("com.lha.weather.ADD");
+        registerReceiver(addBroadcastReceiver,addIntentFilter);
     }
 
-    private BroadcastReceiver changeBroadCastReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver doneBroadCastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String city = intent.getStringExtra("city");
-            String city_id = intent.getStringExtra("city_id");
-            cityId_list.remove(city_id);
-            cityId_list.add(0, city_id);
-            city_list.remove(city);
-            city_list.add(0, city);
+            DELETE_FLAG = 1;
+            cityId_list.clear();
+            city_list.clear();
             fragmentArrayList.clear();
             viewPager.removeAllViews();
             adapter.notifyDataSetChanged();
+            initCityList();
             setViewToDrawerLayout();
-            db.delete("city", null,null);
-            for (int i = 0; i < city_list.size(); i++){
-                ContentValues values = new ContentValues();
-                values.put("city",city_list.get(i));
-                values.put("city_id",cityId_list.get(i));
-                db.insert("city", null, values);
-                values.clear();
-            }
-
+            NewAppWidget.updateWidget();
         }
     };
 
@@ -489,21 +485,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             addLayout();
             String city = intent.getStringExtra("city");
             String city_id = intent.getStringExtra("city_id");
+            city_list.add(city);
+            cityId_list.add(city_id);
+            BlankFragment blankFragment = BlankFragment.newInstance(city_id, city_list.size() - 1);
+            fragmentArrayList.add(blankFragment);
+            adapter.notifyDataSetChanged();
+            Toast.makeText(context,"添加成功：" + city,Toast.LENGTH_SHORT).show();
             ContentValues values = new ContentValues();
             values.put("city", city);
             values.put("city_id", city_id);
             db.insert("city", null, values);
             values.clear();
-            city_list.add(city);
-            cityId_list.add(city_id);
-            BlankFragment blankFragment = BlankFragment.newInstance(city_id,city_list.size()-1);
-            fragmentArrayList.add(blankFragment);
-            adapter.notifyDataSetChanged();
 
         }
     };
 
-    private BroadcastReceiver removeBroadcastReceiver = new BroadcastReceiver() {
+    /*private BroadcastReceiver removeBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d("Main", "onReceive");
@@ -514,10 +511,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             initCityList();
             fragmentArrayList.clear();
             viewPager.removeAllViews();
-            adapter.notifyDataSetChanged();
+            initViewPager();
             setViewToDrawerLayout();
+            NewAppWidget.updateWidget();
         }
-    };
+    };*/
 
 
 

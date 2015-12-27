@@ -11,8 +11,8 @@
     </string-array>
 
     <string-array name="style_color">
-        <item>蓝色</item>
         <item>青色</item>
+        <item>蓝色</item>
         <item>灰色</item>
         <item>绿色</item>
         <item>黑色</item>

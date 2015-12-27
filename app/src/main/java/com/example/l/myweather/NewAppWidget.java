@@ -29,11 +29,12 @@ import java.util.List;
  * Created by L on 2015/10/19.
  */
 public class NewAppWidget extends AppWidgetProvider {
+    private static Context context = MyApplication.getContext();
+
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
-        Log.d("NewAppWidget", "onUpdate");
         int N = appWidgetIds.length;
         for (int i = 0; i < N; i++){
             updateAppWidget(context, appWidgetManager, appWidgetIds[i]);
@@ -41,46 +42,34 @@ public class NewAppWidget extends AppWidgetProvider {
 
     }
 
-    public static void setOnClick(Context context, AppWidgetManager appWidgetManager, int appWidgetId){
-        Log.d("NewAppWidget","onCick");
-        RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.new_app_widget);
-        Intent intent = new Intent(context,MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-        views.setOnClickPendingIntent(R.id.weather_layout, pendingIntent);
-        Intent intent2 = context.getPackageManager().getLaunchIntentForPackage("com.android.deskclock");
-        if (intent2 != null){
-            intent2.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pi = PendingIntent.getActivity(context,0,intent2,0);
-            views.setOnClickPendingIntent(R.id.clock_layout,pi);
-        } else {
-            Toast.makeText(context,"未找到时钟应用",Toast.LENGTH_SHORT).show();
-        }
-        appWidgetManager.updateAppWidget(appWidgetId, views);
-
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+        Log.d("TAG", intent.getAction());
     }
+
 
 
     @Override
     public void onEnabled(Context context) {
         super.onEnabled(context);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean b = sharedPreferences.getBoolean("update_switch",false);
+        boolean b = sharedPreferences.getBoolean("update_switch", false);
         if (b){
-            context.startService(new Intent(context,UpdateService.class));
+            context.startService(new Intent(context, UpdateService.class));
         }
     }
 
     @Override
     public void onDisabled(Context context) {
         super.onDisabled(context);
-        context.stopService(new Intent(context,UpdateService.class));
+        context.stopService(new Intent(context, UpdateService.class));
     }
 
 
     static void updateAppWidget(final Context context,final AppWidgetManager appWidgetManager,final int appWidgetId){
 
         final String city_id;
-        Log.d("NewAppWidget", "updateAppWidget");
         CityDataBase cityDataBase = new CityDataBase(context,"CITY_LIST",null,1);
         SQLiteDatabase db = cityDataBase.getWritableDatabase();
         Cursor cursor = db.query("city",null,null,null,null,null,null);
@@ -91,24 +80,21 @@ public class NewAppWidget extends AppWidgetProvider {
                 HttpUtil.makeBaiduHttpRequest(url, new CallBackListener() {
                     @Override
                     public void onFinish(JSONObject jsonObject) {
-                        setWidgetViews(context, appWidgetManager, appWidgetId, jsonObject,city_id);
-                        setOnClick(context, appWidgetManager, appWidgetId);
+                        setWidgetViews(context, appWidgetManager, appWidgetId, jsonObject, city_id,1);
                     }
 
                     @Override
                     public void onError(String e) {
                         JSONObject jsonObject = FileHandle.getJSONObject(city_id);
                         if (jsonObject != null){
-                            setWidgetViews(context,appWidgetManager,appWidgetId,jsonObject,city_id);
-                            setOnClick(context, appWidgetManager, appWidgetId);
+                            setWidgetViews(context, appWidgetManager, appWidgetId, jsonObject, city_id,0);
                         }
                     }
                 });
             } else {
                 JSONObject jsonObject = FileHandle.getJSONObject(city_id);
                 if (jsonObject != null){
-                    setWidgetViews(context,appWidgetManager,appWidgetId,jsonObject,city_id);
-                    setOnClick(context, appWidgetManager, appWidgetId);
+                    setWidgetViews(context, appWidgetManager, appWidgetId, jsonObject, city_id,0);
                 }
             }
         } else {
@@ -117,8 +103,11 @@ public class NewAppWidget extends AppWidgetProvider {
             views.setTextViewText(R.id.aqi,"");
             views.setTextViewText(R.id.chinese_calendar,"");
             views.setTextViewText(R.id.weather_txt,"");
-            views.setTextViewText(R.id.temp,"");
-            views.setTextViewText(R.id.city,"");
+            views.setTextViewText(R.id.temp, "");
+            views.setTextViewText(R.id.city, "");
+            Intent intent = new Intent(context,MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            views.setOnClickPendingIntent(R.id.relative_layout,pendingIntent);
             appWidgetManager.updateAppWidget(appWidgetId,views);
         }
         cursor.close();
@@ -134,10 +123,11 @@ public class NewAppWidget extends AppWidgetProvider {
     }
 
 
-    static void setWidgetViews(Context context,AppWidgetManager appWidgetManager,int appWidgetId,JSONObject jsonObject,String id){
+    static void setWidgetViews(Context context,AppWidgetManager appWidgetManager,int appWidgetId,JSONObject jsonObject,String id,int i){
 
         String _week = "";
         Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int week = calendar.get(Calendar.DAY_OF_WEEK);
@@ -176,10 +166,42 @@ public class NewAppWidget extends AppWidgetProvider {
             if (city != null){
                 views.setTextViewText(R.id.city, city);
             }
+
+        }
+        views.setTextViewText(R.id.date, month + "月" + day + "日" + " " + _week);
+
+        CalendarUtil calendarUtil = new CalendarUtil();
+        String chineseDay = calendarUtil.getChineseMonth(year,month,day) + calendarUtil.getChineseDay(year,month,day);
+        Log.d("chineseDay",chineseDay);
+        views.setTextViewText(R.id.chinese_calendar,chineseDay);
+
+        Intent intent = new Intent(context,MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        views.setOnClickPendingIntent(R.id.weather_layout, pendingIntent);
+        Intent intent2 = context.getPackageManager().getLaunchIntentForPackage("com.android.deskclock");
+        if (intent2 != null){
+            PendingIntent pi = PendingIntent.getActivity(context,0,intent2,0);
+            views.setOnClickPendingIntent(R.id.clock_layout,pi);
+        } else {
+            Toast.makeText(context,"未找到时钟应用",Toast.LENGTH_SHORT).show();
+        }
+        appWidgetManager.updateAppWidget(appWidgetId, views);
+        if (i == 1){
             FileHandle.saveJSONObject(jsonObject,id);
         }
-        views.setTextViewText(R.id.date,month + "月" + day + "日" + " " + _week);
-        views.setTextViewText(R.id.chinese_calendar,"发布于:" + handleJsonForWidget.getLoc_time());
-        appWidgetManager.updateAppWidget(appWidgetId, views);
     }
+
+
+    static void updateWidget(){
+        Log.d("TAG","updateWidget");
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context,NewAppWidget.class));
+        if (appWidgetIds.length != 0){
+            for (int in = 0; in < appWidgetIds.length; in++){
+                NewAppWidget.updateAppWidget(context,appWidgetManager,appWidgetIds[in]);
+            }
+        }
+    }
+
 }
