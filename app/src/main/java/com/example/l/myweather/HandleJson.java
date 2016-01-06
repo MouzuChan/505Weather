@@ -99,7 +99,7 @@ public class HandleJson {
                 if (all.has("f1")){
                     JSONObject f1 = all.getJSONObject("f1");
                     if (f1.has("day_air_temperature") && f1.has("night_air_temperature")){
-                        first_max_tmp = f1.getString("day_air_temperature") + "°" + "/" + f1.getString("night_air_temperature") + "°";
+                        first_max_tmp = f1.getString("night_air_temperature") + "°" + "/" + f1.getString("day_air_temperature") + "°";
                     }
                     if (f1.has("day_weather")){
                         first_weather = f1.getString("day_weather");

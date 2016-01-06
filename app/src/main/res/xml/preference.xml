@@ -20,6 +20,14 @@
             android:summaryOn="已开启"
             />
 
+        <SwitchPreference
+            android:key="widget_background"
+            android:defaultValue="false"
+            android:title="小部件使用蓝色背景"
+            android:summaryOn="当前为蓝色背景"
+            android:summaryOff="当前为透明背景"
+            />
+
 
         <SwitchPreference
             android:key="update_switch"
@@ -38,6 +46,7 @@
             android:defaultValue="1个小时"
             />
 
+
         <ListPreference
             android:id="@+id/list_preference"
             android:key="style_color"
@@ -47,6 +56,8 @@
             android:entries="@array/style_color"
             android:defaultValue="青色"
             />
+
+
     </PreferenceCategory>
 
 

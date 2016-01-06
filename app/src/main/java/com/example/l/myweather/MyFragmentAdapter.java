@@ -28,7 +28,6 @@ public class MyFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Log.d("position","" + position);
         return list.get(position);
     }
 

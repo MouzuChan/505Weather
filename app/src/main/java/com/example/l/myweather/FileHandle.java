@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.EventListener;
 
 /**
  * Created by L on 2015/10/20.
@@ -80,25 +81,26 @@ public class FileHandle {
         }
     }
 
-    /*static Bitmap getImage(String fileName){
-        File file = new File(Environment.getExternalStorageDirectory() + "/Android/data/com.lha.weather/files", fileName + ".png");
+    static Bitmap getImage(String fileName){
+        File file = new File(Environment.getExternalStorageDirectory() + "/Android/data/com.lha.weather/files", fileName);
         if (file.exists()){
-            Bitmap bm = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/Android/data/com.lha.weather/files/" + fileName + ".png");
+            Bitmap bm = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/Android/data/com.lha.weather/files/" + fileName);
             if(bm != null){
                 return bm;
             }
         }
         return null;
-    }*/
+    }
 
-    /*static void saveImage(Bitmap bitmap,String fileName){
-        File fordl = new File(Environment.getExternalStorageDirectory() + "/Android/data/com.lha.weather/files");
-        File file = new File(Environment.getExternalStorageDirectory() + "/Android/data/com.lha.weather/files", fileName + ".png");
+    static void saveImage(Bitmap bitmap,String fileName){
+        Log.d("FileHandle","saveImage");
+        //File fordl = Environment.getDataDirectory();
+        File file = new File(context.getExternalFilesDir(null), fileName);
         BufferedOutputStream outputStream = null;
         try {
-            if (!fordl.exists()){
-                fordl.mkdirs();
-            }
+            //if (!fordl.exists()){
+            //    fordl.mkdirs();
+            //}
             if (!file.exists()){
                 file.createNewFile();
             }
@@ -117,6 +119,8 @@ public class FileHandle {
                 e.printStackTrace();
             }
         }
-    }*/
+    }
+
+
 
 }

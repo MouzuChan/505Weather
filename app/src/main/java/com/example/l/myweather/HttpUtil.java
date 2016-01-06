@@ -58,7 +58,7 @@ public class HttpUtil {
         mQueue.add(jsonObjectRequest);
     }
 
-   /* public static void makeImageRequest(final String url,final ImageCallBack imageCallBack){
+    public static void makeImageRequest(final String url,final ImageCallBack imageCallBack){
 
         ImageRequest imageRequest = new ImageRequest(url, new Response.Listener<Bitmap>() {
             @Override
@@ -76,6 +76,6 @@ public class HttpUtil {
             }
         });
         mQueue.add(imageRequest);
-    }*/
+    }
 
 }

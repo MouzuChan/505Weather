@@ -7,8 +7,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
@@ -30,6 +33,9 @@ import java.util.List;
  */
 public class NewAppWidget extends AppWidgetProvider {
     private static Context context = MyApplication.getContext();
+    private static PackageManager packageManager;
+    private static int USER_UPDATE_FLAG = 0;
+    private SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
 
     @Override
@@ -46,16 +52,24 @@ public class NewAppWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         Log.d("TAG", intent.getAction());
+        switch (intent.getAction()){
+            case "com.lha.weather.USER_UPDATE":
+                USER_UPDATE_FLAG = 1;
+                updateWidget();
+                break;
+            case "com.lha.weather.UPDATE_FROM_INTERNET":
+                updateWidget();
+                break;
+            case "com.lha.weather.UPDATE_FROM_LOCAL":
+                updateWidget();
+                break;
+        }
     }
-
-
 
     @Override
     public void onEnabled(Context context) {
         super.onEnabled(context);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean b = sharedPreferences.getBoolean("update_switch", false);
-        if (b){
+        if (sharedPreferences.getBoolean("update_switch", false)){
             context.startService(new Intent(context, UpdateService.class));
         }
     }
@@ -63,16 +77,20 @@ public class NewAppWidget extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
         super.onDisabled(context);
-        context.stopService(new Intent(context, UpdateService.class));
+        int[] appWidgetIds = Widget4x2.appWidgetManager.getAppWidgetIds(new ComponentName(context, Widget4x2.class));
+        if (appWidgetIds.length == 0){
+            context.stopService(new Intent(context,UpdateService.class));
+        }
     }
 
 
     static void updateAppWidget(final Context context,final AppWidgetManager appWidgetManager,final int appWidgetId){
 
         final String city_id;
+        packageManager = context.getPackageManager();
         CityDataBase cityDataBase = new CityDataBase(context,"CITY_LIST",null,1);
         SQLiteDatabase db = cityDataBase.getWritableDatabase();
-        Cursor cursor = db.query("city",null,null,null,null,null,null);
+        Cursor cursor = db.query("city", null, null, null, null, null, null);
         if (cursor.moveToFirst()){
             city_id = cursor.getString(cursor.getColumnIndex("city_id"));
             if (isConnected()){
@@ -80,11 +98,20 @@ public class NewAppWidget extends AppWidgetProvider {
                 HttpUtil.makeBaiduHttpRequest(url, new CallBackListener() {
                     @Override
                     public void onFinish(JSONObject jsonObject) {
+                        if (USER_UPDATE_FLAG == 1){
+                            Toast.makeText(context,"更新成功^_^",Toast.LENGTH_SHORT).show();
+                            USER_UPDATE_FLAG = 0;
+                        }
+
                         setWidgetViews(context, appWidgetManager, appWidgetId, jsonObject, city_id,1);
                     }
 
                     @Override
                     public void onError(String e) {
+                        if (USER_UPDATE_FLAG == 1){
+                            Toast.makeText(context,"网络超时⊙﹏⊙‖∣",Toast.LENGTH_SHORT).show();
+                            USER_UPDATE_FLAG = 0;
+                        }
                         JSONObject jsonObject = FileHandle.getJSONObject(city_id);
                         if (jsonObject != null){
                             setWidgetViews(context, appWidgetManager, appWidgetId, jsonObject, city_id,0);
@@ -92,6 +119,10 @@ public class NewAppWidget extends AppWidgetProvider {
                     }
                 });
             } else {
+                if (USER_UPDATE_FLAG == 1){
+                    Toast.makeText(context,"没有网络@_@",Toast.LENGTH_SHORT).show();
+                    USER_UPDATE_FLAG = 0;
+                }
                 JSONObject jsonObject = FileHandle.getJSONObject(city_id);
                 if (jsonObject != null){
                     setWidgetViews(context, appWidgetManager, appWidgetId, jsonObject, city_id,0);
@@ -107,10 +138,11 @@ public class NewAppWidget extends AppWidgetProvider {
             views.setTextViewText(R.id.city, "");
             Intent intent = new Intent(context,MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-            views.setOnClickPendingIntent(R.id.relative_layout,pendingIntent);
-            appWidgetManager.updateAppWidget(appWidgetId,views);
+            views.setOnClickPendingIntent(R.id.relative_layout, pendingIntent);
+            appWidgetManager.updateAppWidget(appWidgetId, views);
         }
         cursor.close();
+
     }
 
 
@@ -146,6 +178,7 @@ public class NewAppWidget extends AppWidgetProvider {
         }else if (week == 7){
             _week = "周六";
         }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
         HandleJsonForWidget handleJsonForWidget = new HandleJsonForWidget();
         handleJsonForWidget.handleJson(jsonObject);
@@ -154,6 +187,7 @@ public class NewAppWidget extends AppWidgetProvider {
             String city = handleJsonForWidget.getCity();
             String aqi = handleJsonForWidget.getAqi();
             String weather_txt = handleJsonForWidget.getWeather_txt();
+            String update_time = handleJsonForWidget.getLoc_time();
             if (aqi != null && !aqi.equals("null")){
                 views.setTextViewText(R.id.aqi,"   " + aqi + handleJsonForWidget.getQlty());
             }
@@ -166,6 +200,9 @@ public class NewAppWidget extends AppWidgetProvider {
             if (city != null){
                 views.setTextViewText(R.id.city, city);
             }
+            if (update_time != null){
+                views.setTextViewText(R.id.update_time,update_time);
+            }
 
         }
         views.setTextViewText(R.id.date, month + "月" + day + "日" + " " + _week);
@@ -173,28 +210,47 @@ public class NewAppWidget extends AppWidgetProvider {
         CalendarUtil calendarUtil = new CalendarUtil();
         String chineseDay = calendarUtil.getChineseMonth(year,month,day) + calendarUtil.getChineseDay(year,month,day);
         Log.d("chineseDay",chineseDay);
-        views.setTextViewText(R.id.chinese_calendar,chineseDay);
+        views.setTextViewText(R.id.chinese_calendar, chineseDay);
 
         Intent intent = new Intent(context,MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.weather_layout, pendingIntent);
-        Intent intent2 = context.getPackageManager().getLaunchIntentForPackage("com.android.deskclock");
+        List<PackageInfo> packageInfo = packageManager.getInstalledPackages(PackageManager.MATCH_DEFAULT_ONLY);
+        Intent intent2 = null;
+        String packageName;
+
+        for (int a = 0; a < packageInfo.size(); a++){
+            packageName = packageInfo.get(a).packageName;
+            //ApplicationInfo applicationInfo = packageInfo.get(a).applicationInfo;
+            //String appName = (String)applicationInfo.loadLabel(packageManager);
+            if (packageName.contains("clock")){
+                intent2 = packageManager.getLaunchIntentForPackage(packageName);
+            }
+        }
         if (intent2 != null){
             PendingIntent pi = PendingIntent.getActivity(context,0,intent2,0);
             views.setOnClickPendingIntent(R.id.clock_layout,pi);
         } else {
-            Toast.makeText(context,"未找到时钟应用",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context,"未找到时钟应用",Toast.LENGTH_SHORT).show();
         }
+        Intent updateIntent = new Intent("com.lha.weather.USER_UPDATE");
+        PendingIntent updatePendingIntent = PendingIntent.getBroadcast(context,0,updateIntent,0);
+        views.setOnClickPendingIntent(R.id.refresh_widget, updatePendingIntent);
+        if (sharedPreferences.getBoolean("widget_background",false)){
+            views.setInt(R.id.relative_layout,"setBackgroundResource",R.drawable.widget_background);
+        } else {
+            views.setInt(R.id.relative_layout,"setBackgroundResource",R.drawable.touming_background);
+        }
+
         appWidgetManager.updateAppWidget(appWidgetId, views);
         if (i == 1){
-            FileHandle.saveJSONObject(jsonObject,id);
+            FileHandle.saveJSONObject(jsonObject, id);
         }
+
     }
 
 
     static void updateWidget(){
-        Log.d("TAG","updateWidget");
-
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context,NewAppWidget.class));
         if (appWidgetIds.length != 0){
@@ -203,5 +259,6 @@ public class NewAppWidget extends AppWidgetProvider {
             }
         }
     }
+
 
 }

@@ -63,6 +63,17 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="com.lha.weather.USER_UPDATE" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="com.lha.weather.UPDATE_FROM_LOCAL" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="com.lha.weather.UPDATE_FROM_INTERNET" />
+            </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
@@ -92,7 +103,9 @@
             android:name=".UpdateService"
             android:enabled="true"
             android:exported="false"
-            android:process=":background" >
+            android:process=":background"
+            android:label="时间和自动更新服务"
+             >
         </service>
 
         <activity
@@ -101,6 +114,29 @@
             android:screenOrientation="portrait" >
         </activity>
 
+        <receiver android:name=".Widget4x2" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.lha.weather.USER_UPDATE4x2" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.lha.weather.UPDATE_TIME" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="com.lha.weather.UPDATE_FROM_LOCAL" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="com.lha.weather.UPDATE_FROM_INTERNET" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget4x2_info" />
+        </receiver>
     </application>
 
 </manifest>

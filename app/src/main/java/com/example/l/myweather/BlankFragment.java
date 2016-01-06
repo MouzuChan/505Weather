@@ -243,7 +243,6 @@ public class BlankFragment extends android.support.v4.app.Fragment implements Vi
         updatePreferences = context.getSharedPreferences("updateTime",Context.MODE_APPEND);
         dialogFragment = new DialogFragment();
 
-
     }
 
     public void initAnimator(){
@@ -609,6 +608,7 @@ public class BlankFragment extends android.support.v4.app.Fragment implements Vi
 
     public void updateAppWidget(){
         NewAppWidget.updateWidget();
+        Widget4x2.updateWidgetFromLocal();
     }
 
     @Override
@@ -616,7 +616,7 @@ public class BlankFragment extends android.support.v4.app.Fragment implements Vi
         int i = v.getId();
         switch (i){
             case R.id.card_yubao:
-                String color = sharedPreferences.getString("style_color", "蓝色");
+                String color = sharedPreferences.getString("style_color", "青色");
                 if (sharedPreferences.getBoolean("full_screen",false)){
                     Intent intent = new Intent(context,DayTable.class);
                     intent.putExtra("maxTemp",maxTemp);

@@ -5,17 +5,16 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:id="@+id/card_yubao"
+    android:paddingBottom="20dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="4dp"
-        app:cardBackgroundColor="#ffffff"
-        app:cardElevation="4dp"
-        app:cardUseCompatPadding="true"
-        app:cardPreventCornerOverlap="true">
+        app:cardBackgroundColor="@color/white"
+
+        >
 
         <LinearLayout
             android:orientation="vertical"
@@ -44,6 +43,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
                     <TextView
+
                         android:layout_gravity="center_horizontal"
                         android:id="@+id/first"
                         android:text="今天"
@@ -59,6 +59,7 @@
                         />
 
                     <TextView
+
                         android:layout_gravity="center_horizontal"
                         android:id="@+id/first_day_weather_txt"
                         android:text="N/A"
@@ -66,6 +67,7 @@
                         android:layout_height="wrap_content" />
 
                     <TextView
+
                         android:layout_gravity="center_horizontal"
                         android:textSize="17sp"
                         android:layout_width="wrap_content"
@@ -82,6 +84,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
+
                         android:layout_gravity="center_horizontal"
                         android:id="@+id/second"
                         android:text="明天"
@@ -97,12 +100,14 @@
                         />
 
                     <TextView
+
                         android:id="@+id/second_day_weather_txt"
                         android:text="N/A"
                         android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                     <TextView
+
                         android:layout_gravity="center_horizontal"
                         android:textSize="17sp"
                         android:layout_width="wrap_content"
@@ -119,6 +124,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
+
                         android:layout_gravity="center_horizontal"
                         android:id="@+id/third"
                         android:text="后天"
@@ -134,12 +140,14 @@
                         />
 
                     <TextView
+
                         android:id="@+id/third_day_weather_txt"
                         android:text="N/A"
                         android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                     <TextView
+
                         android:layout_gravity="center_horizontal"
                         android:textSize="17sp"
                         android:layout_width="wrap_content"
@@ -156,6 +164,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
+
                         android:layout_gravity="center_horizontal"
                         android:id="@+id/four"
                         android:text="大后天"
@@ -172,6 +181,7 @@
                         />
 
                     <TextView
+
                         android:layout_gravity="center_horizontal"
                         android:id="@+id/four_day_weather_txt"
                         android:text="N/A"
@@ -179,6 +189,7 @@
                         android:layout_height="wrap_content" />
 
                     <TextView
+
                         android:layout_gravity="center_horizontal"
                         android:textSize="17sp"
                         android:layout_width="wrap_content"
@@ -193,8 +204,8 @@
 
         </LinearLayout>
 
+</android.support.v7.widget.CardView>
 
-    </android.support.v7.widget.CardView>
 
 
 </LinearLayout>

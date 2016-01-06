@@ -109,9 +109,7 @@ public class CityManager extends AppCompatActivity {
     }
 
     public void deleteCity(int position,int i){
-        db.delete("city", "city=?", new String[]{city_list.get(position)});
-        BlankFragment.updatePreferences.edit().remove("update_time" + city_list.get(position)).apply();
-        city_list.remove(position);
+
         if (i == 0){
             adapter.notifyDataSetChanged();
         } else if (i == 1){
@@ -308,6 +306,9 @@ public class CityManager extends AppCompatActivity {
                     ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(listView.getChildAt(position),"translationX",0f,listView.getWidth());
                     objectAnimator.setDuration(300);
                     objectAnimator.start();
+                    db.delete("city", "city=?", new String[]{city_list.get(position)});
+                    BlankFragment.updatePreferences.edit().remove("update_time" + city_list.get(position)).apply();
+                    city_list.remove(position);
                     objectAnimator.addListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {

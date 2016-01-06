@@ -1,8 +1,11 @@
 package com.example.l.myweather;
 
 
+import android.app.ActivityManager;
 import android.app.ProgressDialog;
+import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -78,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private List<LinearLayout> linearLayoutList;
     public static int DELETE_FLAG = 0;
     private SharedPreferences sharedPreferences;
+    public static Context context = MyApplication.getContext();
 
 
     @Override
@@ -95,18 +99,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initView();
 
         initCityList();
-        //initViewPager();
         initBroadcast();
         setViewToDrawerLayout();
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sharedPreferences.getBoolean("update_switch",false)){
-            startService(new Intent(this, UpdateService.class));
+
+        startService(new Intent(this, UpdateService.class));
+
+        //sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        /*AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(context,Widget4x2.class));
+        if (sharedPreferences.getBoolean("update_switch",false) || appWidgetIds.length > 0){
+
+
         } else {
             stopService(new Intent(this,UpdateService.class));
-        }
+        }*/
 }
 
     public void initView(){
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mQueue = Volley.newRequestQueue(this);
         imageLoader = new ImageLoader(mQueue,new BitmapCache());
         relativeLayout = (RelativeLayout)findViewById(R.id.relative_layout);
@@ -397,7 +407,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(doneBroadCastReceiver);
-        //unregisterReceiver(changeBroadCastReceiver);
+        unregisterReceiver(addBroadcastReceiver);
         //unregisterReceiver(removeBroadcastReceiver);
         System.exit(0);
     }
@@ -476,6 +486,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             initCityList();
             setViewToDrawerLayout();
             NewAppWidget.updateWidget();
+            Widget4x2.updateWidgetFromLocal();
         }
     };
 
@@ -519,7 +530,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-
+    public static boolean isServiceWork(String serviceName){
+        boolean isWork = false;
+        ActivityManager activityManager = (ActivityManager)context.getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> runningServiceInfos = activityManager.getRunningServices(100);
+        for (int i = 0; i < runningServiceInfos.size(); i++){
+           String name = runningServiceInfos.get(i).service.getClassName();
+            Log.d("ServiceName",name);
+            if (name.equals(serviceName)){
+                isWork = true;
+            }
+        }
+        return isWork;
+    }
 
 
 }

@@ -15,5 +15,6 @@ public class MyReceiver extends BroadcastReceiver {
         // an Intent broadcast.
         //throw new UnsupportedOperationException("Not yet implemented");
         NewAppWidget.updateWidget();
+        Widget4x2.updateWidgetFromLocal();
     }
 }

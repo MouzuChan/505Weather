@@ -1,20 +1,31 @@
 package com.example.l.myweather;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.preference.SwitchPreference;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.RemoteViews;
+import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class SettingsActivity extends PreferenceActivity {
@@ -41,14 +52,14 @@ public class SettingsActivity extends PreferenceActivity {
                 finish();
             }
         });
-
-
     }
+
     public static class SettingsFragment extends PreferenceFragment{
         private ListPreference listPreference;
         private ListPreference styleList;
         private SharedPreferences sharedPreferences;
         private Context context = MyApplication.getContext();
+        private SwitchPreference widget_background;
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -58,43 +69,75 @@ public class SettingsActivity extends PreferenceActivity {
             sharedPreferences = getPreferenceScreen().getSharedPreferences();
             listPreference.setSummary(sharedPreferences.getString("update_rate", ""));
             final ListPreference styleList = (ListPreference)findPreference("style_color");
-            styleList.setSummary(sharedPreferences.getString("style_color",""));
+            styleList.setSummary(sharedPreferences.getString("style_color", ""));
             if (sharedPreferences.getBoolean("update_switch",false)){
                 listPreference.setEnabled(true);
-
             } else {
                 listPreference.setEnabled(false);
 
             }
-
+            widget_background = (SwitchPreference)findPreference("widget_background");
             sharedPreferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
+
+
         }
 
         private SharedPreferences.OnSharedPreferenceChangeListener onSharedPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (key.equals("update_rate")) {
-                    listPreference.setSummary(sharedPreferences.getString("update_rate", ""));
-                    context.startService(new Intent(context, UpdateService.class));
-                } else if (key.equals("update_switch")){
-                    boolean b = sharedPreferences.getBoolean("update_switch",false);
-                    if (!b){
-                        listPreference.setEnabled(false);
-                        context.stopService(new Intent(context, UpdateService.class));
-                    } else {
-                        listPreference.setEnabled(true);
+
+                switch (key){
+                    case "update_rate":
+                        listPreference.setSummary(sharedPreferences.getString("update_rate", ""));
                         context.startService(new Intent(context, UpdateService.class));
-                    }
-                }  else if (key.equals("style_color")){
-                    String color = sharedPreferences.getString("style_color", "");
-                    styleList.setSummary(color);
+                        break;
+                    case "update_switch":
+                        boolean b = sharedPreferences.getBoolean("update_switch",false);
+
+                        int appWidgetIds[] = Widget4x2.appWidgetManager.getAppWidgetIds(new ComponentName(context, Widget4x2.class));
+                        int newWidgetIds[] = Widget4x2.appWidgetManager.getAppWidgetIds(new ComponentName(context,NewAppWidget.class));
+                        Intent serviceIntent = new Intent(context, UpdateService.class);
+                        //context.stopService(serviceIntent);
+                        if (b){
+                            listPreference.setEnabled(true);
+                            if (appWidgetIds.length > 0 || newWidgetIds.length > 0){
+                                serviceIntent.putExtra("updateSwitch",true);
+                                serviceIntent.setAction("updateSwitch");
+                                context.startService(serviceIntent);
+                            } else {
+                                context.stopService(serviceIntent);
+                            }
+                        }
+                        else {
+                            listPreference.setEnabled(false);
+                            if (appWidgetIds.length > 0){
+                                serviceIntent.putExtra("updateSwitch",false);
+                                serviceIntent.setAction("updateSwitch");
+                                context.startService(serviceIntent);
+                            }else {
+                                context.stopService(serviceIntent);
+                            }
+                        }
+
+                        break;
+                    case "style_color":
+                        String color = sharedPreferences.getString("style_color", "青色");
+                        styleList.setSummary(color);
+                        break;
+                    case "widget_background":
+                        Intent intent = new Intent("com.lha.weather.UPDATE_FROM_LOCAL");
+                        context.sendBroadcast(intent);
+                        //NewAppWidget.updateWidget();
+                        //Widget4x2.updateWidgetFromLocal();
+                        break;
                 }
+
             }
         };
 
         @Override
-        public void onPause() {
-            super.onPause();
+        public void onDestroy() {
+            super.onDestroy();
             sharedPreferences.unregisterOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
         }
     }

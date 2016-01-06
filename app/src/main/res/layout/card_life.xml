@@ -6,17 +6,15 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:id="@+id/card_life"
+    android:paddingBottom="20dp"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="4dp"
-        app:cardBackgroundColor="#ffffff"
-        app:cardElevation="4dp"
-        app:cardUseCompatPadding="true"
-        app:cardPreventCornerOverlap="true">
+        app:cardBackgroundColor="@color/white"
 
+        >
 
         <LinearLayout
             android:paddingRight="16dp"
@@ -60,6 +58,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <TextView
+
                             android:text="暂无"
                             android:textSize="18sp"
                             android:id="@+id/shushidu"
@@ -69,7 +68,7 @@
                             android:layout_height="wrap_content" />
                         <TextView
                             android:gravity="left"
-                            android:textColor="#9a9a9a"
+                            android:textColor="#64000000"
                             android:textSize="13sp"
                             android:text="心情"
                             android:layout_gravity="center_vertical"
@@ -97,6 +96,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content">
                         <TextView
+
                             android:text="暂无"
                             android:layout_gravity="center_vertical"
                             android:textSize="18sp"
@@ -105,7 +105,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                         <TextView
-                            android:textColor="#9a9a9a"
+                            android:textColor="#64000000"
                             android:textSize="13sp"
                             android:layout_gravity="center_vertical"
                             android:text="感冒"
@@ -150,6 +150,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
                         <TextView
+
                             android:text="暂无"
                             android:textSize="18sp"
                             android:id="@+id/chuanyi"
@@ -157,7 +158,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                         <TextView
-                            android:textColor="#9a9a9a"
+                            android:textColor="#64000000"
                             android:textSize="13sp"
                             android:text="穿衣"
                             android:layout_gravity="center_vertical"
@@ -183,6 +184,7 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content">
                         <TextView
+
                             android:text="暂无"
                             android:layout_gravity="center_vertical"
                             android:textSize="18sp"
@@ -191,7 +193,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                         <TextView
-                            android:textColor="#9a9a9a"
+                            android:textColor="#64000000"
                             android:textSize="13sp"
                             android:layout_gravity="center_vertical"
                             android:text="晾晒"
@@ -242,7 +244,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                         <TextView
-                            android:textColor="#9a9a9a"
+                            android:textColor="#64000000"
                             android:textSize="13sp"
                             android:text="出行"
                             android:layout_gravity="center_vertical"
@@ -278,7 +280,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
                         <TextView
-                            android:textColor="#9a9a9a"
+                            android:textColor="#64000000"
                             android:textSize="13sp"
                             android:layout_gravity="center_vertical"
                             android:text="洗车"
@@ -298,14 +300,7 @@
             </LinearLayout>
 
 
-
-
-
-
         </LinearLayout>
-
-
-
     </android.support.v7.widget.CardView>
 
 </LinearLayout>
