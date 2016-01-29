@@ -14,7 +14,7 @@ public class MyReceiver extends BroadcastReceiver {
         // TODO: This method is called when the BroadcastReceiver is receiving
         // an Intent broadcast.
         //throw new UnsupportedOperationException("Not yet implemented");
-        NewAppWidget.updateWidget();
-        Widget4x2.updateWidgetFromLocal();
+        Intent intent1 = new Intent("com.lha.weather.UPDATE_FROM_LOCAL");
+        context.sendBroadcast(intent1);
     }
 }

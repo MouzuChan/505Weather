@@ -207,8 +207,13 @@ public class HandleJson {
                             qlty = aqiDetail.getString("quality");
                         }
                     }
-                    loc_time = now.getString("temperature_time");
-                    weather_pic = now.getString("weather_pic");
+                    if (now.has("temperature_time")){
+                        loc_time = now.getString("temperature_time");
+                    }
+                    if (now.has("weather_pic")){
+                        weather_pic = now.getString("weather_pic");
+                    }
+
                 }
                 JSONObject f2 = all.getJSONObject("f2");
                 JSONObject f3 = all.getJSONObject("f3");

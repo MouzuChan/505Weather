@@ -57,26 +57,30 @@ public class SettingsActivity extends PreferenceActivity {
     public static class SettingsFragment extends PreferenceFragment{
         private ListPreference listPreference;
         private ListPreference styleList;
+        private ListPreference widgetColorList;
         private SharedPreferences sharedPreferences;
         private Context context = MyApplication.getContext();
-        private SwitchPreference widget_background;
+        //private SwitchPreference widget_background;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preference);
             listPreference = (ListPreference)findPreference("update_rate");
             styleList = (ListPreference) findPreference("style_color");
+            widgetColorList = (ListPreference) findPreference("widget_color");
             sharedPreferences = getPreferenceScreen().getSharedPreferences();
             listPreference.setSummary(sharedPreferences.getString("update_rate", ""));
             final ListPreference styleList = (ListPreference)findPreference("style_color");
             styleList.setSummary(sharedPreferences.getString("style_color", ""));
+            widgetColorList.setSummary(sharedPreferences.getString("widget_color",""));
             if (sharedPreferences.getBoolean("update_switch",false)){
                 listPreference.setEnabled(true);
             } else {
                 listPreference.setEnabled(false);
 
             }
-            widget_background = (SwitchPreference)findPreference("widget_background");
+            //widget_background = (SwitchPreference)findPreference("widget_background");
             sharedPreferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
 
 
@@ -94,29 +98,21 @@ public class SettingsActivity extends PreferenceActivity {
                     case "update_switch":
                         boolean b = sharedPreferences.getBoolean("update_switch",false);
 
-                        int appWidgetIds[] = Widget4x2.appWidgetManager.getAppWidgetIds(new ComponentName(context, Widget4x2.class));
-                        int newWidgetIds[] = Widget4x2.appWidgetManager.getAppWidgetIds(new ComponentName(context,NewAppWidget.class));
+                        //int appWidgetIds[] = Widget4x2.appWidgetManager.getAppWidgetIds(new ComponentName(context, Widget4x2.class));
+                        //int newWidgetIds[] = Widget4x2.appWidgetManager.getAppWidgetIds(new ComponentName(context,NewAppWidget.class));
                         Intent serviceIntent = new Intent(context, UpdateService.class);
                         //context.stopService(serviceIntent);
                         if (b){
                             listPreference.setEnabled(true);
-                            if (appWidgetIds.length > 0 || newWidgetIds.length > 0){
-                                serviceIntent.putExtra("updateSwitch",true);
-                                serviceIntent.setAction("updateSwitch");
-                                context.startService(serviceIntent);
-                            } else {
-                                context.stopService(serviceIntent);
-                            }
+                            serviceIntent.putExtra("updateSwitch",true);
+                            serviceIntent.setAction("updateSwitch");
+                            context.startService(serviceIntent);
                         }
                         else {
                             listPreference.setEnabled(false);
-                            if (appWidgetIds.length > 0){
-                                serviceIntent.putExtra("updateSwitch",false);
-                                serviceIntent.setAction("updateSwitch");
-                                context.startService(serviceIntent);
-                            }else {
-                                context.stopService(serviceIntent);
-                            }
+                            serviceIntent.putExtra("updateSwitch",false);
+                            serviceIntent.setAction("updateSwitch");
+                            context.startService(serviceIntent);
                         }
 
                         break;
@@ -124,11 +120,23 @@ public class SettingsActivity extends PreferenceActivity {
                         String color = sharedPreferences.getString("style_color", "青色");
                         styleList.setSummary(color);
                         break;
-                    case "widget_background":
+                    case "widget_color":
+                        String widget_color = sharedPreferences.getString("widget_color","蓝色");
+                        widgetColorList.setSummary(widget_color);
                         Intent intent = new Intent("com.lha.weather.UPDATE_FROM_LOCAL");
                         context.sendBroadcast(intent);
-                        //NewAppWidget.updateWidget();
-                        //Widget4x2.updateWidgetFromLocal();
+                        break;
+                    case "show_notification":
+                        b = sharedPreferences.getBoolean("show_notification",false);
+                        if (b){
+                            //Log.d("FUCK","FUCK");
+                        } else {
+                            WeatherNotification.cancelNotification();
+                        }
+                        Intent intent1 = new Intent(context,UpdateService.class);
+                        intent1.setAction("showNotification");
+                        intent1.putExtra("showNotification", b);
+                        context.startService(intent1);
                         break;
                 }
 

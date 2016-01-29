@@ -17,7 +17,7 @@ public class LocationCityId {
     private String city_name;
 
     public void getLocationCityId(final String city, final String district, final LocationCallBack locationCallBack) {
-        Log.d("city", city);
+
         String cityName = "";
         try {
             cityName = URLEncoder.encode(city,"UTF-8");
@@ -33,23 +33,20 @@ public class LocationCityId {
                 try {
 
                     String errMsg = jsonObject.getString("errMsg");
-                    Log.d("errMsg", errMsg);
+
                     if (errMsg.equals("success")) {
                         JSONArray jsonArray = jsonObject.getJSONArray("retData");
-                        for (int i = 0; i < jsonArray.length(); i++) {
+                        for (int i = jsonArray.length() - 1; i >=0; i--) {
                             JSONObject jo = jsonArray.getJSONObject(i);
                             String name_cn = jo.getString("name_cn");
-                            if (name_cn.equals(city)) {
-                                String id = jo.getString("area_id");
-                                return_id = id;
-                                city_name = city;
-                                Log.d("DD", "NULL");
+                            if (name_cn.equals(district)) {
+                                return_id = jo.getString("area_id");
+                                city_name = district;
 
                                 break;
-                            } else if (name_cn.equals(district)) {
-                                String id = jo.getString("area_id");
-                                return_id = id;
-                                city_name = district;
+                            } else if (name_cn.equals(city)) {
+                                return_id = jo.getString("area_id");
+                                city_name = city;
                                 break;
                             }
                         }

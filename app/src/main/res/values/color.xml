@@ -9,6 +9,7 @@
     <color name="kafeise">#5f4421</color>
     <color name="lvse">#2e8b57</color>
     <color name="red">#d40029</color>
+    <color name="notification_black">#b4000000</color>
 
 
 </resources>

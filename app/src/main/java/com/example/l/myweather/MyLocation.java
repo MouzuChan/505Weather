@@ -49,14 +49,16 @@ public class MyLocation {
             if (locType == BDLocation.TypeGpsLocation || locType == BDLocation.TypeNetWorkLocation){
                 city = bdLocation.getCity();
                 district = bdLocation.getDistrict();
+
                 if (city.contains("自治区") || city.contains("自治县")){
-                    city = city.substring(0,city.length() -3);
-                } else {
+                    city = city.replace("自治区","");
+                    city = city.replace("自治县","");
+                } else{
                     city = city.substring(0,city.length() - 1);
                 }
 
 
-                if (city.contains("自治区") || city.contains("自治县")){
+                if (district.contains("自治区") || district.contains("自治县")){
                     district = district.substring(0,district.length() - 3);
                 }
                 else {

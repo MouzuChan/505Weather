@@ -1,5 +1,6 @@
 package com.example.l.myweather;
 
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -12,14 +13,18 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.Calendar;
 import java.util.List;
 
@@ -30,11 +35,13 @@ public class Widget4x2 extends AppWidgetProvider{
 
     private static Context context = MyApplication.getContext();
     private static int USER_UPDATE_FLAG = 0;
-    //private static AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-    //private static Intent intent = new Intent("com.lha.weather.UPDATE_TIME");
-    //private static PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+    private static AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+    private static Intent intent = new Intent("com.lha.weather.UPDATE_TIME");
+    private static PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
     public static AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
     private static PackageManager packageManager = context.getPackageManager();
+    private String city_id;
+    private JSONObject jsonObject;
     //public static RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget4x2_layout);
 
 
@@ -43,8 +50,9 @@ public class Widget4x2 extends AppWidgetProvider{
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
         for (int i : appWidgetIds){
-            updateWidget(i,appWidgetManager);
+            updateWidget(i);
         }
+        alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), 10 * 1000, pendingIntent);
     }
 
     @Override
@@ -57,7 +65,7 @@ public class Widget4x2 extends AppWidgetProvider{
                 updateWidgetFromInternet();
                 break;
             case "com.lha.weather.UPDATE_TIME":
-                setWidgetTime();
+                updateWidgetFromLocal();
                 break;
             case "com.lha.weather.UPDATE_FROM_LOCAL":
                 updateWidgetFromLocal();
@@ -74,31 +82,40 @@ public class Widget4x2 extends AppWidgetProvider{
         super.onEnabled(context);
         Intent intent = new Intent(context,UpdateService.class);
         context.startService(intent);
-
+        alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), 10 * 1000, pendingIntent);
     }
 
     @Override
     public void onDisabled(Context context) {
         super.onDisabled(context);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, NewAppWidget.class));
         if (!sharedPreferences.getBoolean("update_switch", false) || appWidgetIds.length == 0){
             Intent intent = new Intent(context,UpdateService.class);
             context.stopService(intent);
         }
-        //alarmManager.cancel(pendingIntent);
+        alarmManager.cancel(pendingIntent);
     }
 
-    public static void updateWidget(int appWidgetId,AppWidgetManager appWidgetManager){
-        String city_id = getCityId();
-        JSONObject jsonObject = null;
-        if (city_id != null){
-            jsonObject = getJSONObjectFromLocal(city_id);
+    public  void updateWidget(int appWidgetId){
+
+        if (city_id == null){
+            city_id = getCityId();
         }
-        if (jsonObject != null){
-            setWidgetViews(appWidgetManager, appWidgetId, jsonObject);
+
+        if (jsonObject == null){
+            jsonObject = FileHandle.getJSONObject(city_id);
         }
-        //alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), 10 * 1000, pendingIntent);
+        if (city_id != null && jsonObject != null){
+            setWidgetViews(appWidgetId, jsonObject);
+        }
+        if (city_id == null){
+            RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget4x2_layout);
+            views.setTextViewText(R.id.date,"未找到已添加城市...");
+            appWidgetManager.updateAppWidget(appWidgetId,views);
+        }
+
     }
 
 
@@ -118,8 +135,8 @@ public class Widget4x2 extends AppWidgetProvider{
     }
 
 
-    public static void setWidgetViews(AppWidgetManager appWidgetManager,int appWidgetId,JSONObject jsonObject){
-        Log.d("Widget4x2","setWidgetViews");
+    public  void setWidgetViews(int appWidgetId,JSONObject jsonObject){
+
         RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget4x2_layout);
         Calendar calendar = Calendar.getInstance();
         HandleJson handleJson = new HandleJson();
@@ -213,12 +230,83 @@ public class Widget4x2 extends AppWidgetProvider{
         views.setTextViewText(R.id.four_day_temp,four_day_temp);
         views.setTextViewText(R.id.fifth_day_temp, fifth_day_temp);
 
-        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("widget_background",false)){
-            views.setInt(R.id.widget_layout,"setBackgroundResource",R.drawable.widget_background);
-            Log.d("background","widget");
-        } else {
-            views.setInt(R.id.widget_layout,"setBackgroundResource",R.drawable.touming_background);
-            Log.d("background","touming");
+        SharedPreferences defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        switch (defaultPreferences.getString("widget_color","蓝色")){
+            case "蓝色":
+                views.setInt(R.id.widget_layout,"setBackgroundResource",R.drawable.widget_background);
+                views.setTextColor(R.id.widget_time, Color.WHITE);
+                views.setTextColor(R.id.city, Color.WHITE);
+                views.setTextColor(R.id.update_time, Color.WHITE);
+                views.setTextColor(R.id.aqi, Color.WHITE);
+                views.setTextColor(R.id.weather, Color.WHITE);
+                views.setTextColor(R.id.first_day_weather, Color.WHITE);
+                views.setTextColor(R.id.second_day_weather, Color.WHITE);
+                views.setTextColor(R.id.third_day_weather, Color.WHITE);
+                views.setTextColor(R.id.four_day_weather, Color.WHITE);
+                views.setTextColor(R.id.fifth_day_weather, Color.WHITE);
+                views.setTextColor(R.id.first_day_temp, Color.WHITE);
+                views.setTextColor(R.id.second_day_temp, Color.WHITE);
+                views.setTextColor(R.id.third_day_temp, Color.WHITE);
+                views.setTextColor(R.id.four_day_temp, Color.WHITE);
+                views.setTextColor(R.id.fifth_day_temp, Color.WHITE);
+                views.setTextColor(R.id.date,Color.WHITE);
+                views.setTextColor(R.id.third_day,Color.WHITE);
+                views.setTextColor(R.id.four_day,Color.WHITE);
+                views.setTextColor(R.id.fifth_day,Color.WHITE);
+                views.setTextColor(R.id.first_day,Color.WHITE);
+                views.setTextColor(R.id.second_day,Color.WHITE);
+                views.setInt(R.id.refresh_button, "setBackgroundResource", R.drawable.ic_refresh_white_36dp);
+                break;
+            case "透明":
+                views.setInt(R.id.widget_layout,"setBackgroundResource",R.drawable.touming_background);
+                views.setTextColor(R.id.widget_time, Color.WHITE);
+                views.setTextColor(R.id.city, Color.WHITE);
+                views.setTextColor(R.id.update_time, Color.WHITE);
+                views.setTextColor(R.id.aqi, Color.WHITE);
+                views.setTextColor(R.id.weather, Color.WHITE);
+                views.setTextColor(R.id.first_day_weather, Color.WHITE);
+                views.setTextColor(R.id.second_day_weather, Color.WHITE);
+                views.setTextColor(R.id.third_day_weather, Color.WHITE);
+                views.setTextColor(R.id.four_day_weather, Color.WHITE);
+                views.setTextColor(R.id.fifth_day_weather, Color.WHITE);
+                views.setTextColor(R.id.first_day_temp, Color.WHITE);
+                views.setTextColor(R.id.second_day_temp, Color.WHITE);
+                views.setTextColor(R.id.third_day_temp, Color.WHITE);
+                views.setTextColor(R.id.four_day_temp, Color.WHITE);
+                views.setTextColor(R.id.fifth_day_temp, Color.WHITE);
+                views.setTextColor(R.id.date,Color.WHITE);
+                views.setTextColor(R.id.third_day,Color.WHITE);
+                views.setTextColor(R.id.four_day,Color.WHITE);
+                views.setTextColor(R.id.fifth_day,Color.WHITE);
+                views.setTextColor(R.id.first_day,Color.WHITE);
+                views.setTextColor(R.id.second_day,Color.WHITE);
+                views.setInt(R.id.refresh_button, "setBackgroundResource", R.drawable.ic_refresh_white_36dp);
+                break;
+            case "白色":
+                views.setInt(R.id.widget_layout, "setBackgroundResource", R.drawable.white_background);
+                views.setTextColor(R.id.widget_time, Color.BLACK);
+                views.setTextColor(R.id.city, Color.BLACK);
+                views.setTextColor(R.id.update_time, Color.BLACK);
+                views.setTextColor(R.id.aqi, Color.BLACK);
+                views.setTextColor(R.id.weather, Color.BLACK);
+                views.setTextColor(R.id.first_day_weather, Color.BLACK);
+                views.setTextColor(R.id.second_day_weather, Color.BLACK);
+                views.setTextColor(R.id.third_day_weather, Color.BLACK);
+                views.setTextColor(R.id.four_day_weather, Color.BLACK);
+                views.setTextColor(R.id.fifth_day_weather, Color.BLACK);
+                views.setTextColor(R.id.first_day_temp, Color.BLACK);
+                views.setTextColor(R.id.second_day_temp, Color.BLACK);
+                views.setTextColor(R.id.third_day_temp, Color.BLACK);
+                views.setTextColor(R.id.four_day_temp, Color.BLACK);
+                views.setTextColor(R.id.fifth_day_temp, Color.BLACK);
+                views.setTextColor(R.id.date,Color.BLACK);
+                views.setTextColor(R.id.third_day,Color.BLACK);
+                views.setTextColor(R.id.four_day,Color.BLACK);
+                views.setTextColor(R.id.fifth_day,Color.BLACK);
+                views.setTextColor(R.id.first_day, Color.BLACK);
+                views.setTextColor(R.id.second_day, Color.BLACK);
+                views.setInt(R.id.refresh_button, "setBackgroundResource", R.drawable.ic_refresh_black_36dp);
+                break;
         }
 
         Intent updateIntent = new Intent("com.lha.weather.USER_UPDATE4x2");
@@ -257,21 +345,20 @@ public class Widget4x2 extends AppWidgetProvider{
             getImage(weather_pic, appWidgetId,views);
         }
         else {
-            views.setImageViewBitmap(R.id.weather_image,bitmap);
+            views.setImageViewBitmap(R.id.weather_image, bitmap);
+
         }
+        appWidgetManager.updateAppWidget(appWidgetId, views);
 
-
-
-        appWidgetManager.updateAppWidget(appWidgetId,views);
 
     }
 
 
-    public static void updateWidgetFromLocal(){
+    public  void updateWidgetFromLocal(){
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context,Widget4x2.class));
         if (appWidgetIds.length > 0){
             for (int in = 0; in < appWidgetIds.length; in++){
-                updateWidget(appWidgetIds[in],appWidgetManager);
+                updateWidget(appWidgetIds[in]);
             }
         }
     }
@@ -284,17 +371,18 @@ public class Widget4x2 extends AppWidgetProvider{
                 HttpUtil.makeBaiduHttpRequest(url, new CallBackListener() {
                     @Override
                     public void onFinish(JSONObject jsonObject) {
-                        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context,Widget4x2.class));
+                        /*int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context,Widget4x2.class));
                         if (appWidgetIds.length != 0){
                             for (int in = 0; in < appWidgetIds.length; in++){
-                                setWidgetViews(appWidgetManager,appWidgetIds[in],jsonObject);
+                                setWidgetViews(appWidgetIds[in],jsonObject);
                             }
-                        }
+                        }*/
+                        FileHandle.saveJSONObject(jsonObject,city_id);
                         if (USER_UPDATE_FLAG == 1){
                             Toast.makeText(context,"更新成功^_^",Toast.LENGTH_SHORT).show();
                             USER_UPDATE_FLAG = 0;
                         }
-                        FileHandle.saveJSONObject(jsonObject,city_id);
+                        context.sendBroadcast(new Intent("com.lha.weather.UPDATE_FROM_LOCAL"));
                     }
 
                     @Override
@@ -317,17 +405,9 @@ public class Widget4x2 extends AppWidgetProvider{
 
     }
 
-
-
-    public static JSONObject getJSONObjectFromLocal(String city_id){
-        return FileHandle.getJSONObject(city_id);
-
-    }
-
     public static String getCityId(){
         CityDataBase cityDataBase = new CityDataBase(context,"CITY_LIST",null,1);
         SQLiteDatabase db = cityDataBase.getWritableDatabase();
-
         Cursor cursor = db.query("city",null,null,null,null,null,null);
         if (cursor.moveToFirst()){
             return cursor.getString(cursor.getColumnIndex("city_id"));
@@ -346,14 +426,14 @@ public class Widget4x2 extends AppWidgetProvider{
 
 
 
-    public static  void setWidgetTime(){
+    /*public static  void setWidgetTime(){
         RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget4x2_layout);
-        //AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, Widget4x2.class));
         Calendar calendar = Calendar.getInstance();
         if (appWidgetIds.length != 0){
             for (int in = 0; in < appWidgetIds.length; in++){
-                Log.d("TAG","UPDATE_WIDGET_TIME");
+                //Log.d("TAG","UPDATE_WIDGET_TIME");
                 int hour = calendar.get(Calendar.HOUR_OF_DAY);
                 int minute = calendar.get(Calendar.MINUTE);
                 String h = hour + "";
@@ -368,16 +448,12 @@ public class Widget4x2 extends AppWidgetProvider{
                 appWidgetManager.updateAppWidget(appWidgetIds[in], views);
             }
         }
-    }
+    }*/
 
     static void setImageViewImage(Bitmap bitmap,int appWidgetId,String fileName,RemoteViews views){
         views.setImageViewBitmap(R.id.weather_image, bitmap);
         appWidgetManager.updateAppWidget(appWidgetId, views);
-
         String name = fileName.replace("/","").replace(".","").replace(":","");
-
         FileHandle.saveImage(bitmap,name);
     }
-
-
 }

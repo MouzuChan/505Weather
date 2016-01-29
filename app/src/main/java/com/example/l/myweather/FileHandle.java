@@ -38,13 +38,18 @@ public class FileHandle {
         BufferedReader reader = null;
         try {
             StringBuilder data = new StringBuilder();
-            FileInputStream in = context.openFileInput(city_id);
-            reader = new BufferedReader(new InputStreamReader(in));
-            String line;
-            while ((line = reader.readLine()) != null){
-                data.append(line);
+
+            File file = new File(context.getFilesDir(),city_id);
+            if (file.exists()){
+                FileInputStream in = context.openFileInput(city_id);
+                reader = new BufferedReader(new InputStreamReader(in));
+                String line;
+                while ((line = reader.readLine()) != null){
+                    data.append(line);
+                }
+                jsonObject = new JSONObject(data.toString());
             }
-            jsonObject = new JSONObject(data.toString());
+
         } catch (Exception e){
             e.printStackTrace();
         } finally {

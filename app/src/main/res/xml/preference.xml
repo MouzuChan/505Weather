@@ -13,6 +13,11 @@
             />
 
         <SwitchPreference
+            android:key="show_notification"
+            android:defaultValue="false"
+            android:title="在通知栏显示"/>
+
+        <SwitchPreference
             android:key="auto_refresh"
             android:defaultValue="false"
             android:title="每次启动时自动刷新"
@@ -20,13 +25,6 @@
             android:summaryOn="已开启"
             />
 
-        <SwitchPreference
-            android:key="widget_background"
-            android:defaultValue="false"
-            android:title="小部件使用蓝色背景"
-            android:summaryOn="当前为蓝色背景"
-            android:summaryOff="当前为透明背景"
-            />
 
 
         <SwitchPreference
@@ -51,10 +49,18 @@
             android:id="@+id/list_preference"
             android:key="style_color"
             android:title="主题颜色"
-            android:dialogTitle="请选择"
+            android:dialogTitle="主题颜色"
             android:entryValues="@array/style_color"
             android:entries="@array/style_color"
             android:defaultValue="青色"
+            />
+        <ListPreference
+            android:key="widget_color"
+            android:title="小部件背景颜色"
+            android:dialogTitle="小部件背景颜色"
+            android:entryValues="@array/widget_color"
+            android:entries="@array/widget_color"
+            android:defaultValue="蓝色"
             />
 
 

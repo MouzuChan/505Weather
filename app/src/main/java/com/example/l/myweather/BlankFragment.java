@@ -151,13 +151,17 @@ public class BlankFragment extends android.support.v4.app.Fragment implements Vi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         view = inflater.inflate(R.layout.fragment_blank, container, false);
 
         Bundle bundle = getArguments();
         id = bundle.getString("city_id");
         i = bundle.getInt("i");
+        Log.d("i", i + "");
         initView();
-        initAnimator();
+        //if (i == 0){
+          //  initAnimator();
+        //}
         initDate();
         getDataFromLocal();
         return view;
@@ -282,9 +286,6 @@ public class BlankFragment extends android.support.v4.app.Fragment implements Vi
                 qitaAnimator.start();
             }
         });
-
-
-
     }
 
     public void getDataFromId(String city_id,final int i){
@@ -409,13 +410,14 @@ public class BlankFragment extends android.support.v4.app.Fragment implements Vi
     }
 
 
-    public void judgeUpdate(JSONObject jsonObject,int i){
+    public void judgeUpdate(JSONObject jsonObject,int ii){
+        Log.d("TAG",jsonObject.toString());
         HandleJson handleJson = new HandleJson();
         handleJson.handleJson(jsonObject);
         String city = handleJson.getCity();
         String time = handleJson.getLoc_time();
         if (handleJson.getErr_code().equals("0")){
-            if (i == LOCAL_DATA){
+            if (ii == LOCAL_DATA){
                 handleDatas(handleJson);
                 if (MainActivity.DELETE_FLAG == 0 && sharedPreferences.getBoolean("auto_refresh",false)){
                     initRefreshLayout();
@@ -426,7 +428,14 @@ public class BlankFragment extends android.support.v4.app.Fragment implements Vi
                     Toast.makeText(context,"更新成功",Toast.LENGTH_SHORT).show();
                     refreshLayout.setRefreshing(false);
                     FileHandle.saveJSONObject(jsonObject, id);
-                    updateAppWidget();
+                    if (i == 0){
+                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+                        if (sharedPreferences.getBoolean("show_notification",false)){
+                            WeatherNotification.sendNotification(jsonObject);
+                        }
+                        updateAppWidget();
+                    }
+
                 } else {
                     Toast.makeText(context,"数据已最新",Toast.LENGTH_SHORT).show();
                     refreshLayout.setRefreshing(false);
@@ -487,13 +496,13 @@ public class BlankFragment extends android.support.v4.app.Fragment implements Vi
         weatherDatas[4] = "";
         weatherDatas[5] = handleJson.getFengli();
         weatherDatas[6] = first_day_weather;
-        weatherDatas[7] = first_day_temp + "°" + "/" + first_night_temp +  "°";
+        weatherDatas[7] = first_night_temp + "°" + "/" + first_day_temp +  "°";
         weatherDatas[8] = second_day_weather;
-        weatherDatas[9] = second_day_temp + "°" + "/" + second_night_temp + "°";
+        weatherDatas[9] = second_night_temp + "°" + "/" + second_day_temp + "°";
         weatherDatas[10] = third_day_weather;
-        weatherDatas[11] = third_day_temp + "°" + "/" + third_night_temp + "°";
+        weatherDatas[11] = third_night_temp + "°" + "/" + third_day_temp + "°";
         weatherDatas[12] = four_day_weather;
-        weatherDatas[13] = four_day_temp +  "°" + "/" + four_night_temp + "°";
+        weatherDatas[13] = four_night_temp +  "°" + "/" + four_day_temp + "°";
         weatherDatas[14] = handleJson.getXinqing();
         weatherDatas[15] = handleJson.getGanmao();
         weatherDatas[16] = handleJson.getChuanyi();
@@ -607,8 +616,8 @@ public class BlankFragment extends android.support.v4.app.Fragment implements Vi
     }
 
     public void updateAppWidget(){
-        NewAppWidget.updateWidget();
-        Widget4x2.updateWidgetFromLocal();
+        Intent intent = new Intent("com.lha.weather.UPDATE_FROM_LOCAL");
+        context.sendBroadcast(intent);
     }
 
     @Override
