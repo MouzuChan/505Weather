@@ -182,7 +182,14 @@ public class CityManagerFragment extends android.support.v4.app.Fragment {
                 @Override
                 public void onClick(View v) {
                     DELETE_FLAG = 1;
-                    //changeDefault(position);
+                    String city = city_list.get(position);
+                    String city_id = cityId_list.get(position);
+                    city_list.remove(position);
+                    cityId_list.remove(position);
+                    city_list.add(0, city);
+                    cityId_list.add(0, city_id);
+                    adapter.notifyDataSetChanged();
+                    mainActivity.changeDefaultCity(position);
                 }
             });
 

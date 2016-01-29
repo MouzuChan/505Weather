@@ -59,7 +59,7 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private ViewPager viewPager;
     private ArrayList<Fragment> fragmentArrayList;
-    private ArrayList<Fragment> cityManagetFragment;
+    private ArrayList<Fragment> cityManagerFragment;
     private Button add;
     private MyFragmentAdapter mainAdapter;
     private MyFragmentAdapter cityManagerAdapter;
@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static Context context = MyApplication.getContext();
     private int flag = 0;
     private int pageSelected = 1;
+    private Button settings,exit;
 
 
     @Override
@@ -114,12 +115,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         imageLoader = new ImageLoader(mQueue,new BitmapCache());
         relativeLayout = (RelativeLayout)findViewById(R.id.relative_layout);
         headerLayout = (RelativeLayout) findViewById(R.id.header_layout);
-        cityManagetFragment = new ArrayList<Fragment>();
+        cityManagerFragment = new ArrayList<Fragment>();
         fragmentArrayList = new ArrayList<Fragment>();
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         add = (Button) findViewById(R.id.add);
         mainAdapter = new MyFragmentAdapter(getSupportFragmentManager(),fragmentArrayList);
-        cityManagerAdapter = new MyFragmentAdapter(getSupportFragmentManager(),cityManagetFragment);
+        cityManagerAdapter = new MyFragmentAdapter(getSupportFragmentManager(),cityManagerFragment);
         CityDataBase cityDataBase = new CityDataBase(this,"CITY_LIST",null,1);
         db = cityDataBase.getWritableDatabase();
         city_list = new ArrayList<String>();
@@ -150,7 +151,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         viewPager.addOnPageChangeListener(onPageChangeListener);
         viewPager.setOffscreenPageLimit(10);
         linearLayout = (LinearLayout)findViewById(R.id.linear_layout);
-
+        settings = (Button)findViewById(R.id.settings);
+        exit = (Button) findViewById(R.id.exit);
+        settings.setOnClickListener(this);
+        exit.setOnClickListener(this);
         
     }
     public void initCityList(){
@@ -251,7 +255,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent = new Intent(this,SearchActivity.class);
                 startActivityForResult(intent,1);
                 break;
-            default:
+            case R.id.settings:
+                drawerLayout.closeDrawers();
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                break;
+            case R.id.exit:
+                finish();
+                break;
+             default:
                 break;
         }
     }
@@ -357,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         }
                     }
-                    viewPager.setCurrentItem(0);
+                    //viewPager.setCurrentItem(0);
                 }
                 navigationView.setCheckedItem(R.id.weather_show);
                 pageSelected = 0;
@@ -368,13 +379,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case 2:
                 pageSelected = 2;
-                if (cityManagetFragment.size() > 0){
-                    cityManagetFragment.clear();
+                if (cityManagerFragment.size() > 0){
+                    cityManagerFragment.clear();
                 }
                 toolbar.setTitle("城市管理");
                 drawerLayout.closeDrawers();
                 Fragment fragment = CityManagerFragment.newInstance();
-                cityManagetFragment.add(fragment);
+                cityManagerFragment.add(fragment);
                 viewPager.setAdapter(cityManagerAdapter);
                 DELETE_FLAG = 0;
                 navigationView.setCheckedItem(R.id.city_manager);
@@ -392,16 +403,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             switch (i){
                 case R.id.city_manager:
                     setItemSelected(2);
-                    //startActivityForResult(new Intent(MainActivity.this,CityManager.class),2);
                     break;
                 case R.id.add_city:
                     startActivityForResult(new Intent(MainActivity.this, SearchActivity.class), 1);
-                    break;
-                case R.id.settings:
-                    startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                    break;
-                case R.id.exit:
-                    finish();
                     break;
                 case R.id.weather_show:
                     flag = 1;
@@ -464,6 +468,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 drawerLayout.closeDrawers();
+                if (pageSelected != 0){
+                    setItemSelected(0);
+                }
                 viewPager.setCurrentItem(i);
             }
         });
@@ -612,6 +619,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             tip_text.setVisibility(View.VISIBLE);
             add.setBackgroundResource(R.drawable.ic_add_black_48dp);
             tip_text.setTextColor(Color.BLACK);
+        }
+        startService(new Intent(this,UpdateService.class));
+    }
+
+    public void changeDefaultCity(int position){
+        String city = city_list.get(position);
+        String city_id = cityId_list.get(position);
+        city_list.remove(position);
+        cityId_list.remove(position);
+        city_list.add(0, city);
+        cityId_list.add(0, city_id);
+        DELETE_FLAG = 1;
+        Fragment fragment = fragmentArrayList.get(position);
+        fragmentArrayList.remove(position);
+        fragmentArrayList.add(0, fragment);
+
+        TextView cityView = cityViewList.get(position);
+        TextView weatherView = weatherViewList.get(position);
+        NetworkImageView imageView = networkImageViewList.get(position);
+        LinearLayout layout = linearLayoutList.get(position);
+
+
+        linearLayout.removeViewAt(position);
+        cityViewList.remove(position);
+        weatherViewList.remove(position);
+        networkImageViewList.remove(position);
+        linearLayoutList.remove(position);
+
+        linearLayout.addView(layout, 0);
+        linearLayoutList.add(0, layout);
+        cityViewList.add(0, cityView);
+        weatherViewList.add(0, weatherView);
+        networkImageViewList.add(0, imageView);
+        startService(new Intent(this,UpdateService.class));
+
+
+        db.delete("city", null, null);
+        ContentValues values = new ContentValues();
+        for (int i = 0; i < city_list.size(); i++){
+            values.put("city",city_list.get(i));
+            values.put("city_id",cityId_list.get(i));
+            db.insert("city", null, values);
+            values.clear();
         }
     }
 

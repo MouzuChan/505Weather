@@ -68,8 +68,31 @@
             app:itemIconTint="#222222"
             app:menu="@menu/menu_drawer"
             app:headerLayout="@layout/header_drawer"
-
             >
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_gravity="bottom"
+                android:gravity="bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/settings"
+                    android:text="设置"
+                    android:background="@color/white"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <Button
+                    android:id="@+id/exit"
+                    android:text="退出"
+                    android:background="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
         </android.support.design.widget.NavigationView>
 
     </android.support.v4.widget.DrawerLayout>

@@ -53,6 +53,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
     private Button location;
     private RelativeLayout relativeLayout;
     private List<String> city_list;
+    private Toolbar toolbar;
 
 
 
@@ -62,15 +63,18 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.setStatusBarColor(Color.TRANSPARENT);
+            window.setNavigationBarColor(Color.TRANSPARENT);
         }
         setContentView(R.layout.activity_search);
         listView = (ListView) findViewById(R.id.list_view);
         editText = (EditText) findViewById(R.id.edit_text);
         location = (Button)findViewById(R.id.location);
         relativeLayout = (RelativeLayout)findViewById(R.id.relative_layout);
-
+        toolbar= (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         location.setOnClickListener(this);
 
         city_list = new ArrayList<String>();
@@ -304,7 +308,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    @Override
+    /*@Override
     protected void onResume() {
         super.onResume();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.getContext());
@@ -335,5 +339,5 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 relativeLayout.setBackgroundColor(Color.parseColor("#5f4421"));
                 break;
         }
-    }
+    }*/
 }
