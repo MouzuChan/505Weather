@@ -20,6 +20,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 import org.json.JSONObject;
@@ -111,9 +112,9 @@ public class Widget4x2 extends AppWidgetProvider{
             setWidgetViews(appWidgetId, jsonObject);
         }
         if (city_id == null){
-            RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget4x2_layout);
-            views.setTextViewText(R.id.date,"未找到已添加城市...");
-            appWidgetManager.updateAppWidget(appWidgetId,views);
+
+            initWidgetView(appWidgetId);
+
         }
 
     }
@@ -138,6 +139,7 @@ public class Widget4x2 extends AppWidgetProvider{
     public  void setWidgetViews(int appWidgetId,JSONObject jsonObject){
 
         RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget4x2_layout);
+        views.setViewVisibility(R.id.refresh_button,View.VISIBLE);
         Calendar calendar = Calendar.getInstance();
         HandleJson handleJson = new HandleJson();
         handleJson.handleJson(jsonObject);
@@ -199,7 +201,8 @@ public class Widget4x2 extends AppWidgetProvider{
             views.setTextViewText(R.id.four_day,"周三");
             views.setTextViewText(R.id.fifth_day,"周四");
         }
-
+        views.setTextViewText(R.id.first_day,"明天");
+        views.setTextViewText(R.id.second_day,"后天");
         CalendarUtil calendarUtil = new CalendarUtil();
         String chineseDay = calendarUtil.getChineseMonth(year,month,day) + calendarUtil.getChineseDay(year,month,day);
         views.setTextViewText(R.id.date,month + "/" + day + "  " + _week + "   " + chineseDay);
@@ -233,7 +236,7 @@ public class Widget4x2 extends AppWidgetProvider{
         SharedPreferences defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         switch (defaultPreferences.getString("widget_color","蓝色")){
             case "蓝色":
-                views.setInt(R.id.widget_layout,"setBackgroundResource",R.drawable.widget_background);
+                views.setInt(R.id.widget_layout, "setBackgroundResource", R.drawable.widget_background);
                 views.setTextColor(R.id.widget_time, Color.WHITE);
                 views.setTextColor(R.id.city, Color.WHITE);
                 views.setTextColor(R.id.update_time, Color.WHITE);
@@ -363,7 +366,7 @@ public class Widget4x2 extends AppWidgetProvider{
         }
     }
 
-    public static void updateWidgetFromInternet(){
+    public void updateWidgetFromInternet(){
         if (isConnected()){
             final String city_id = getCityId();
             if (city_id != null){
@@ -394,6 +397,8 @@ public class Widget4x2 extends AppWidgetProvider{
                     }
                 });
 
+            } else {
+                updateWidgetFromLocal();
             }
 
         } else {
@@ -455,5 +460,30 @@ public class Widget4x2 extends AppWidgetProvider{
         appWidgetManager.updateAppWidget(appWidgetId, views);
         String name = fileName.replace("/","").replace(".","").replace(":","");
         FileHandle.saveImage(bitmap,name);
+    }
+    public void initWidgetView(int appWidgetId){
+        RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget4x2_layout);
+        views.setTextViewText(R.id.widget_time, "");
+        views.setTextViewText(R.id.city, "");
+        views.setTextViewText(R.id.update_time, "");
+        views.setTextViewText(R.id.aqi, "");
+        views.setTextViewText(R.id.weather,"");
+        views.setTextViewText(R.id.first_day_weather, "");
+        views.setTextViewText(R.id.second_day_weather, "");
+        views.setTextViewText(R.id.third_day_weather, "");
+        views.setTextViewText(R.id.four_day_weather, "");
+        views.setTextViewText(R.id.fifth_day_weather, "");
+        views.setTextViewText(R.id.first_day_temp, "");
+        views.setTextViewText(R.id.second_day_temp, "");
+        views.setTextViewText(R.id.third_day_temp, "");
+        views.setTextViewText(R.id.four_day_temp,"");
+        views.setTextViewText(R.id.fifth_day_temp, "");
+        views.setTextViewText(R.id.third_day, "");
+        views.setTextViewText(R.id.four_day, "");
+        views.setTextViewText(R.id.fifth_day, "");
+        views.setTextViewText(R.id.second_day, "");
+        views.setTextViewText(R.id.date,"未找到已添加城市...");
+        views.setViewVisibility(R.id.refresh_button, View.GONE);
+        appWidgetManager.updateAppWidget(appWidgetId,views);
     }
 }

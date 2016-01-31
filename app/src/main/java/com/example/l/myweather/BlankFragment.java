@@ -159,9 +159,9 @@ public class BlankFragment extends android.support.v4.app.Fragment implements Vi
         i = bundle.getInt("i");
         Log.d("i", i + "");
         initView();
-        //if (i == 0){
-          //  initAnimator();
-        //}
+        if (i == 0){
+            initAnimator();
+        }
         initDate();
         getDataFromLocal();
         return view;

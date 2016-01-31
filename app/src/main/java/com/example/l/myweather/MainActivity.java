@@ -1,22 +1,15 @@
 package com.example.l.myweather;
 
 
-import android.app.ActivityManager;
 import android.app.ProgressDialog;
-import android.appwidget.AppWidgetManager;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Build;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -26,16 +19,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -47,7 +37,6 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -60,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ViewPager viewPager;
     private ArrayList<Fragment> fragmentArrayList;
     private ArrayList<Fragment> cityManagerFragment;
-    private Button add;
     private MyFragmentAdapter mainAdapter;
     private MyFragmentAdapter cityManagerAdapter;
     private SQLiteDatabase db;
@@ -74,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
     private LinearLayout linearLayout;
-    private boolean FIRST_START = false;
     private RelativeLayout relativeLayout;
     private RequestQueue mQueue;
     private ImageLoader imageLoader;
@@ -118,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cityManagerFragment = new ArrayList<Fragment>();
         fragmentArrayList = new ArrayList<Fragment>();
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        add = (Button) findViewById(R.id.add);
         mainAdapter = new MyFragmentAdapter(getSupportFragmentManager(),fragmentArrayList);
         cityManagerAdapter = new MyFragmentAdapter(getSupportFragmentManager(),cityManagerFragment);
         CityDataBase cityDataBase = new CityDataBase(this,"CITY_LIST",null,1);
@@ -138,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_24dp);
         toolbar.setNavigationOnClickListener(onClickListener);
-        add.setOnClickListener(this);
         startCount = getPreferences(MODE_APPEND);
         editor = startCount.edit();
         start_count = startCount.getInt("start_count",0);
@@ -165,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 cityId_list.add(cursor.getString(cursor.getColumnIndex("city_id")));
                 } while (cursor.moveToNext());
         }
+        cursor.close();
 
     }
     public void initViewPager(){
@@ -183,14 +169,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    @Override
+    /*@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String city_id;
         String district;
         if (requestCode == 1){
             switch (resultCode){
-                case 1:                    city_id = data.getStringExtra("return_id");
+                case 1:
+                    city_id = data.getStringExtra("return_id");
                     district = data.getStringExtra("district");
                     addData(city_id,district);
                     break;
@@ -209,52 +196,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
             }
         }
-    }
+    }*/
 
-    public void addData(final String city_id,String district){
-        boolean b =true;
-        Cursor cursor = db.query("city",new String[]{"city_id"},null,null,null,null,null);
-        if (cursor.moveToFirst()){
-            do {
-                if (cursor.getString(cursor.getColumnIndex("city_id")).equals(city_id)){
-                    b = false;
-                    for (int i = 0;i<city_list.size();i++){
-                        if (city_id.equals(cityId_list.get(i))){
-                            viewPager.setCurrentItem(i);
-                            break;
-                        }
-                    }
-                }
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        if (b) {
-            addLayout();
-            ContentValues values = new ContentValues();
-            city_list.add(district);
-            cityId_list.add(city_id);
-            values.put("city", district);
-            values.put("city_id", city_id);
-            db.insert("city", null, values);
-            Fragment fragment = BlankFragment.newInstance(city_id,city_list.size()-1);
-            fragmentArrayList.add(fragment);
-            mainAdapter.notifyDataSetChanged();
-            viewPager.setCurrentItem(city_list.size() - 1);
-            toolbar.setTitle(district);
-            add.setVisibility(View.GONE);
-            tip_text.setVisibility(View.GONE);
-
-        }
-    }
 
     @Override
     public void onClick(View v) {
-        Intent intent;
         switch (v.getId()){
-            case R.id.add:
-                intent = new Intent(this,SearchActivity.class);
-                startActivityForResult(intent,1);
-                break;
             case R.id.settings:
                 drawerLayout.closeDrawers();
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
@@ -299,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run() {
                 String city = myLocation.getCity();
-                String district = myLocation.getDistrict();
+                final String district = myLocation.getDistrict();
                 if (city == null ){
                     runOnUiThread(new Runnable() {
                         @Override
@@ -314,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onFinish(String return_id, String city_name) {
                             if (return_id != null) {
-                                addData(return_id, city_name);
+                                addCity(city_name,return_id);
                             }
                         }
                     });
@@ -332,38 +279,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void setItemSelected(int position){
         switch(position){
             case 0:
-
                 if (pageSelected == 0){
                     drawerLayout.closeDrawers();
                 } else {
                     if (DELETE_FLAG == 0 && flag == 1){
-
                         viewPager.setAdapter(mainAdapter);
                         if (city_list.size() > 0){
+                            tip_text.setVisibility(View.GONE);
                             toolbar.setTitle(city_list.get(0));
                         } else {
+                            tip_text.setVisibility(View.VISIBLE);
                             toolbar.setTitle("请添加城市");
                         }
                         drawerLayout.closeDrawers();
                     } else {
                         viewPager.removeAllViews();
-                        mainAdapter.notifyDataSetChanged();
+                        //mainAdapter.notifyDataSetChanged();
                         setViewToDrawerLayout();
                         viewPager.setAdapter(mainAdapter);
-                        if (city_list.size() != 0 ){
-
-                            add.setVisibility(View.GONE);
+                        if (city_list.size() > 0 ){
                             tip_text.setVisibility(View.GONE);
                             fragmentArrayList.clear();
                             initViewPager();
                             mainAdapter.notifyDataSetChanged();
                             toolbar.setTitle(city_list.get(0));
                             drawerLayout.closeDrawers();
-                            flag = 0;
+
                         }else {
                             drawerLayout.closeDrawers();
                             toolbar.setTitle("请添加城市");
-                            add.setVisibility(View.VISIBLE);
                             tip_text.setVisibility(View.VISIBLE);
 
                         }
@@ -372,10 +316,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 navigationView.setCheckedItem(R.id.weather_show);
                 pageSelected = 0;
-                add.setBackgroundResource(R.drawable.ic_add_white_48dp);
                 tip_text.setTextColor(Color.WHITE);
+                flag = 0;
                 break;
             case 1:
+                pageSelected = 1;
+                drawerLayout.closeDrawers();
+                cityManagerFragment.clear();
+
+                Fragment fragment1 = AddCityFragment.newInstance();
+                cityManagerFragment.add(fragment1);
+                viewPager.setAdapter(cityManagerAdapter);
+                navigationView.setCheckedItem(R.id.add_city);
+                toolbar.setTitle("添加城市");
+                tip_text.setVisibility(View.GONE);
                 break;
             case 2:
                 pageSelected = 2;
@@ -389,7 +343,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 viewPager.setAdapter(cityManagerAdapter);
                 DELETE_FLAG = 0;
                 navigationView.setCheckedItem(R.id.city_manager);
-                add.setBackgroundResource(R.drawable.ic_add_black_48dp);
+                if (city_list.size() > 0){
+                    tip_text.setVisibility(View.GONE);
+                } else {
+                    tip_text.setVisibility(View.VISIBLE);
+                }
                 tip_text.setTextColor(Color.BLACK);
                 break;
         }
@@ -405,7 +363,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     setItemSelected(2);
                     break;
                 case R.id.add_city:
-                    startActivityForResult(new Intent(MainActivity.this, SearchActivity.class), 1);
+                    //startActivityForResult(new Intent(MainActivity.this, SearchActivity.class), 1);
+                    setItemSelected(1);
                     break;
                 case R.id.weather_show:
                     flag = 1;
@@ -530,10 +489,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
         if (city_list.size() == 0){
-            add.setVisibility(View.VISIBLE);
             tip_text.setVisibility(View.VISIBLE);
         } else {
-            add.setVisibility(View.GONE);
             tip_text.setVisibility(View.GONE);
         }
 
@@ -615,9 +572,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         linearLayoutList.remove(position);
         sendBroadcast(new Intent("com.lha.weather.UPDATE_FROM_LOCAL"));
         if (city_list.size() == 0){
-            add.setVisibility(View.VISIBLE);
             tip_text.setVisibility(View.VISIBLE);
-            add.setBackgroundResource(R.drawable.ic_add_black_48dp);
             tip_text.setTextColor(Color.BLACK);
         }
         startService(new Intent(this,UpdateService.class));
@@ -662,6 +617,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             values.put("city_id",cityId_list.get(i));
             db.insert("city", null, values);
             values.clear();
+        }
+    }
+
+    public void addCity(String city,String id){
+        boolean b =true;
+        Cursor cursor = db.query("city",new String[]{"city_id"},null,null,null,null,null);
+        if (cursor.moveToFirst()){
+            do {
+                if (cursor.getString(cursor.getColumnIndex("city_id")).equals(id)){
+                    b = false;
+                    for (int i = 0;i<city_list.size();i++){
+                        if (id.equals(cityId_list.get(i))){
+                            //viewPager.setAdapter(mainAdapter);
+                            //viewPager.setCurrentItem(i);
+                            //toolbar.setTitle(city_list.get(i));
+                            //navigationView.setCheckedItem(R.id.weather_show);
+                            Toast.makeText(context,city_list.get(i) + "  已存在..",Toast.LENGTH_SHORT).show();
+                            break;
+                        }
+                    }
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        if (b) {
+            addLayout();
+            ContentValues values = new ContentValues();
+            city_list.add(city);
+            cityId_list.add(id);
+            values.put("city", city);
+            values.put("city_id", id);
+            db.insert("city", null, values);
+            viewPager.setAdapter(mainAdapter);
+            Fragment fragment = BlankFragment.newInstance(id,city_list.size()-1);
+            fragmentArrayList.add(fragment);
+            mainAdapter.notifyDataSetChanged();
+            flag = 0;
+            viewPager.setCurrentItem(city_list.size() - 1);
+            toolbar.setTitle(city);
+            navigationView.setCheckedItem(R.id.weather_show);
+
+            //add.setVisibility(View.GONE);
+            tip_text.setVisibility(View.GONE);
         }
     }
 

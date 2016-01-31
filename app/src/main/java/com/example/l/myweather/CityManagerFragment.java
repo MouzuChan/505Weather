@@ -65,7 +65,7 @@ public class CityManagerFragment extends android.support.v4.app.Fragment {
         listView = (ListView)view.findViewById(R.id.city_list);
         city_list = new ArrayList<String>();
         cityId_list = new ArrayList<String>();
-        adapter = new MyAdapter(0);
+        adapter = new MyAdapter();
         listView.setAdapter(adapter);
         mainActivity = (MainActivity)getActivity();
 
@@ -82,7 +82,7 @@ public class CityManagerFragment extends android.support.v4.app.Fragment {
         cursor.close();
     }
 
-    public void deleteCity(int position,int i){
+    public void deleteCity(int position){
 
         mainActivity.deleteCity(position);
         adapter.notifyDataSetChanged();
@@ -106,9 +106,8 @@ public class CityManagerFragment extends android.support.v4.app.Fragment {
 
 
     class MyAdapter extends BaseAdapter {
-        private int i;
-        public MyAdapter(int i){
-            this.i = i;
+
+        public MyAdapter(){
         }
 
         @Override
@@ -172,7 +171,7 @@ public class CityManagerFragment extends android.support.v4.app.Fragment {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             super.onAnimationEnd(animation);
-                            deleteCity(position, i);
+                            deleteCity(position);
                         }
                     });
 

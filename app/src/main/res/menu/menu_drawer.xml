@@ -3,6 +3,7 @@
 
 
     <item
+        android:icon="@drawable/ic_wb_sunny_black_36dp"
         android:checkable="true"
         android:id="@+id/weather_show"
         android:title="天气"/>

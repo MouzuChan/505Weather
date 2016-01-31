@@ -117,7 +117,6 @@
             <TextView
                 android:id="@+id/first_day"
                 android:textColor="@color/white"
-                android:text="明天"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <TextView
@@ -146,7 +145,6 @@
             <TextView
                 android:id="@+id/second_day"
                 android:textColor="@color/white"
-                android:text="后天"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <TextView

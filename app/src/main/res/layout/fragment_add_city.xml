@@ -1,6 +1,9 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="com.example.l.myweather.AddCityFragment">
+    android:layout_height="match_parent" tools:context="com.example.l.myweather.AddCityFragment"
+    android:background="@color/white"
+    android:orientation="vertical"
+    >
 
     <!-- TODO: Update blank fragment layout -->
     <LinearLayout
@@ -10,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
-            android:background="@drawable/search_background"
             android:id="@+id/edit_text"
             android:drawableLeft="@drawable/ic_search_black_24dp"
             android:hint="搜索城市"
@@ -28,4 +30,10 @@
 
     </LinearLayout>
 
-</FrameLayout>
+    <ListView
+        android:background="@color/white"
+        android:id="@+id/city_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

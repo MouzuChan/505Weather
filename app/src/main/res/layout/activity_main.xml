@@ -37,22 +37,15 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <Button
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:id="@+id/add"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:background="@drawable/ic_add_white_48dp"/>
 
             <TextView
                 android:id="@+id/tip_text"
-                android:text="点击按钮添加城市"
+                android:text="请添加城市"
                 android:textColor="#ffffff"
                 android:textSize="22sp"
                 android:layout_width="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/add"
+                android:layout_centerInParent="true"
                 android:layout_height="wrap_content" />
 
         </RelativeLayout>
