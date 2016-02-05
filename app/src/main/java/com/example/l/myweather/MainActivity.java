@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -19,9 +20,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.DragEvent;
 import android.view.Gravity;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -84,13 +89,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(Color.TRANSPARENT);
-            window.setNavigationBarColor(Color.TRANSPARENT);
-        }
+
         setContentView(R.layout.activity_main);
         initView();
-
         initCityList();
         setItemSelected(0);
         startService(new Intent(this, UpdateService.class));
@@ -140,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         exit = (Button) findViewById(R.id.exit);
         settings.setOnClickListener(this);
         exit.setOnClickListener(this);
+
         
     }
     public void initCityList(){
@@ -168,35 +170,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
-
-    /*@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        String city_id;
-        String district;
-        if (requestCode == 1){
-            switch (resultCode){
-                case 1:
-                    city_id = data.getStringExtra("return_id");
-                    district = data.getStringExtra("district");
-                    addData(city_id,district);
-                    break;
-                case 2:
-                    city_id = data.getStringExtra("return_id");
-                    district = data.getStringExtra("district");
-                    addData(city_id,district);
-                    Toast.makeText(this,"定位成功:   " + district,Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        } else if (requestCode == 2){
-            switch (resultCode){
-                case 1:
-                    int pageSelected = data.getIntExtra("pageSelected",0);
-                    viewPager.setCurrentItem(pageSelected);
-                    break;
-            }
-        }
-    }*/
 
 
     @Override
@@ -320,35 +293,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 flag = 0;
                 break;
             case 1:
-                pageSelected = 1;
-                drawerLayout.closeDrawers();
-                cityManagerFragment.clear();
+                if (pageSelected == 1){
+                    drawerLayout.closeDrawers();
+                } else{
+                    pageSelected = 1;
+                    drawerLayout.closeDrawers();
+                    cityManagerFragment.clear();
 
-                Fragment fragment1 = AddCityFragment.newInstance();
-                cityManagerFragment.add(fragment1);
-                viewPager.setAdapter(cityManagerAdapter);
-                navigationView.setCheckedItem(R.id.add_city);
-                toolbar.setTitle("添加城市");
-                tip_text.setVisibility(View.GONE);
+                    Fragment fragment1 = AddCityFragment.newInstance();
+                    cityManagerFragment.add(fragment1);
+                    viewPager.setAdapter(cityManagerAdapter);
+                    navigationView.setCheckedItem(R.id.add_city);
+                    toolbar.setTitle("添加城市");
+                    tip_text.setVisibility(View.GONE);
+                }
                 break;
             case 2:
-                pageSelected = 2;
-                if (cityManagerFragment.size() > 0){
-                    cityManagerFragment.clear();
-                }
-                toolbar.setTitle("城市管理");
-                drawerLayout.closeDrawers();
-                Fragment fragment = CityManagerFragment.newInstance();
-                cityManagerFragment.add(fragment);
-                viewPager.setAdapter(cityManagerAdapter);
-                DELETE_FLAG = 0;
-                navigationView.setCheckedItem(R.id.city_manager);
-                if (city_list.size() > 0){
-                    tip_text.setVisibility(View.GONE);
+                if (pageSelected == 2){
+                    drawerLayout.closeDrawers();
                 } else {
-                    tip_text.setVisibility(View.VISIBLE);
+                    pageSelected = 2;
+                    if (cityManagerFragment.size() > 0){
+                        cityManagerFragment.clear();
+                    }
+                    toolbar.setTitle("城市管理");
+                    drawerLayout.closeDrawers();
+                    Fragment fragment = CityManagerFragment.newInstance();
+                    cityManagerFragment.add(fragment);
+                    viewPager.setAdapter(cityManagerAdapter);
+                    DELETE_FLAG = 0;
+                    navigationView.setCheckedItem(R.id.city_manager);
+                    if (city_list.size() > 0){
+                        tip_text.setVisibility(View.GONE);
+                    } else {
+                        tip_text.setVisibility(View.VISIBLE);
+                    }
+                    tip_text.setTextColor(Color.BLACK);
                 }
-                tip_text.setTextColor(Color.BLACK);
                 break;
         }
     }
@@ -622,7 +603,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void addCity(String city,String id){
         boolean b =true;
-        Cursor cursor = db.query("city",new String[]{"city_id"},null,null,null,null,null);
+        Cursor cursor = db.query("city", new String[]{"city_id"}, null, null, null, null, null);
         if (cursor.moveToFirst()){
             do {
                 if (cursor.getString(cursor.getColumnIndex("city_id")).equals(id)){
@@ -662,7 +643,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             tip_text.setVisibility(View.GONE);
         }
     }
-
 
 }
 

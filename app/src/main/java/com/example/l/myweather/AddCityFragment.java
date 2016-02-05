@@ -244,7 +244,7 @@ public class AddCityFragment extends android.support.v4.app.Fragment implements 
     public void onPause() {
         super.onPause();
         InputMethodManager inputMethodManager=(InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+        inputMethodManager.hideSoftInputFromWindow(editText.getWindowToken(),0);
     }
 
     @Override
