@@ -2,12 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
      android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     >
 
 
     <ImageView
         android:background="@drawable/yuanxing"
-        android:backgroundTint="#538bc0"
+        android:backgroundTint="#dc018fff"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="15dp"
         android:padding="5dp"
@@ -42,11 +43,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
-                android:textColor="@color/notification_black"
-                android:id="@+id/max_temp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
         </LinearLayout>
 
 
@@ -60,14 +56,6 @@
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
-        <TextView
-            android:gravity="center"
-            android:layout_gravity="right"
-            android:layout_weight="1"
-            android:textColor="@color/notification_black"
-            android:id="@+id/city"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
 
         <TextView
             android:gravity="center"
@@ -77,6 +65,16 @@
             android:id="@+id/aqi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+        <TextView
+            android:gravity="center"
+            android:layout_gravity="right"
+            android:layout_weight="1"
+            android:textColor="@color/notification_black"
+            android:id="@+id/city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
 
     </LinearLayout>
 

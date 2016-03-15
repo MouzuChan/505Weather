@@ -4,7 +4,7 @@
     android:useLevel="false"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <solid android:color="@color/white" />
+    <solid android:color="#b42b2b2b" />
     <size android:height="50dp"
         android:width="50dp" />
 </shape>

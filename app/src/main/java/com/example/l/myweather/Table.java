@@ -15,19 +15,25 @@ public class Table extends View {
 
     private Paint mPaint;
     private int pointCount;
-    private float[] maxXaxis;
-    private float[] maxYaxis;
 
-    private float[] minXaxis;
-    private float[] minYaxis;
-    private int jiange;
-    private int lineCount;
+    private float[] Xs;
+    private float[] Ys;
 
-    private int[] maxTemp;
-    private int[] minTemp;
+
+    private int jiange = 40;
+
+    private String[] data;
+    private int[] secData;
+    private String[] weatherData;
 
     public Table(Context context,AttributeSet attrs){
         super(context, attrs);
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        setWillNotDraw(false);
+    }
+
+    public Table(Context context){
+        super(context);
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
@@ -36,6 +42,7 @@ public class Table extends View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         setMeasuredDimension(dp2px((pointCount) * jiange), heightMeasureSpec);
         Log.d("Table", "onMeasure");
+
     }
 
     @Override
@@ -45,74 +52,54 @@ public class Table extends View {
         mPaint.setAntiAlias(true);
         mPaint.setColor(Color.WHITE);
         mPaint.setStrokeWidth(5);
-        if (lineCount == 2){
-            for (int i = 0; i < maxXaxis.length; i++){
-                canvas.drawCircle(maxXaxis[i], maxYaxis[i], 10, mPaint);
-                canvas.drawCircle(minXaxis[i], minYaxis[i], 10, mPaint);
-                mPaint.setTextSize(30);
-                if (maxTemp[i] != 0 || minTemp[i] != 0){
-                    canvas.drawText(maxTemp[i] + "°", maxXaxis[i] - dp2px(5),maxYaxis[i] - dp2px(15),mPaint);
-                    canvas.drawText(minTemp[i] + "°", minXaxis[i] - dp2px(5), minYaxis[i] + dp2px(25),mPaint);
-                }
-
+        for (int i = 0; i < Xs.length; i++) {
+            canvas.drawCircle(Xs[i], Ys[i], 10, mPaint);
+            mPaint.setTextSize(MyApplication.sp2px(15));
+            mPaint.setTextAlign(Paint.Align.CENTER);
+            if (data[i] != null){
+                canvas.drawText(data[i],Xs[i],getHeight() - dp2px(10),mPaint);
             }
-            for (int i = 1; i < maxXaxis.length; i++){
-                canvas.drawLine(maxXaxis[i - 1],maxYaxis[i - 1],maxXaxis[i],maxYaxis[i],mPaint);
-                canvas.drawLine(minXaxis[i - 1],minYaxis[i - 1],minXaxis[i],minYaxis[i],mPaint);
+            if (weatherData[i] != null){
+                canvas.drawText(weatherData[i],Xs[i],getHeight() - dp2px(30),mPaint);
             }
-        } else if (lineCount == 1){
-            for (int i = 0; i < maxXaxis.length; i++){
-                canvas.drawCircle(maxXaxis[i],maxYaxis[i],10,mPaint);
-                mPaint.setTextSize(sp2px(15));
-                canvas.drawText(maxTemp[i] + "°", maxXaxis[i] - dp2px(5), maxYaxis[i] - dp2px(15), mPaint);
-            }
-            for (int i = 1; i < maxXaxis.length; i++){
-                canvas.drawLine(maxXaxis[i - 1],maxYaxis[i - 1],maxXaxis[i],maxYaxis[i],mPaint);
-            }
-
+            canvas.drawText(secData[i] + "°",Xs[i],Ys[i] - 30,mPaint);
+        }
+        for (int i = 1; i < Xs.length; i++){
+            canvas.drawLine(Xs[i - 1],Ys[i - 1],Xs[i],Ys[i],mPaint);
         }
 
     }
 
+
+
     public void setPointCount(int pointCount){
         this.pointCount = pointCount;
-        maxXaxis = new float[pointCount];
-        maxYaxis = new float[pointCount];
-        minXaxis = new float[pointCount];
-        minYaxis = new float[pointCount];
+        Xs = new float[pointCount];
+        Ys = new float[pointCount];
 
-        maxTemp = new int[pointCount];
-        minTemp = new int[pointCount];
     }
 
-    public void addMaxPoint(int point,float x,float y){
-        maxXaxis[point] = dp2px(x);
-        maxYaxis[point] = dp2px(y);
-    }
-    public void addMinPoint(int point,float x,float y){
-        minXaxis[point] = dp2px(x);
-        minYaxis[point] = dp2px(y);
+    public void addPoint(int point,float x,float y){
+        Xs[point] = dp2px(x);
+        Ys[point] = dp2px(y);
     }
 
     public void setJiange(int jiange){
         this.jiange = jiange;
     }
 
-    public void setMaxTemp(int point,int temp){
-        maxTemp[point] = temp;
+    public void setData(String[] data,String[] weatherData,int[] secData){
+        this.data = data;
+        this.secData = secData;
+        this.weatherData = weatherData;
     }
 
-    public void setMinTemp(int point,int temp){
-        minTemp[point] = temp;
-    }
 
     public int dp2px(float dpValue){
         float scale = this.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
-    public void setLineCount(int lineCount){
-        this.lineCount = lineCount;
-    }
+
 
     public int sp2px(float spValue) {
         final float fontScale = this.getResources().getDisplayMetrics().scaledDensity;

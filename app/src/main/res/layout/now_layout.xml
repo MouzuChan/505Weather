@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/now_layout"
+    >
+
+
+
+    <TextView
+        android:layout_marginRight="20dp"
+        android:id="@+id/update_time"
+        android:gravity="right"
+        android:textColor="#8cffffff"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+
+    <TextView
+        android:paddingTop="40dp"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:id="@+id/now_weather"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        />
+
+    <TextView
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/white"
+        android:id="@+id/now_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="70sp"/>
+    <TextView
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="10dp"
+        android:textColor="@color/white"
+        android:id="@+id/now_wind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <TextView
+        android:paddingTop="10dp"
+        android:textColor="@color/white"
+        android:id="@+id/now_aqi"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <LinearLayout
+        android:id="@+id/alarm_layout"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:background="@drawable/alarm_background"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/alarm_icon"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text=" "
+            android:textColor="@color/white"
+            android:id="@+id/alarm_name"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+
+</LinearLayout>

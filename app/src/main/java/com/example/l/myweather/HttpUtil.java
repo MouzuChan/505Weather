@@ -8,6 +8,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -25,7 +26,29 @@ public class HttpUtil {
 
 
 
-   private static RequestQueue mQueue = Volley.newRequestQueue(MyApplication.getContext());
+    private static RequestQueue mQueue = Volley.newRequestQueue(MyApplication.getContext());
+
+    public static void makeHttpRequest(String url,final CallBackListener callBackListener){
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject jsonObject) {
+                if (jsonObject != null){
+                    if (callBackListener != null){
+                        callBackListener.onFinish(jsonObject);
+                    }
+                }
+            }
+        },new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                Log.e("TAG",volleyError.getMessage(),volleyError);
+                callBackListener.onError("error");
+            }
+        });
+
+        jsonObjectRequest.setShouldCache(false);
+        mQueue.add(jsonObjectRequest);
+    }
 
 
     public static void makeBaiduHttpRequest(String url,final CallBackListener callBackListener){
@@ -34,7 +57,7 @@ public class HttpUtil {
             public void onResponse(JSONObject jsonObject) {
                 if (jsonObject != null){
                     if (callBackListener != null){
-                        callBackListener.onFinish(jsonObject);;
+                        callBackListener.onFinish(jsonObject);
                     }
                 }
 

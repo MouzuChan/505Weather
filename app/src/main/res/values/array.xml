@@ -23,8 +23,6 @@
     <string-array name="widget_color">
         <item>蓝色</item>
         <item>透明</item>
-        <item>白色</item>
-
     </string-array>
 
 </resources>

@@ -5,15 +5,10 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Timer;
@@ -28,11 +23,15 @@ public class UpdateService extends Service {
     private int appWidgetIds[];
     private int newWidgetIds[];
     private ComponentName componentName = new ComponentName(context,Widget4x2.class);
-    private boolean hasWidget = false;
     private boolean updateSwitch = false;
     private boolean showNotification = false;
-    private RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget4x2_layout);
     private  AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+    private Timer updateTimeTimer;
+
+    private TimerTask timerTask;
+    private TimerTask updateTimeTimerTask;
+
+    private int minute = -1;
     public UpdateService() {
     }
 
@@ -48,8 +47,8 @@ public class UpdateService extends Service {
         Log.d("UpdateService", "onCreate");
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         updateSwitch = sharedPreferences.getBoolean("update_switch", false);
-        showNotification = sharedPreferences.getBoolean("show_notification",false);
-
+        showNotification = sharedPreferences.getBoolean("show_notification", false);
+        initTimerTask();
     }
 
     @Override
@@ -61,29 +60,60 @@ public class UpdateService extends Service {
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
         Log.d("UpdateService", "onStartCommand");
-
-
-
-        appWidgetIds = appWidgetManager.getAppWidgetIds(componentName);
-        newWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, NewAppWidget.class));
         if(intent != null){
             String action = intent.getAction();
             if (action != null){
                 switch (action){
                     case "updateSwitch":
                         updateSwitch = intent.getBooleanExtra("updateSwitch",false);
+                        initTimerTask();
                         break;
-                    case "showNotification":
-                        showNotification = intent.getBooleanExtra("showNotification",false);
+                    case "Widget":
+                        initTimerTask();
                         break;
+                    case "ChangeUpdateRate":
+                        initTimerTask();
                 }
             }
         }
-        if (showNotification){
-            WeatherNotification.sendNotification(null);
+        return START_STICKY;
+    }
+
+
+    public void initTimerTask(){
+
+        appWidgetIds = appWidgetManager.getAppWidgetIds(componentName);
+        newWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, NewAppWidget.class));
+
+
+        String update_rate = sharedPreferences.getString("update_rate","1个小时");
+        switch (update_rate){
+            case "30分钟":
+                i = 30 * 60 * 1000;
+                break;
+            case "1个小时":
+                i = 60 * 60 * 1000;
+                break;
+            case "2个小时":
+                i = 120* 60 * 1000;
+                break;
+            case "4个小时":
+                i = 240 * 60 * 1000;
+                break;
+            case "6个小时":
+                i = 360 * 60 * 1000;
+                break;
         }
 
-        TimerTask timerTask = new TimerTask() {
+
+        if (timerTask != null){
+            timerTask.cancel();
+        }
+        if (updateTimeTimerTask != null){
+            updateTimeTimerTask.cancel();
+        }
+
+        timerTask = new TimerTask() {
             @Override
             public void run() {
                 appWidgetIds = appWidgetManager.getAppWidgetIds(componentName);
@@ -98,154 +128,59 @@ public class UpdateService extends Service {
                 }
             }
         };
-
-        /*TimerTask task = new TimerTask() {
+        updateTimeTimerTask = new TimerTask() {
             @Override
             public void run() {
-                //RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget4x2_layout);
-                //ComponentName componentName = new ComponentName(context,Widget4x2.class);
-                appWidgetIds = Widget4x2.appWidgetManager.getAppWidgetIds(componentName);
-                //Calendar calendar = Calendar.getInstance();
 
+                appWidgetIds = appWidgetManager.getAppWidgetIds(componentName);
                 if (appWidgetIds.length > 0){
-                    Log.d("TAG", "UPDATE_WIDGET_TIME");
-                    Intent timeIntent = new Intent("com.lha.weather.UPDATE_FROM_LOCAL");
-                    sendBroadcast(timeIntent);
-                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                    int minute = calendar.get(Calendar.MINUTE);
-                    String h = hour + "";
-                    String m = minute + "";
-                    if (hour < 10){
-                        h = "0" + h;
+                    Calendar calendar = Calendar.getInstance();
+                    int m = calendar.get(Calendar.MINUTE);
+                    if (m != minute){
+                        minute = m;
+                        context.sendBroadcast(new Intent("com.lha.weather.UPDATE_FROM_LOCAL"));
                     }
-                    if (minute < 10){
-                        m = "0" + m;
-                    }
-                    Widget4x2.views.setTextViewText(R.id.widget_time, h + ":" + m);
-                    Widget4x2.appWidgetManager.updateAppWidget(componentName, Widget4x2.views);
                 } else {
-                    if (timer != null){
-                        Log.d("TAG","timer.cancel");
-                        timer.cancel();
+                    if (updateTimeTimer != null){
+                        updateTimeTimer.cancel();
+                        updateTimeTimer = null;
                     }
                 }
             }
-        };*/
-
+        };
         if (updateSwitch){
             if (showNotification || appWidgetIds.length > 0 || newWidgetIds.length > 0){
-                String update_rate = sharedPreferences.getString("update_rate","1个小时");
-                switch (update_rate){
-                    case "30分钟":
-                        i = 30 * 60 * 1000;
-                        break;
-                    case "1个小时":
-                        i = 60 * 60 * 1000;
-                        break;
-                    case "2个小时":
-                        i = 120* 60 * 1000;
-                        break;
-                    case "4个小时":
-                        i = 240 * 60 * 1000;
-                        break;
-                    case "6个小时":
-                        i = 360 * 60 * 1000;
-                        break;
-                }
-
                 if (autoUpdateTimer != null){
-                    Log.d("TAG","autoUpdateTimerIsNotNull");
                     autoUpdateTimer.cancel();
+                    autoUpdateTimer = null;
                 }
-                Log.d("TAG",appWidgetIds.length + "");
                 autoUpdateTimer = new Timer();
                 autoUpdateTimer.schedule(timerTask,0,i);
             } else {
                 if (autoUpdateTimer != null){
                     autoUpdateTimer.cancel();
+                    autoUpdateTimer = null;
                 }
-                stopSelf();
             }
         } else {
             if (autoUpdateTimer != null){
                 autoUpdateTimer.cancel();
+                autoUpdateTimer = null;
             }
-            stopSelf();
+        }
+        if (appWidgetIds.length > 0){
+            if (updateTimeTimer != null){
+                updateTimeTimer.cancel();
+                updateTimeTimer = null;
+            }
+            updateTimeTimer = new Timer();
+            updateTimeTimer.schedule(updateTimeTimerTask,0,3000);
+        } else {
+            if (updateTimeTimer != null){
+                updateTimeTimer.cancel();
+                updateTimeTimer = null;
+            }
         }
 
-
-
-
-
-        /*if (newWidgetIds.length > 0 || appWidgetIds.length > 0){
-            hasWidget = true;
-            if (updateSwitch){
-                String update_rate = sharedPreferences.getString("update_rate","1个小时");
-                switch (update_rate){
-                    case "30分钟":
-                        i = 30 * 60 * 1000;
-                        break;
-                    case "1个小时":
-                        i = 60 * 60 * 1000;
-                        break;
-                    case "2个小时":
-                        i = 120* 60 * 1000;
-                        break;
-                    case "4个小时":
-                        i = 240 * 60 * 1000;
-                        break;
-                    case "6个小时":
-                        i = 360 * 60 * 1000;
-                        break;
-                }
-
-                if (autoUpdateTimer != null){
-                    Log.d("TAG","autoUpdateTimerIsNotNull");
-                    autoUpdateTimer.cancel();
-
-                }
-                Log.d("TAG","update");
-                autoUpdateTimer = new Timer();
-                autoUpdateTimer.schedule(timerTask,0,i);
-            } else if (autoUpdateTimer != null){
-                Log.d("TAG","CLOSE");
-                autoUpdateTimer.cancel();
-            }
-
-        } else if (autoUpdateTimer != null){
-            autoUpdateTimer.cancel();
-            stopSelf();
-        }*/
-
-
-
-        /*if (appWidgetIds.length > 0) {
-            if (timer != null){
-                Log.d("TAG","timerIsNotNull");
-                timer.cancel();
-            }
-            timer = new Timer();
-            timer.schedule(task,0,15000);
-
-        } else {
-            if (timer != null){
-                timer.cancel();
-            }
-        }*/
-
-        return START_STICKY;
-
     }
-
-
-
-    public boolean isConnected(){
-        ConnectivityManager cm = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnectedOrConnecting();
-    }
-
-
-
-
 }

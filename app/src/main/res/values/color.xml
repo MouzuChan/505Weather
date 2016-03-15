@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="color_primary">#104d8e</color>
+    <color name="color_primary">#007167</color>
     <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
+    <color name="black">#181818</color>
     <color name="huise">#c0c0c0</color>
     <color name="qingse">#FF00786F</color>
     <color name="kafeise">#5f4421</color>

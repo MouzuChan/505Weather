@@ -6,26 +6,6 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="lanseTheme" parent="Theme.AppCompat.Light.NoActionBar" >
-
-    </style>
-
-    <style name="qingseTheme" parent="Theme.AppCompat.Light.NoActionBar" >
-
-    </style>
-
-    <style name="huiseTheme" parent="Theme.AppCompat.Light.NoActionBar" >
-
-    </style>
-    <style name="lvseTheme" parent="Theme.AppCompat.Light.NoActionBar" >
-
-    </style>
-    <style name="heiseTheme" parent="Theme.AppCompat.Light.NoActionBar" >
-
-    </style>
-    <style name="kafeiseTheme" parent="Theme.AppCompat.Light.NoActionBar" >
-
-    </style>
 
 
 </resources>

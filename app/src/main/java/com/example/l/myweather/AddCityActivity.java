@@ -1,0 +1,312 @@
+package com.example.l.myweather;
+
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.l.myweather.R;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class AddCityActivity extends AppCompatActivity implements View.OnClickListener{
+
+    private EditText editText;
+    private Button locationButton;
+    private ListView cityListView;
+    private ListAdapter adapter;
+    private List<String> id_list;
+    private List<String> city_list;
+    private List<String> list;
+    private Context context = MyApplication.getContext();
+    private int errNum = 1;
+    private Toolbar toolbar;
+    private String location_city;
+    private String location_city_id;
+    private TextView location_city_view;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        setContentView(R.layout.activity_add_city);
+        initView();
+
+    }
+
+    public void initView(){
+        editText = (EditText) findViewById(R.id.edit_text);
+        locationButton = (Button)findViewById(R.id.location);
+        cityListView = (ListView)findViewById(R.id.city_list);
+        locationButton.setOnClickListener(this);
+        city_list = new ArrayList<String>();
+        list = new ArrayList<String>();
+        id_list = new ArrayList<String>();
+        adapter = new ListAdapter(list);
+        cityListView.setAdapter(adapter);
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        location_city_view = (TextView) findViewById(R.id.location_city_view);
+        location_city_view.setOnClickListener(this);
+        locationButton.setVisibility(View.INVISIBLE);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                list.clear();
+                String cityName = "";
+                try {
+                    String edit_name = editText.getText().toString();
+                    if (edit_name.contains("市") || edit_name.contains("县") || edit_name.contains("区") || edit_name.contains("省")) {
+                        if (edit_name.length() > 2) {
+                            edit_name = edit_name.substring(0, edit_name.length() - 1);
+                        }
+                    }
+                    cityName = URLEncoder.encode(edit_name, "UTF-8");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (!cityName.equals("")) {
+                    if (MyApplication.isConnected()) {
+                        getCityList(cityName);
+                    } else {
+                        list.add("请检查网络连接");
+                    }
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+        cityListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (errNum == 0) {
+                    Intent intent = new Intent("com.lha.weather.ADD_CITY");
+                    intent.putExtra("city_name", city_list.get(position));
+                    intent.putExtra("city_id", id_list.get(position));
+                    sendBroadcast(intent);
+                    finish();
+                }
+
+            }
+        });
+
+
+    }
+
+
+    public void getCityList(String cityName){
+        id_list.clear();
+        city_list.clear();
+        if (!cityName.equals("") && cityName.length() >= 18) {
+            String url = "http://apis.baidu.com/apistore/weatherservice/citylist?cityname=" + cityName;
+            HttpUtil.makeBaiduHttpRequest(url, new CallBackListener() {
+                @Override
+                public void onFinish(final JSONObject jsonObject) {
+
+                    try {
+                        String errMsg = jsonObject.getString("errMsg");
+                        if (errMsg.equals("success")) {
+                            errNum = 0;
+                            JSONArray jsonArray = jsonObject.getJSONArray("retData");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject oj = jsonArray.getJSONObject(i);
+                                String city1 = oj.getString("name_cn");
+                                String city = oj.getString("province_cn") + "-" + oj.getString("district_cn") + "-" + oj.getString("name_cn");
+                                String id = oj.getString("area_id");
+                                city_list.add(city1);
+                                id_list.add(id);
+                                list.add(city);
+                            }
+                        } else {
+                            errNum = 1;
+                            list.add(errMsg);
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onError(String e) {
+                    Toast.makeText(context, "更新失败,网络超时", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } else {
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.location:
+                Toast.makeText(context,"定位中..",Toast.LENGTH_SHORT).show();
+                initLocation();
+                /*final MyLocation myLocation = new MyLocation();
+                myLocation.getUserLocation();
+                final ProgressDialog progressDialog = new ProgressDialog(this);
+                progressDialog.setMessage("定位中...");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+                TimerTask timerTask = new TimerTask() {
+                    @Override
+                    public void run() {
+
+                        String city = myLocation.getCity();
+                        final String district = myLocation.getDistrict();
+                        if (city == null ){
+                            Toast.makeText(context, "定位失败", Toast.LENGTH_SHORT).show();
+                        }else {
+
+                            //getLocationCity(city, district);
+                            LocationCityId locationCityId = new LocationCityId();
+                            locationCityId.getLocationCityId(city, district, new LocationCallBack() {
+                                @Override
+                                public void onFinish(String return_id,String city_name) {
+
+                                    if (return_id != null){
+                                        Toast.makeText(context, "定位成功:" + city_name,Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent("com.lha.weather.ADD_CITY");
+                                        intent.putExtra("city_name",city_name);
+                                        intent.putExtra("city_id",return_id);
+                                        sendBroadcast(intent);
+                                        finish();
+
+                                    }
+                                }
+                            });
+
+
+                        }
+                        progressDialog.dismiss();
+
+
+
+                    }
+                };
+                Timer timer = new Timer();
+                timer.schedule(timerTask, 3000);*/
+                break;
+            case R.id.location_city_view :
+                if (location_city_id != null && location_city != null){
+                    Intent intent = new Intent("com.lha.weather.ADD_CITY");
+                    intent.putExtra("city_name",location_city);
+                    intent.putExtra("city_id",location_city_id);
+                    sendBroadcast(intent);
+                    finish();
+                } else {
+                    initLocation();
+                }
+                break;
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initLocation();
+    }
+
+    public void initLocation(){
+        final MyLocation myLocation = new MyLocation();
+        myLocation.getUserLocation();
+
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                final String city = myLocation.getCity();
+                final String district = myLocation.getDistrict();
+                if (city == null ){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            location_city_view.setText("定位失败，点击重新定位");
+                        }
+                    });
+
+                }else {
+                    LocationCityId locationCityId = new LocationCityId();
+                    locationCityId.getLocationCityId(city, district, new LocationCallBack() {
+                        @Override
+                        public void onFinish(String return_id,String city_name) {
+
+                            if (return_id != null){
+                                //Toast.makeText(context, "定位成功:" + city_name,Toast.LENGTH_SHORT).show();
+                                //Intent intent = new Intent("com.lha.weather.ADD_CITY");
+                                //intent.putExtra("city_name",city_name);
+                                //intent.putExtra("city_id",return_id);
+                                //sendBroadcast(intent);
+                                //finish();
+                                location_city = city_name;
+                                location_city_id = return_id;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        location_city_view.setText("当前位置：" + city + "-" + district);
+                                        locationButton.setVisibility(View.VISIBLE);
+                                    }
+                                });
+
+                            }
+                        }
+                    });
+                }
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(timerTask,2000);
+
+    }
+}

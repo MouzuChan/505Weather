@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="20dp"
+    >
+
+
+    <TextView
+        android:text="生活指数"
+        android:textSize="12sp"
+        android:textColor="#8cffffff"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:weightSum="3"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textColor="#96ffffff"
+                android:text="舒适度"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:textColor="@color/white"
+                android:text="--"
+                android:id="@+id/shushidu"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <TextView
+            android:background="#32ffffff"
+            android:layout_width="1dp"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textColor="#96ffffff"
+                android:text="穿衣"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:textColor="@color/white"
+                android:text="--"
+                android:id="@+id/chuanyi"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <TextView
+            android:background="#32ffffff"
+            android:layout_width="1dp"
+            android:layout_height="match_parent" />
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textColor="#96ffffff"
+                android:text="感冒"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:textColor="@color/white"
+                android:text="--"
+                android:id="@+id/ganmao"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#32ffffff"
+        />
+
+    <LinearLayout
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:weightSum="3"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textColor="#96ffffff"
+                android:text="洗车"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:textColor="@color/white"
+                android:text="--"
+                android:id="@+id/xiche"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <TextView
+            android:background="#32ffffff"
+            android:layout_width="1dp"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textColor="#96ffffff"
+                android:text="运动"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textColor="@color/white"
+                android:id="@+id/yundong"
+                android:text="--"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <TextView
+            android:background="#32ffffff"
+            android:layout_width="1dp"
+            android:layout_height="match_parent" />
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textColor="#96ffffff"
+                android:text="晾晒"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textColor="@color/white"
+                android:text="--"
+                android:id="@+id/liangshai"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#32ffffff"
+        />
+
+    <LinearLayout
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:weightSum="3"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:textColor="#96ffffff"
+                android:text="雨伞"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:textColor="@color/white"
+                android:text="--"
+                android:id="@+id/yusan"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <TextView
+            android:background="#32ffffff"
+            android:layout_width="1dp"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textColor="#96ffffff"
+                android:text="紫外线"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textColor="@color/white"
+                android:id="@+id/ziwaixian"
+                android:text="--"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <TextView
+            android:background="#32ffffff"
+            android:layout_width="1dp"
+            android:layout_height="match_parent" />
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textColor="#96ffffff"
+                android:text="化妆"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textColor="@color/white"
+                android:text="--"
+                android:id="@+id/huazhuang"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#32ffffff"
+        />
+
+
+
+
+    <TextView
+
+        android:textColor="#8cffffff"
+        android:textSize="12sp"
+        android:text="数据来源：中国天气网"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        />
+
+
+
+</LinearLayout>

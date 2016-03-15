@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class CityDataBase extends SQLiteOpenHelper {
 
+    private static CityDataBase mCityDataBase;
+
     private static String CREATE_CITY = "create table city(" + " _id integer primary key autoincrement, " + " city text, " + " city_id text)";
 
     public CityDataBase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -23,5 +25,12 @@ public class CityDataBase extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+    }
+
+    public static CityDataBase getInstance(){
+        if (mCityDataBase == null){
+            mCityDataBase = new CityDataBase(MyApplication.getContext(),"CITY_LIST",null,1);
+        }
+        return mCityDataBase;
     }
 }

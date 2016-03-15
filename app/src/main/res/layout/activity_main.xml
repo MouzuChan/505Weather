@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/color_primary"
     android:orientation="vertical"
     android:id="@+id/relative_layout"
-    android:fitsSystemWindows="true"
     >
     <android.support.v4.widget.DrawerLayout
 
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
-
+            android:fitsSystemWindows="true"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -23,17 +23,21 @@
                 app:titleTextColor="@color/white"
                 app:title="天气"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </android.support.v7.widget.Toolbar>
+                android:layout_height="wrap_content"/>
+
             <android.support.v4.view.ViewPager
                 android:id="@+id/viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
             />
-
+            <com.example.l.myweather.Indicator
+                android:id="@+id/indicator"
+                android:layout_width="match_parent"
+                android:layout_height="20dp" />
 
             </LinearLayout>
+
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -41,9 +45,8 @@
 
             <TextView
                 android:id="@+id/tip_text"
-                android:text="请添加城市"
+                android:text="点击添加城市"
                 android:textColor="#ffffff"
-                android:textSize="22sp"
                 android:layout_width="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerInParent="true"
@@ -63,39 +66,8 @@
             app:menu="@menu/menu_drawer"
             app:headerLayout="@layout/header_drawer"
 
-            >
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_gravity="bottom"
-                android:gravity="bottom"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <Button
-                    android:id="@+id/settings"
-                    android:text="设置"
-                    android:background="@color/white"
-                    android:layout_weight="1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Button
-                    android:id="@+id/exit"
-                    android:text="退出"
-                    android:background="@color/white"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
-
-            </LinearLayout>
-        </android.support.design.widget.NavigationView>
+            />
 
     </android.support.v4.widget.DrawerLayout>
-
-
-
-
-
-
 
 </RelativeLayout>

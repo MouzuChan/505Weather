@@ -13,9 +13,9 @@ import java.util.ArrayList;
  */
 public class MyFragmentAdapter extends FragmentStatePagerAdapter {
 
-    private ArrayList<Fragment> list;
+    private ArrayList<ContentFragment> list;
 
-    public MyFragmentAdapter(FragmentManager fm,ArrayList<Fragment> list){
+    public MyFragmentAdapter(FragmentManager fm,ArrayList<ContentFragment> list){
         super(fm);
         this.list = list;
     }

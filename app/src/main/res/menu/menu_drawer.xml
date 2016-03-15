@@ -2,21 +2,27 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <item
-        android:icon="@drawable/ic_wb_sunny_black_36dp"
-        android:checkable="true"
-        android:id="@+id/weather_show"
-        android:title="天气"/>
 
     <item
-        android:checkable="true"
+        android:checkable="false"
         android:icon="@drawable/ic_add_black_48dp"
         android:id="@+id/add_city" android:title="添加城市" />
 
     <item
-        android:checkable="true"
+        android:checkable="false"
         android:icon="@drawable/ic_place_black_48dp"
         android:id="@+id/city_manager" android:title="城市管理"/>
 
+    <item
+        android:id="@+id/settings"
+        android:checkable="false"
+        android:title="设置"
+        android:icon="@drawable/ic_settings_black_48dp"
+        />
+    <item
+        android:icon="@drawable/ic_exit_to_app_black_48dp"
+        android:id="@+id/exit"
+        android:checkable="false"
+        android:title="退出"/>
 
 </menu>

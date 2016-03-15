@@ -42,7 +42,6 @@ public class LocationCityId {
                             if (name_cn.equals(district)) {
                                 return_id = jo.getString("area_id");
                                 city_name = district;
-
                                 break;
                             } else if (name_cn.equals(city)) {
                                 return_id = jo.getString("area_id");

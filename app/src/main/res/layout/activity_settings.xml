@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:fitsSystemWindows="true"
+    android:background="@color/color_primary"
     tools:context="com.example.l.myweather.SettingsActivity"
     android:orientation="vertical">
 
@@ -11,10 +12,10 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/tool_bar"
         android:layout_height="wrap_content"
-        android:background="@color/color_primary"
+
         android:layout_width="match_parent"
         app:title="设置"
-        android:fitsSystemWindows="true"
+
         app:titleTextColor="@color/white"
         />
 
@@ -24,6 +25,7 @@
         android:layout_height="wrap_content"></ListView>
 
     <FrameLayout
+        android:background="@color/white"
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></FrameLayout>

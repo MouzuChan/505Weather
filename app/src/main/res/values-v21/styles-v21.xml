@@ -1,29 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:colorPrimary">@color/color_primary</item>
+        <item name="colorPrimary">@color/color_primary</item>
     </style>
 
-
-    <style name="lanseTheme" parent="Theme.AppCompat.Light.NoActionBar" >
-        <item name="android:colorPrimary">@color/color_primary</item>
-    </style>
-
-    <style name="qingseTheme" parent="Theme.AppCompat.Light.NoActionBar" >
-        <item name="android:colorPrimary">@color/qingse</item>
-    </style>
-
-    <style name="huiseTheme" parent="Theme.AppCompat.Light.NoActionBar" >
-        <item name="android:colorPrimary">@color/huise</item>
-    </style>
-    <style name="lvseTheme" parent="Theme.AppCompat.Light.NoActionBar" >
-        <item name="android:colorPrimary">@color/lvse</item>
-    </style>
-    <style name="heiseTheme" parent="Theme.AppCompat.Light.NoActionBar" >
-        <item name="android:colorPrimary">@color/black</item>
-    </style>
-    <style name="kafeiseTheme" parent="Theme.AppCompat.Light.NoActionBar" >
-        <item name="android:colorPrimary">@color/kafeise</item>
-    </style>
 
 </resources>
