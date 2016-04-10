@@ -3,31 +3,42 @@
 
 
     <PreferenceCategory
-        android:title="基本设置">
-
+        android:title="通知栏设置">
         <SwitchPreference
             android:key="show_notification"
             android:defaultValue="false"
             android:title="在通知栏显示"/>
 
+        <ListPreference
+            android:key="notify_background"
+            android:title="通知栏底色"
+            android:dialogTitle="通知栏底色"
+            android:entryValues="@array/notify_strings"
+            android:entries="@array/notify_strings"
+            android:defaultValue="系统默认底色"
+            />
+
+        <ListPreference
+            android:key="notify_text_color"
+            android:title="通知栏字体颜色"
+            android:dialogTitle="通知栏字体颜色"
+            android:entryValues="@array/notify_text_color"
+            android:entries="@array/notify_text_color"
+            android:defaultValue="黑色"
+            />
+
+
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="小部件设置">
 
         <SwitchPreference
-            android:key="update_switch"
+            android:key="show_frame"
+            android:title="是否带边框"
             android:defaultValue="false"
-            android:title="自动更新桌面小部件"
-            android:summaryOff="已关闭"
-            android:summaryOn="已开启"
             />
-        <ListPreference
-            android:id="@+id/list_preference"
-            android:key="update_rate"
-            android:title="更新频率"
-            android:dialogTitle="更新频率"
-            android:entryValues="@array/entries_preference"
-            android:entries="@array/entries_preference"
-            android:defaultValue="1个小时"
-            />
-
 
         <ListPreference
             android:key="widget_color"
@@ -37,8 +48,51 @@
             android:entries="@array/widget_color"
             android:defaultValue="透明"
             />
+        <ListPreference
+            android:key="widget_text_color"
+            android:title="小部件字体颜色"
+            android:dialogTitle="小部件字体颜色"
+            android:entryValues="@array/notify_text_color"
+            android:entries="@array/notify_text_color"
+            android:defaultValue="白色"
+            />
 
 
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="更新设置"
+        >
+
+        <SwitchPreference
+            android:key="update_switch"
+            android:defaultValue="false"
+            android:title="自动更新小部件和通知栏"
+            android:summaryOff="已关闭"
+            android:summaryOn="已开启"
+            />
+        <ListPreference
+            android:key="update_rate"
+            android:title="更新频率"
+            android:dialogTitle="更新频率"
+            android:entryValues="@array/entries_preference"
+            android:entries="@array/entries_preference"
+            android:defaultValue="1个小时"
+            />
+
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="其他设置"
+        >
+        <SwitchPreference
+            android:key="update_location"
+            android:title="自动更新位置"
+            android:defaultValue="true"
+            android:summary="启动应用时自动更新位置"
+            />
     </PreferenceCategory>
 
 

@@ -48,11 +48,7 @@ public class NewAppWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
-        int N = appWidgetIds.length;
-        for (int i = 0; i < N; i++){
-            updateAppWidget(context, appWidgetManager, appWidgetIds[i]);
-        }
-
+        updateFromLocal();
     }
 
     @Override
@@ -62,13 +58,13 @@ public class NewAppWidget extends AppWidgetProvider {
         switch (intent.getAction()){
             case "com.lha.weather.USER_UPDATE":
                 USER_UPDATE_FLAG = 1;
-                updateWidget(1);
+                updateFromInternet();
                 break;
             case "com.lha.weather.UPDATE_FROM_INTERNET":
-                updateWidget(1);
+                updateFromInternet();
                 break;
             case "com.lha.weather.UPDATE_FROM_LOCAL":
-                updateWidget(0);
+                updateFromLocal();
                 break;
         }
     }
@@ -89,91 +85,10 @@ public class NewAppWidget extends AppWidgetProvider {
     }
 
 
-    public void updateAppWidget(final Context context,final AppWidgetManager appWidgetManager,final int appWidgetId){
-
-        if (city_id == null){
-            initCity();
-        }
-        if (city_id != null){
-            if (MyApplication.isConnected()){
-                String url = "http://zhwnlapi.etouch.cn/Ecalender/api/v2/weather?citykey=" + city_id;
-                HttpUtil.makeHttpRequest(url, new CallBackListener() {
-                    @Override
-                    public void onFinish(JSONObject jsonObject) {
-                        if (USER_UPDATE_FLAG == 1) {
-                            Toast.makeText(context, "更新成功^_^", Toast.LENGTH_SHORT).show();
-                            USER_UPDATE_FLAG = 0;
-                        }
-                        setWidgetViews(context, appWidgetManager, appWidgetId, jsonObject, city_id);
-                        FileHandle.saveJSONObject(jsonObject, city_id);
-                    }
-
-                    @Override
-                    public void onError(String e) {
-                        if (USER_UPDATE_FLAG == 1) {
-                            Toast.makeText(context, "网络超时⊙﹏⊙‖∣", Toast.LENGTH_SHORT).show();
-                            USER_UPDATE_FLAG = 0;
-                        }
-                        JSONObject jsonObject = FileHandle.getJSONObject(city_id);
-                        if (jsonObject != null) {
-                            setWidgetViews(context, appWidgetManager, appWidgetId, jsonObject, city_id);
-                        }
-                    }
-                });
-            } else {
-                if (USER_UPDATE_FLAG == 1){
-                    Toast.makeText(context,"没有网络@_@",Toast.LENGTH_SHORT).show();
-                    USER_UPDATE_FLAG = 0;
-                }
-                JSONObject jsonObject = FileHandle.getJSONObject(city_id);
-                if (jsonObject != null){
-                    setWidgetViews(context, appWidgetManager, appWidgetId, jsonObject, city_id);
-                }
-            }
-        } else {
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
-            views.setTextViewText(R.id.date,"未找到已添加的城市...");
-            views.setTextViewText(R.id.aqi,"");
-            views.setTextViewText(R.id.chinese_calendar,"");
-            views.setTextViewText(R.id.weather_txt,"");
-            views.setTextViewText(R.id.temp, "");
-            views.setTextViewText(R.id.city, "");
-            Intent intent = new Intent(context,MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-            views.setOnClickPendingIntent(R.id.relative_layout, pendingIntent);
-            appWidgetManager.updateAppWidget(appWidgetId, views);
-        }
-    }
-
-
-    public void updateFromLocal(final Context context,final AppWidgetManager appWidgetManager,final int appWidgetId){
-        if (city_id == null){
-            initCity();
-        }
-        if (city_id != null){
-            JSONObject jsonObject = FileHandle.getJSONObject(city_id);
-            if (jsonObject != null){
-                setWidgetViews(context,appWidgetManager,appWidgetId,jsonObject,city_id);
-            }
-
-        }  else {
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
-            views.setTextViewText(R.id.date,"未找到已添加的城市...");
-            views.setTextViewText(R.id.aqi,"");
-            views.setTextViewText(R.id.chinese_calendar,"");
-            views.setTextViewText(R.id.weather_txt,"");
-            views.setTextViewText(R.id.temp, "");
-            views.setTextViewText(R.id.city, "");
-            Intent intent = new Intent(context,MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-            views.setOnClickPendingIntent(R.id.relative_layout, pendingIntent);
-            appWidgetManager.updateAppWidget(appWidgetId, views);
-        }
-    }
 
 
 
-    public void setWidgetViews(Context context,AppWidgetManager appWidgetManager,int appWidgetId,JSONObject jsonObject,String id){
+    public void setWidgetViews(AppWidgetManager appWidgetManager,int appWidgetId,JSONObject jsonObject){
 
         String _week = "";
         Calendar calendar = Calendar.getInstance();
@@ -198,10 +113,8 @@ public class NewAppWidget extends AppWidgetProvider {
         }
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
-
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        JSONHandle jsonHandle = new JSONHandle(jsonObject);
-        widget2x1_strings = jsonHandle.getWidget2x1_strings(hour);
+        HandleJSON jsonHandle = new HandleJSON(jsonObject);
+        widget2x1_strings = jsonHandle.getWidget2x1_strings();
 
         views_id[0] = R.id.temp;
         views_id[1] = R.id.weather_txt;
@@ -213,6 +126,27 @@ public class NewAppWidget extends AppWidgetProvider {
                 views.setTextViewText(views_id[i],widget2x1_strings[i]);
             }
         }
+
+        switch (sharedPreferences.getString("widget_text_color","白色")){
+            case "白色":
+                for (int i = 0; i < 4; i++){
+                    views.setTextColor(views_id[i],Color.WHITE);
+                }
+                views.setTextColor(R.id.city,Color.WHITE);
+                views.setTextColor(R.id.date,Color.WHITE);
+                views.setTextColor(R.id.chinese_calendar,Color.WHITE);
+                break;
+            case "黑色":
+                for (int i = 0; i < 4; i++){
+                    views.setTextColor(views_id[i],Color.BLACK);
+                }
+                views.setTextColor(R.id.city,Color.BLACK);
+                views.setTextColor(R.id.date,Color.BLACK);
+                views.setTextColor(R.id.chinese_calendar,Color.BLACK);
+                break;
+        }
+
+
 
 
         views.setTextViewText(R.id.city,city);
@@ -249,25 +183,19 @@ public class NewAppWidget extends AppWidgetProvider {
 
         switch (sharedPreferences.getString("widget_color","透明")){
             case "蓝色":
-                views.setInt(R.id.relative_layout,"setBackgroundResource",R.drawable.widget_background);
-                views.setTextColor(R.id.city, Color.WHITE);
-                views.setTextColor(R.id.date,Color.WHITE);
-                views.setTextColor(R.id.chinese_calendar,Color.WHITE);
-                views.setTextColor(R.id.temp,Color.WHITE);
-                views.setTextColor(R.id.aqi,Color.WHITE);
-                views.setTextColor(R.id.weather_txt,Color.WHITE);
-                views.setTextColor(R.id.update_time,Color.WHITE);
-
+                if (sharedPreferences.getBoolean("show_frame",false)){
+                    views.setInt(R.id.relative_layout, "setBackgroundResource",R.drawable.blue_background_frame);
+                } else {
+                    views.setInt(R.id.relative_layout, "setBackgroundResource",R.drawable.widget_background);
+                }
                 break;
             case "透明":
-                views.setInt(R.id.relative_layout,"setBackgroundResource",R.drawable.touming_background);
-                views.setTextColor(R.id.city, Color.WHITE);
-                views.setTextColor(R.id.date,Color.WHITE);
-                views.setTextColor(R.id.chinese_calendar,Color.WHITE);
-                views.setTextColor(R.id.temp,Color.WHITE);
-                views.setTextColor(R.id.aqi,Color.WHITE);
-                views.setTextColor(R.id.weather_txt,Color.WHITE);
-                views.setTextColor(R.id.update_time,Color.WHITE);
+                if (sharedPreferences.getBoolean("show_frame",false)){
+                    views.setInt(R.id.relative_layout,"setBackgroundResource",R.drawable.touming_frame);
+                } else {
+                    views.setInt(R.id.relative_layout,"setBackgroundColor",Color.TRANSPARENT);
+                }
+
                 break;
         }
 
@@ -275,22 +203,65 @@ public class NewAppWidget extends AppWidgetProvider {
     }
 
 
-    public void updateWidget(int i){
+
+
+    public void updateFromLocal(){
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context,NewAppWidget.class));
-        if (appWidgetIds.length != 0){
-            if (i == 0){
-                for (int in = 0; in < appWidgetIds.length; in++){
-                    updateFromLocal(context, appWidgetManager, appWidgetIds[in]);
-                }
-            } else if (i == 1){
-                for (int in = 0; in < appWidgetIds.length; in++){
-                    updateAppWidget(context,appWidgetManager,appWidgetIds[in]);
+        if (city_id == null){
+            initCity();
+        }
+        if (city_id != null){
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context,NewAppWidget.class));
+            if (appWidgetIds.length != 0){
+                JSONObject jsonObject = FileHandle.getJSONObject(city_id);
+                for (int i : appWidgetIds){
+                    setWidgetViews(appWidgetManager,i,jsonObject);
                 }
             }
+        }
 
+    }
+
+    public void updateFromInternet(){
+        final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        if (city_id == null){
+            initCity();
+        }
+        if (city_id != null){
+            final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context,NewAppWidget.class));
+            if (appWidgetIds.length != 0 || sharedPreferences.getBoolean("show_notification",false)){
+                if (MyApplication.isConnected()){
+                    String url = "http://aider.meizu.com/app/weather/listWeather?cityIds=" + city_id;
+                    HttpUtil.makeHttpRequest(url, new CallBackListener() {
+                        @Override
+                        public void onFinish(JSONObject jsonObject) {
+                            if (USER_UPDATE_FLAG == 1) {
+                                Toast.makeText(context, "更新成功...", Toast.LENGTH_SHORT).show();
+                                USER_UPDATE_FLAG = 0;
+                            }
+                            for (int i : appWidgetIds){
+                                setWidgetViews(appWidgetManager, i, jsonObject);
+                            }
+                            if (sharedPreferences.getBoolean("show_notification",false)){
+                                WeatherNotification.sendNotification(jsonObject,city);
+                            }
+                            FileHandle.saveJSONObject(jsonObject, city_id);
+                        }
+
+                        @Override
+                        public void onError(String e) {
+                            if (USER_UPDATE_FLAG == 1) {
+                                Toast.makeText(context, "网络超时...", Toast.LENGTH_SHORT).show();
+                                USER_UPDATE_FLAG = 0;
+                            }
+                        }
+                    });
+                }
+            }
         }
     }
+
+
 
     public  void initCity() {
         packageManager = context.getPackageManager();

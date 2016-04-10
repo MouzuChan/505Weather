@@ -1,4 +1,4 @@
-package com.example.l.myweather;
+package com.example.l.myweather.customView;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.View;
+
+import com.example.l.myweather.MyApplication;
 
 /**
  * Created by L on 2016-03-15.
@@ -26,7 +28,7 @@ public class SunRiseAndSet extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         int width = getWidth();
-        int height = width -MyApplication.dp2px(100);
+        int height = width - MyApplication.dp2px(100);
 
         int left = MyApplication.dp2px(50);
         RectF rectF = new RectF(left,20,width - left,height+20);

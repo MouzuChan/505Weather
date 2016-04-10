@@ -18,7 +18,7 @@ public class JSONHandle {
     private String[] forecast_day_strings;
     private int[] forecast_high_temp;
     private int[] forecast_low_temp;
-    private String[] picUrl = new String[2];
+    private String picUrl;
     private JSONObject jsonObject;
     private String[] aqi_Strings;
     private String[] widget_strings;
@@ -44,7 +44,7 @@ public class JSONHandle {
         widget2x1_strings = new String[4];
     }
 
-    public void jsonHandle() {
+    public void jsonHandle(int hour) {
         try {
             JSONObject observe = jsonObject.getJSONObject("observe");
             now_layout_strings[2] = observe.getString("temp") + "°";
@@ -75,8 +75,15 @@ public class JSONHandle {
                     forecast_high_temp[i] = object.getInt("high");
                     forecast_low_temp[i] = object.getInt("low");
                     if (i == 1) {
-                        picUrl[0] = day_object.getString("bgPic");
-                        picUrl[1] = night_object.getString("bgPic");
+                        if (hour > 18 || hour < 7){
+                            if (night_object.has("bgPic")){
+                                picUrl = night_object.getString("bgPic");
+                            }
+                        } else {
+                            if (day_object.has("bgPic")){
+                                picUrl = day_object.getString("bgPic");
+                            }
+                        }
                         now_layout_strings[5] = object.getString("sunrise");
                         now_layout_strings[6] = object.getString("sunset");
                     }
@@ -130,7 +137,7 @@ public class JSONHandle {
         return forecast_low_temp;
     }
 
-    public String[] getPicUrl() {
+    public String getPicUrl() {
         return picUrl;
     }
 
@@ -178,7 +185,13 @@ public class JSONHandle {
         try {
             JSONArray forecast = jsonObject.getJSONArray("forecast");
             JSONObject observe = jsonObject.getJSONObject("observe");
-            JSONObject evn = jsonObject.getJSONObject("evn");
+            if (jsonObject.has("evn")){
+                JSONObject evn = jsonObject.getJSONObject("evn");
+                if (evn.has("aqi") && evn.has("quality")){
+                    widget_strings[1] = "空气指数：" + evn.getString("aqi") + evn.getString("quality");
+                }
+            }
+
             JSONObject today = forecast.getJSONObject(1);
             if (hour > 18 || hour < 7) {
                 widget_strings[0] = today.getJSONObject("night").getString("wthr");
@@ -186,7 +199,7 @@ public class JSONHandle {
                 widget_strings[0] = today.getJSONObject("day").getString("wthr");
             }
             widget_strings[12] = observe.getString("temp") + "°";
-            widget_strings[1] = "空气指数：" + evn.getString("aqi") + evn.getString("quality");
+
             widget_strings[13] = jsonObject.getJSONObject("meta").getString("up_time") + "发布";
             for (int i = 1; i < 6; i++) {
                 JSONObject object = forecast.getJSONObject(i);
@@ -204,7 +217,16 @@ public class JSONHandle {
         try {
             JSONArray forecast = jsonObject.getJSONArray("forecast");
             JSONObject observe = jsonObject.getJSONObject("observe");
-            JSONObject evn = jsonObject.getJSONObject("evn");
+            if (jsonObject.has("evn")){
+                JSONObject evn = jsonObject.getJSONObject("evn");
+                if (evn.has("aqi") && evn.has("quality")){
+                    widget2x1_strings[2] = evn.getString("aqi") + " " + evn.getString("quality");
+                } else {
+                    widget2x1_strings[2] = "空气指数：--";
+                }
+            }else {
+                widget2x1_strings[2] = "空气指数：--";
+            }
             JSONObject today = forecast.getJSONObject(1);
             if (hour > 18 || hour < 7) {
                 widget2x1_strings[1] = today.getJSONObject("night").getString("wthr");
@@ -212,7 +234,7 @@ public class JSONHandle {
                 widget2x1_strings[1] = today.getJSONObject("day").getString("wthr");
             }
             widget2x1_strings[0] = observe.getString("temp") + "°";
-            widget2x1_strings[2] = evn.getString("aqi") + evn.getString("quality");
+
             widget2x1_strings[3] = jsonObject.getJSONObject("meta").getString("up_time") + "发布";
         } catch (Exception e) {
             e.printStackTrace();

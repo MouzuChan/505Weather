@@ -12,9 +12,7 @@ package com.example.l.myweather;
 
         import android.graphics.Color;
         import android.preference.PreferenceManager;
-        import android.util.Log;
         import android.widget.RemoteViews;
-        import android.widget.Toast;
 
         import org.json.JSONObject;
 
@@ -29,7 +27,7 @@ public class WeatherNotification {
     private static Context mContext = MyApplication.getContext();
     private static NotificationManager notificationManager = (NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE);
     private static String city;
-    private static String weatherCode = "{\"晴\":\"100\",\"多云\":\"101\",\"阴\":\"104\",\"阵雨\":\"300\",\"雷阵雨\":\"302\",\"雷阵雨伴有冰雹\":\"304\",\"雨夹雪\":\"404\",\"小雨\":\"305\",\"中雨\":\"306\",\"大雨\":\"307\",\"暴雨\":\"310\",\"大暴雨\":\"311\",\"特大暴雨\":\"312\",\"阵雪\":\"407\",\"小雪\":\"400\",\"中雪\":\"401\",\"大雪\":\"402\",\"暴雪\":\"403\",\"雾\":\"501\",\"冻雨\":\"313\",\"沙尘暴\":\"507\",\"浮尘\":\"504\",\"扬沙\":\"503\",\"霾\":\"502\",\"强沙尘暴\":\"508\"}";
+    private static String weatherCode = "{\"晴\":\"100\",\"多云\":\"101\",\"阴\":\"104\",\"阵雨\":\"300\",\"雷阵雨\":\"302\",\"雷阵雨伴有冰雹\":\"304\",\"雨夹雪\":\"404\",\"小雨\":\"305\",\"小到中雨\":\"305\",\"中雨\":\"306\",\"中到大雨\":\"306\",\"大雨\":\"307\",\"大到暴雨\":\"307\",\"暴雨\":\"310\",\"大暴雨\":\"311\",\"特大暴雨\":\"312\",\"阵雪\":\"407\",\"小雪\":\"400\",\"中雪\":\"401\",\"大雪\":\"402\",\"暴雪\":\"403\",\"雾\":\"501\",\"冻雨\":\"313\",\"沙尘暴\":\"507\",\"浮尘\":\"504\",\"扬沙\":\"503\",\"霾\":\"502\",\"强沙尘暴\":\"508\"}";
 
     private static JSONObject weatherObject;
 
@@ -42,25 +40,53 @@ public class WeatherNotification {
             if (cityName != null){
                 city = cityName;
             }
-            RemoteViews views = new RemoteViews(mContext.getPackageName(),R.layout.notiy_layout);
-            JSONHandle jsonHandle= new JSONHandle(jsonObject);
-            int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+            RemoteViews views = new RemoteViews(mContext.getPackageName(),R.layout.notify_layout);
+            HandleJSON jsonHandle= new HandleJSON(jsonObject);
             int[] views_id = new int[3];
             views_id[0] = R.id.temp;
             views_id[1] = R.id.weather;
             views_id[2] = R.id.aqi;
-            String[] notiy_strings = jsonHandle.getWidget2x1_strings(hour);
+            String[] notify_strings = jsonHandle.getWidget2x1_strings();
             for (int i = 0; i < 3; i++){
-                if (notiy_strings[i] != null && !notiy_strings[i].isEmpty()){
+                if (notify_strings[i] != null && !notify_strings[i].isEmpty()){
                     if (i == 2){
-                        views.setTextViewText(views_id[i],"空气指数：" + notiy_strings[i]);
+                        views.setTextViewText(views_id[i],"空气指数：" + notify_strings[i]);
                     } else {
-                        views.setTextViewText(views_id[i],notiy_strings[i]);
+                        views.setTextViewText(views_id[i],notify_strings[i]);
                     }
 
                 }
             }
-            views.setTextViewText(R.id.city, city + "  " + notiy_strings[3]);
+            views.setTextViewText(R.id.city, city + "  " + notify_strings[3]);
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+            String notify_string = sharedPreferences.getString("notify_background","系统默认底色");
+            String notify_text_color = sharedPreferences.getString("notify_text_color","黑色");
+            switch (notify_string){
+                case "白色":
+                    views.setInt(R.id.notify_layout, "setBackgroundColor", Color.WHITE);
+                    break;
+                case "黑色":
+                    views.setInt(R.id.notify_layout, "setBackgroundColor", Color.BLACK);
+                    break;
+                case "系统默认底色":
+                    views.setInt(R.id.notify_layout,"setBackgroundColor",Color.TRANSPARENT);
+                    break;
+            }
+            switch (notify_text_color){
+                case "白色":
+                    for (int i = 0; i < 3; i++){
+                        views.setTextColor(views_id[i],Color.WHITE);
+                    }
+                    views.setTextColor(R.id.city, Color.WHITE);
+                    break;
+                case "黑色":
+                    for (int i = 0; i < 3; i++){
+                        views.setTextColor(views_id[i],Color.BLACK);
+                    }
+                    views.setTextColor(R.id.city,Color.BLACK);
+                    break;
+            }
+
             Intent intent = new Intent(mContext,MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(mContext,0,intent,0);
             builder.setContentIntent(pendingIntent);
@@ -76,7 +102,7 @@ public class WeatherNotification {
                 }
             }
             try {
-                String code = weatherObject.getString(notiy_strings[1]);
+                String code = weatherObject.getString(notify_strings[1]);
                 String url = "http://files.heweather.com/cond_icon/" + code + ".png";
                 String fileName = url.replace("/","").replace(".","").replace(":", "");
                 Bitmap bitmap = FileHandle.getImage(fileName);
@@ -98,11 +124,11 @@ public class WeatherNotification {
         HttpUtil.makeImageRequest(url, new ImageCallBack() {
             @Override
             public void onFinish(Bitmap bitmap) {
-                views.setImageViewBitmap(R.id.weather_image,bitmap);
+                views.setImageViewBitmap(R.id.weather_image, bitmap);
                 builder.setContent(views);
                 Notification notification = builder.build();
                 notification.flags = Notification.FLAG_NO_CLEAR;
-                notificationManager.notify(1,notification);
+                notificationManager.notify(1, notification);
             }
 
             @Override
@@ -128,4 +154,6 @@ public class WeatherNotification {
     public static void cancelNotification(){
         notificationManager.cancelAll();
     }
+
+
 }

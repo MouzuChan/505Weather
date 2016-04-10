@@ -55,10 +55,8 @@ public class LocationCityId {
 
 
                     } else {
-                        Toast.makeText(MyApplication.getContext(), "定位失败", Toast.LENGTH_SHORT).show();
+                        locationCallBack.onError();
                     }
-
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

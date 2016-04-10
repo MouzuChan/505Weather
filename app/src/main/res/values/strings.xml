@@ -17,4 +17,7 @@
     <string name="title_activity_hour_table">HourTable</string>
     <string name="title_activity_add_city">AddCityActivity</string>
 
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
 </resources>

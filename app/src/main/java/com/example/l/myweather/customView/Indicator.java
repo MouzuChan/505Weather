@@ -1,4 +1,4 @@
-package com.example.l.myweather;
+package com.example.l.myweather.customView;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.example.l.myweather.MyApplication;
 
 /**
  * Created by L on 2016-02-05.
@@ -35,9 +37,11 @@ public class Indicator extends View {
         }
         for (int i = 0; i < circleCount; i++){
             if (i == pageSelected){
-                canvas.drawCircle(firstCircle + (30 * i),y,6,mPaint);
+                mPaint.setAlpha(255);
+                canvas.drawCircle(firstCircle + (30 * i),y, MyApplication.dp2px(3),mPaint);
             } else {
-                canvas.drawCircle(firstCircle + (30 * i),y,3,mPaint);
+                mPaint.setAlpha(100);
+                canvas.drawCircle(firstCircle + (30 * i),y,MyApplication.dp2px(3),mPaint);
             }
 
         }

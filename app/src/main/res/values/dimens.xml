@@ -12,4 +12,8 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
 
     <dimen name="clock_size">60sp</dimen>
 
+    <dimen name="temp_size">65sp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+
 </resources>

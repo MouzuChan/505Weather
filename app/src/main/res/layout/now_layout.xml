@@ -18,7 +18,7 @@
 
 
     <TextView
-        android:paddingTop="40dp"
+        android:paddingTop="30dp"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:id="@+id/now_weather"
@@ -34,10 +34,10 @@
         android:id="@+id/now_temp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="70sp"/>
+        android:textSize="@dimen/temp_size"/>
     <TextView
         android:layout_gravity="center_horizontal"
-        android:paddingTop="10dp"
+        android:paddingTop="5dp"
         android:textColor="@color/white"
         android:id="@+id/now_wind"
         android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
 
 
     <TextView
-        android:paddingTop="10dp"
+        android:paddingTop="5dp"
         android:textColor="@color/white"
         android:id="@+id/now_aqi"
         android:layout_gravity="center_horizontal"
@@ -55,29 +55,36 @@
 
     <LinearLayout
         android:id="@+id/alarm_layout"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:background="@drawable/alarm_background"
         android:layout_marginTop="10dp"
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+
+        android:layout_height="30dp">
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/alarm_icon"
+            android:adjustViewBounds="true"
+            android:maxHeight="18dp"
             android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+
+            />
 
         <TextView
             android:text=" "
+            android:paddingLeft="5dp"
             android:textColor="@color/white"
             android:id="@+id/alarm_name"
             android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
-
 
 </LinearLayout>

@@ -25,4 +25,18 @@
         <item>透明</item>
     </string-array>
 
+    <string-array name="notify_strings">
+        <item>系统默认底色</item>
+        <item>白色</item>
+        <item>黑色</item>
+
+    </string-array>
+
+    <string-array name="notify_text_color">
+        <item>黑色</item>
+        <item>白色</item>
+
+
+    </string-array>
+
 </resources>

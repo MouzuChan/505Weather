@@ -44,16 +44,12 @@ class ListAdapter extends BaseAdapter {
         //final ViewHolder holder;
         ViewHolder viewHolder = new ViewHolder();
         if (convertView == null) {
-            convertView = LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.item_list,null);
+            convertView = LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.simple_item_list,null);
             viewHolder.itemText = (TextView)convertView.findViewById(R.id.item_text);
-            viewHolder.itemButton = (Button)convertView.findViewById(R.id.item_button);
-            viewHolder.changeButton = (Button)convertView.findViewById(R.id.change_button);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.itemButton.setVisibility(View.GONE);
-        viewHolder.changeButton.setVisibility(View.GONE);
         viewHolder.itemText.setText(city_list.get(position));
         viewHolder.itemText.setTextColor(Color.BLACK);
 
@@ -63,7 +59,5 @@ class ListAdapter extends BaseAdapter {
 
     class ViewHolder {
         public TextView itemText;
-        public Button itemButton;
-        public Button changeButton;
     }
 }

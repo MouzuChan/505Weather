@@ -1,30 +1,20 @@
 package com.example.l.myweather;
 
-import android.app.ProgressDialog;
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.l.myweather.R;
+import android.widget.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -59,6 +49,7 @@ public class AddCityActivity extends AppCompatActivity implements View.OnClickLi
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         setContentView(R.layout.activity_add_city);
         initView();
+        initLocation();
 
     }
 
@@ -72,7 +63,7 @@ public class AddCityActivity extends AppCompatActivity implements View.OnClickLi
         id_list = new ArrayList<String>();
         adapter = new ListAdapter(list);
         cityListView.setAdapter(adapter);
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar = (Toolbar)findViewById(R.id.add_toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -252,13 +243,32 @@ public class AddCityActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        initLocation();
-    }
+
 
     public void initLocation(){
+
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},0);
+        } else{
+            location();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case 0:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    location();
+                } else {
+                    location_city_view.setText("没有定位权限，点击授权");
+                }
+                break;
+        }
+    }
+
+    public void location(){
         final MyLocation myLocation = new MyLocation();
         myLocation.getUserLocation();
 
@@ -274,7 +284,6 @@ public class AddCityActivity extends AppCompatActivity implements View.OnClickLi
                             location_city_view.setText("定位失败，点击重新定位");
                         }
                     });
-
                 }else {
                     LocationCityId locationCityId = new LocationCityId();
                     locationCityId.getLocationCityId(city, district, new LocationCallBack() {
@@ -282,18 +291,11 @@ public class AddCityActivity extends AppCompatActivity implements View.OnClickLi
                         public void onFinish(String return_id,String city_name) {
 
                             if (return_id != null){
-                                //Toast.makeText(context, "定位成功:" + city_name,Toast.LENGTH_SHORT).show();
-                                //Intent intent = new Intent("com.lha.weather.ADD_CITY");
-                                //intent.putExtra("city_name",city_name);
-                                //intent.putExtra("city_id",return_id);
-                                //sendBroadcast(intent);
-                                //finish();
                                 location_city = city_name;
                                 location_city_id = return_id;
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-
                                         location_city_view.setText("当前位置：" + city + "-" + district);
                                         locationButton.setVisibility(View.VISIBLE);
                                     }
@@ -301,12 +303,16 @@ public class AddCityActivity extends AppCompatActivity implements View.OnClickLi
 
                             }
                         }
+
+                        @Override
+                        public void onError() {
+
+                        }
                     });
                 }
             }
         };
         Timer timer = new Timer();
         timer.schedule(timerTask,2000);
-
     }
 }

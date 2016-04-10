@@ -49,6 +49,9 @@ public class UpdateService extends Service {
         updateSwitch = sharedPreferences.getBoolean("update_switch", false);
         showNotification = sharedPreferences.getBoolean("show_notification", false);
         initTimerTask();
+        if (showNotification){
+            WeatherNotification.sendNotification(null,null);
+        }
     }
 
     @Override
@@ -73,6 +76,9 @@ public class UpdateService extends Service {
                         break;
                     case "ChangeUpdateRate":
                         initTimerTask();
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -119,7 +125,7 @@ public class UpdateService extends Service {
                 appWidgetIds = appWidgetManager.getAppWidgetIds(componentName);
                 newWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context,NewAppWidget.class));
                 if (appWidgetIds.length > 0 || newWidgetIds.length > 0 || (updateSwitch && showNotification)){
-                    Intent intent1 = new Intent("com.lha.weather.UPDATE");
+                    Intent intent1 = new Intent("com.lha.weather.UPDATE_FROM_INTERNET");
                     sendBroadcast(intent1);
                 } else {
                     if (autoUpdateTimer != null){

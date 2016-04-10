@@ -5,5 +5,5 @@ package com.example.l.myweather;
  */
 public interface LocationCallBack {
     void onFinish(String return_id,String city_name);
-
+    void onError();
 }

@@ -45,6 +45,9 @@ public class SettingsActivity extends PreferenceActivity {
         private ListPreference listPreference;
         private ListPreference widgetColorList;
         private SharedPreferences sharedPreferences;
+        private ListPreference notify_background;
+        private ListPreference notify_text_color;
+        private ListPreference widget_text_color;
         private Context context = MyApplication.getContext();
 
         @Override
@@ -53,14 +56,26 @@ public class SettingsActivity extends PreferenceActivity {
             addPreferencesFromResource(R.xml.preference);
             listPreference = (ListPreference)findPreference("update_rate");
             widgetColorList = (ListPreference) findPreference("widget_color");
+            notify_background = (ListPreference) findPreference("notify_background");
+            notify_text_color = (ListPreference) findPreference("notify_text_color");
+            widget_text_color = (ListPreference) findPreference("widget_text_color");
             sharedPreferences = getPreferenceScreen().getSharedPreferences();
-            listPreference.setSummary(sharedPreferences.getString("update_rate", ""));
-            widgetColorList.setSummary(sharedPreferences.getString("widget_color",""));
+            listPreference.setSummary(sharedPreferences.getString("update_rate", "1个小时"));
+            widgetColorList.setSummary(sharedPreferences.getString("widget_color","透明"));
+            notify_background.setSummary(sharedPreferences.getString("notify_background","系统默认底色"));
+            notify_text_color.setSummary(sharedPreferences.getString("notify_text_color","黑色"));
+            widget_text_color.setSummary(sharedPreferences.getString("widget_text_color","白色"));
             if (sharedPreferences.getBoolean("update_switch",false)){
                 listPreference.setEnabled(true);
             } else {
                 listPreference.setEnabled(false);
-
+            }
+            if (sharedPreferences.getBoolean("show_notification",false)){
+                notify_background.setEnabled(true);
+                notify_text_color.setEnabled(true);
+            } else {
+                notify_background.setEnabled(false);
+                notify_text_color.setEnabled(false);
             }
             sharedPreferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
 
@@ -104,9 +119,32 @@ public class SettingsActivity extends PreferenceActivity {
                         b = sharedPreferences.getBoolean("show_notification",false);
                         if (b){
                             WeatherNotification.sendNotification(null,null);
+                            notify_background.setEnabled(true);
+                            notify_text_color.setEnabled(true);
                         } else {
+                            notify_background.setEnabled(false);
+                            notify_text_color.setEnabled(false);
                             WeatherNotification.cancelNotification();
                         }
+                        break;
+                    case "notify_background":
+                        String notify_background_strings = sharedPreferences.getString("notify_background","系统默认底色");
+                        notify_background.setSummary(notify_background_strings);
+                        WeatherNotification.sendNotification(null,null);
+                        break;
+                    case "notify_text_color":
+                        String text_color = sharedPreferences.getString("notify_text_color","黑色");
+                        notify_text_color.setSummary(text_color);
+                        WeatherNotification.sendNotification(null,null);
+                        break;
+                    case "widget_text_color":
+                        String color = sharedPreferences.getString("widget_text_color","白色");
+                        widget_text_color.setSummary(color);
+                        context.sendBroadcast(new Intent("com.lha.weather.UPDATE_FROM_LOCAL"));
+                        break;
+                    case "show_frame":
+                        Intent intent3 = new Intent("com.lha.weather.UPDATE_FROM_LOCAL");
+                        context.sendBroadcast(intent3);
                         break;
                 }
 

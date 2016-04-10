@@ -15,12 +15,16 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 //import android.util.Log;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
+import android.widget.TextView;
 import android.widget.Toast;
 import org.json.JSONObject;
 
@@ -31,9 +35,7 @@ import java.util.List;
  * Created by L on 2015-12-30.
  */
 public class Widget4x2 extends AppWidgetProvider{
-
     private static Context context = MyApplication.getContext();
-    private static int USER_UPDATE_FLAG = 0;
     public AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
     private PackageManager packageManager = context.getPackageManager();
     private String city_id,city;
@@ -42,7 +44,7 @@ public class Widget4x2 extends AppWidgetProvider{
     private int[] view_id = new int[12];
     private String[] widget_strings;
 
-    private String weatherCode = "{\"晴\":\"100\",\"多云\":\"101\",\"阴\":\"104\",\"阵雨\":\"300\",\"雷阵雨\":\"302\",\"雷阵雨伴有冰雹\":\"304\",\"雨夹雪\":\"404\",\"小雨\":\"305\",\"中雨\":\"306\",\"大雨\":\"307\",\"暴雨\":\"310\",\"大暴雨\":\"311\",\"特大暴雨\":\"312\",\"阵雪\":\"407\",\"小雪\":\"400\",\"中雪\":\"401\",\"大雪\":\"402\",\"暴雪\":\"403\",\"雾\":\"501\",\"冻雨\":\"313\",\"沙尘暴\":\"507\",\"浮尘\":\"504\",\"扬沙\":\"503\",\"霾\":\"502\",\"强沙尘暴\":\"508\"}";
+    private String weatherCode = "{\"晴\":\"100\",\"多云\":\"101\",\"阴\":\"104\",\"阵雨\":\"300\",\"雷阵雨\":\"302\",\"雷阵雨伴有冰雹\":\"304\",\"雨夹雪\":\"404\",\"小雨\":\"305\",\"小到中雨\":\"305\",\"中雨\":\"306\",\"中到大雨\":\"306\",\"大雨\":\"307\",\"大到暴雨\":\"307\",\"暴雨\":\"310\",\"大暴雨\":\"311\",\"特大暴雨\":\"312\",\"阵雪\":\"407\",\"小雪\":\"400\",\"中雪\":\"401\",\"大雪\":\"402\",\"暴雪\":\"403\",\"雾\":\"501\",\"冻雨\":\"313\",\"沙尘暴\":\"507\",\"浮尘\":\"504\",\"扬沙\":\"503\",\"霾\":\"502\",\"强沙尘暴\":\"508\"}";
 
     private JSONObject weatherObject;
 
@@ -54,7 +56,6 @@ public class Widget4x2 extends AppWidgetProvider{
         } else {
             updateWidgetFromLocal();
         }
-        //alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), 10 * 1000, pendingIntent);
 }
 
     @Override
@@ -62,9 +63,14 @@ public class Widget4x2 extends AppWidgetProvider{
         super.onReceive(context, intent);
         String action = intent.getAction();
         switch (action){
-            case "com.lha.weather.USER_UPDATE4x2":
-                USER_UPDATE_FLAG = 1;
-                updateWidgetFromInternet();
+            case "com.lha.weather.USER_UPDATE":
+                if (MyApplication.isConnected()){
+                    updateWidgetFromInternet();
+                    Toast.makeText(context,"更新中..",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context,"网络错误..",Toast.LENGTH_SHORT).show();
+                }
+
                 break;
             case "com.lha.weather.UPDATE_FROM_LOCAL":
                 updateWidgetFromLocal();
@@ -92,7 +98,21 @@ public class Widget4x2 extends AppWidgetProvider{
         context.startService(intent);
     }
 
-    public  void updateWidget(int appWidgetId){
+
+    @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
+        int i = newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT);
+        updateWidget(appWidgetId, i);
+
+    }
+
+    @Override
+    public void onRestored(Context context, int[] oldWidgetIds, int[] newWidgetIds) {
+        super.onRestored(context, oldWidgetIds, newWidgetIds);
+    }
+
+    public  void updateWidget(int appWidgetId,int i){
         if (city_id == null){
             initCity();
         }
@@ -101,7 +121,7 @@ public class Widget4x2 extends AppWidgetProvider{
                 jsonObject = FileHandle.getJSONObject(city_id);
             }
             if (jsonObject != null) {
-                setWidgetViews(appWidgetId,jsonObject);
+                setWidgetViews(appWidgetId,jsonObject,i);
             }
         } else {
             initWidgetView(appWidgetId);
@@ -128,8 +148,21 @@ public class Widget4x2 extends AppWidgetProvider{
     }
 
 
-    public  void setWidgetViews(int appWidgetId,JSONObject jsonObject){
+    public  void setWidgetViews(int appWidgetId,JSONObject jsonObject,int a){
         RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget4x2_layout);
+
+        if (a == 0){
+            a = appWidgetManager.getAppWidgetOptions(appWidgetId).getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT);
+        }
+        if (a <= 100){
+            views.setViewVisibility(R.id.forecast_layout,View.GONE);
+            views.setViewVisibility(R.id.line, View.GONE);
+            views.setTextViewTextSize(R.id.widget_time, TypedValue.COMPLEX_UNIT_SP, 35);
+        } else{
+            views.setViewVisibility(R.id.forecast_layout,View.VISIBLE);
+            views.setViewVisibility(R.id.line,View.VISIBLE);
+            views.setTextViewTextSize(R.id.widget_time, TypedValue.COMPLEX_UNIT_SP, 50);
+        }
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
@@ -146,10 +179,62 @@ public class Widget4x2 extends AppWidgetProvider{
         view_id[10] = R.id.four_day_temp;
         view_id[11] = R.id.fifth_day_temp;
 
+        SharedPreferences defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        switch (defaultPreferences.getString("widget_color","透明")){
+            case "蓝色":
+                if (defaultPreferences.getBoolean("show_frame",false)){
+                    views.setInt(R.id.widget_layout, "setBackgroundResource",R.drawable.blue_background_frame);
+                } else {
+                    views.setInt(R.id.widget_layout, "setBackgroundResource",R.drawable.widget_background);
+                }
+                break;
+            case "透明":
+                if (defaultPreferences.getBoolean("show_frame",false)){
+                    views.setInt(R.id.widget_layout,"setBackgroundResource",R.drawable.touming_frame);
+                } else {
+                    views.setInt(R.id.widget_layout,"setBackgroundColor",Color.TRANSPARENT);
+                }
 
+                break;
+        }
+        switch (defaultPreferences.getString("widget_text_color","白色")){
+            case "白色":
+                for (int i = 0; i < 12; i++){
+                    views.setTextColor(view_id[i],Color.WHITE);
+                }
+                views.setTextColor(R.id.city,Color.WHITE);
+                views.setTextColor(R.id.update_time,Color.WHITE);
+                views.setTextColor(R.id.widget_time,Color.WHITE);
+                views.setTextColor(R.id.date,Color.WHITE);
+                views.setTextColor(R.id.first_day,Color.WHITE);
+                views.setTextColor(R.id.second_day,Color.WHITE);
+                views.setTextColor(R.id.third_day,Color.WHITE);
+                views.setTextColor(R.id.four_day,Color.WHITE);
+                views.setTextColor(R.id.fifth_day,Color.WHITE);
+                views.setInt(R.id.weather_image, "setColorFilter", Color.WHITE);
+                views.setInt(R.id.line, "setBackgroundColor", Color.parseColor("#32ffffff"));
+                break;
+            case "黑色":
+                for (int i = 0; i < 12; i++){
+                    views.setTextColor(view_id[i],Color.BLACK);
+                }
+                views.setTextColor(R.id.city,Color.BLACK);
+                views.setTextColor(R.id.update_time,Color.BLACK);
+                views.setTextColor(R.id.widget_time,Color.BLACK);
+                views.setTextColor(R.id.date,Color.BLACK);
+                views.setTextColor(R.id.first_day,Color.BLACK);
+                views.setTextColor(R.id.second_day,Color.BLACK);
+                views.setTextColor(R.id.third_day,Color.BLACK);
+                views.setTextColor(R.id.four_day,Color.BLACK);
+                views.setTextColor(R.id.fifth_day,Color.BLACK);
+                views.setInt(R.id.line,"setBackgroundColor",Color.BLACK);
+                views.setInt(R.id.weather_image, "setColorFilter", Color.BLACK);
 
-        JSONHandle jsonHandle = new JSONHandle(jsonObject);
-        widget_strings = jsonHandle.getWidget_strings(hour);
+                break;
+        }
+
+        HandleJSON jsonHandle = new HandleJSON(jsonObject);
+        widget_strings = jsonHandle.getWidget_strings();
         for (int i = 0; i < 12; i++){
             if (widget_strings[i] != null && !widget_strings[i].isEmpty()){
                 if (i == 0){
@@ -159,9 +244,6 @@ public class Widget4x2 extends AppWidgetProvider{
                 }
             }
         }
-        views.setTextViewText(R.id.city,city);
-        views.setTextViewText(R.id.update_time,widget_strings[13]);
-
         String _week = "";
 
         int year = calendar.get(Calendar.YEAR);
@@ -208,8 +290,9 @@ public class Widget4x2 extends AppWidgetProvider{
         views.setTextViewText(R.id.second_day,"明天");
         CalendarUtil calendarUtil = new CalendarUtil();
         String chineseDay = calendarUtil.getChineseMonth(year,month,day) + calendarUtil.getChineseDay(year,month,day);
-        views.setTextViewText(R.id.date,month + "/" + day + " " + _week + " " + chineseDay);
-
+        views.setTextViewText(R.id.date,month + "月" + day + "日  " + _week);
+        views.setTextViewText(R.id.city,city);
+        views.setTextViewText(R.id.update_time,chineseDay);
         String h = hour + "";
         String m = minute + "";
         if (hour < 10){
@@ -219,22 +302,14 @@ public class Widget4x2 extends AppWidgetProvider{
             m = "0" + m;
         }
         views.setTextViewText(R.id.widget_time,h + ":" + m);
-        SharedPreferences defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        switch (defaultPreferences.getString("widget_color","透明")){
-            case "蓝色":
-                views.setInt(R.id.widget_layout, "setBackgroundResource", R.drawable.widget_background);
-                break;
-            case "透明":
-                views.setInt(R.id.widget_layout,"setBackgroundResource",R.drawable.touming_background);
-                break;
-        }
-        Intent updateIntent = new Intent("com.lha.weather.USER_UPDATE4x2");
+        Intent updateIntent = new Intent("com.lha.weather.USER_UPDATE");
         PendingIntent updatePi = PendingIntent.getBroadcast(context, 0, updateIntent, 0);
-        views.setOnClickPendingIntent(R.id.update_time, updatePi);
+        views.setOnClickPendingIntent(R.id.update_layout, updatePi);
 
         Intent activityIntent = new Intent(context,MainActivity.class);
         PendingIntent activityPi = PendingIntent.getActivity(context, 0, activityIntent, 0);
         views.setOnClickPendingIntent(R.id.weather_layout, activityPi);
+        views.setOnClickPendingIntent(R.id.forecast_layout,activityPi);
 
 
         Intent clockIntent;
@@ -269,7 +344,7 @@ public class Widget4x2 extends AppWidgetProvider{
             String url = "http://files.heweather.com/cond_icon/" + code + ".png";
             String fileName = url.replace("/","").replace(".","").replace(":", "");
             Bitmap bitmap = FileHandle.getImage(fileName);
-            views.setInt(R.id.weather_image, "setColorFilter", Color.WHITE);
+
             if (bitmap == null){
                 getImage(url, appWidgetId, views);
             }
@@ -287,11 +362,10 @@ public class Widget4x2 extends AppWidgetProvider{
 
 
     public  void updateWidgetFromLocal(){
-        Log.d("Widget4x2","-->  updateWidgetFromLocal");
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context,Widget4x2.class));
         if (appWidgetIds.length > 0){
             for (int i:appWidgetIds){
-                updateWidget(i);
+                updateWidget(i,0);
             }
         }
     }
@@ -302,45 +376,33 @@ public class Widget4x2 extends AppWidgetProvider{
                 initCity();
             }
             if (city_id != null){
-                String url = "http://zhwnlapi.etouch.cn/Ecalender/api/v2/weather?citykey=" + city_id;
-                HttpUtil.makeBaiduHttpRequest(url, new CallBackListener() {
-                    @Override
-                    public void onFinish(JSONObject jsonObject) {
-                        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context,Widget4x2.class));
-                        if (appWidgetIds.length != 0){
-                            for (int in = 0; in < appWidgetIds.length; in++){
-                                setWidgetViews(appWidgetIds[in],jsonObject);
+                String url = "http://aider.meizu.com/app/weather/listWeather?cityIds=" + city_id;
+                final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context,Widget4x2.class));
+                final boolean b = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("show_notification",false);
+                if (appWidgetIds.length != 0 || b){
+                    HttpUtil.makeBaiduHttpRequest(url, new CallBackListener() {
+                        @Override
+                        public void onFinish(JSONObject jsonObject) {
+
+                            for (int in : appWidgetIds){
+                                setWidgetViews(in,jsonObject,0);
                             }
+                            //context.sendBroadcast(new Intent("com.lha.weather.UPDATE_FROM_LOCAL"));
+                            if (b){
+                                WeatherNotification.sendNotification(jsonObject,city);
+                            }
+                            FileHandle.saveJSONObject(jsonObject, city_id);
                         }
-                        JSONHandle jsonHandle = new JSONHandle(jsonObject);
-                        if (jsonHandle.getStatus_code() == 1000){
-                            FileHandle.saveJSONObject(jsonObject,city_id);
-                        }
-                        if (USER_UPDATE_FLAG == 1){
-                            Toast.makeText(context,"更新成功^_^",Toast.LENGTH_SHORT).show();
-                            USER_UPDATE_FLAG = 0;
-                        }
-                        context.sendBroadcast(new Intent("com.lha.weather.UPDATE_FROM_LOCAL"));
-                    }
 
-                    @Override
-                    public void onError(String e) {
-                        if (USER_UPDATE_FLAG == 1){
-                            Toast.makeText(context,"网络超时⊙﹏⊙‖∣",Toast.LENGTH_SHORT).show();
-                            USER_UPDATE_FLAG = 0;
-                        }
-                    }
-                });
+                        @Override
+                        public void onError(String e) {
 
-            } else {
-                updateWidgetFromLocal();
+                        }
+                    });
+                }
             }
-
-        } else {
-            if (USER_UPDATE_FLAG == 1){
-                Toast.makeText(context,"没有网络@_@",Toast.LENGTH_SHORT).show();
-                USER_UPDATE_FLAG = 0;
-            }
+        }  else {
+            updateWidgetFromLocal();
         }
 
     }

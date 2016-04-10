@@ -1,4 +1,4 @@
-package com.example.l.myweather;
+package com.example.l.myweather.customView;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -9,6 +9,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+
+import com.example.l.myweather.MyApplication;
 
 /**
  * Created by L on 2016-03-08.
@@ -33,13 +35,13 @@ public class AqiArc extends View{
         super.onDraw(canvas);
 
         width = getWidth();
-        height = getHeight();
+        height = width - MyApplication.dp2px(100);
         mPaint.setAntiAlias(true);
         mPaint.setStrokeWidth(MyApplication.dp2px(10));
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setColor(Color.WHITE);
         mPaint.setAlpha(100);
-        RectF rectF = new RectF(100,20,width -100,height + 20);
+        RectF rectF = new RectF(MyApplication.dp2px(50),20,width -MyApplication.dp2px(50),height + 20);
         canvas.drawArc(rectF, 120, 300, false, mPaint);
         float i = (float)aqi / 500 * 300;
         int color = getColor();

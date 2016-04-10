@@ -1,11 +1,14 @@
-package com.example.l.myweather;
+package com.example.l.myweather.customView;
 
+import android.animation.TypeEvaluator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.View;
+
+import com.example.l.myweather.MyApplication;
 
 /**
  * Created by L on 2016-03-05.
@@ -42,27 +45,19 @@ public class ForecastTable extends View {
 
         mPaint.setAntiAlias(true);
         mPaint.setColor(Color.WHITE);
-        mPaint.setStrokeWidth(5);
+        mPaint.setStrokeWidth(MyApplication.dp2px(2));
         mPaint.setTextSize(MyApplication.sp2px(15));
         mPaint.setTextAlign(Paint.Align.CENTER);
-        for (int i = 1; i < maxXs.length; i++){
-            canvas.drawCircle(maxXs[i], maxYs[i], 10, mPaint);
-            canvas.drawCircle(minXs[i], minYs[i], 10, mPaint);
+        for (int i = 0; i < maxXs.length; i++){
+            canvas.drawCircle(maxXs[i], maxYs[i], MyApplication.dp2px(4), mPaint);
+            canvas.drawCircle(minXs[i], minYs[i], MyApplication.dp2px(4), mPaint);
             canvas.drawText(maxData[i] + "°", maxXs[i], maxYs[i] - MyApplication.dp2px(20), mPaint);
             canvas.drawText(minData[i] + "°", minXs[i], minYs[i] + MyApplication.dp2px(30), mPaint);
         }
-        for (int i = 2; i < maxXs.length; i++) {
+        for (int i = 1; i < maxXs.length; i++) {
             canvas.drawLine(maxXs[i - 1], maxYs[i - 1], maxXs[i], maxYs[i], mPaint);
             canvas.drawLine(minXs[i - 1], minYs[i - 1], minXs[i], minYs[i], mPaint);
         }
-
-        mPaint.setAlpha(150);
-        canvas.drawCircle(maxXs[0],maxYs[0],10,mPaint);
-        canvas.drawCircle(minXs[0], minYs[0], 10, mPaint);
-        canvas.drawText(maxData[0] + "°", maxXs[0], maxYs[0] - MyApplication.dp2px(20), mPaint);
-        canvas.drawText(minData[0] + "°", minXs[0], minYs[0] + MyApplication.dp2px(30), mPaint);
-        canvas.drawLine(maxXs[0], maxYs[0], maxXs[1], maxYs[1], mPaint);
-        canvas.drawLine(minXs[0], minYs[0], minXs[1], minYs[1], mPaint);
 
 
 
@@ -98,5 +93,8 @@ public class ForecastTable extends View {
     public void setHeight(int height){
         this.height = height;
     }
+
+
+
 
 }

@@ -11,16 +11,18 @@
         android:layout_height="1dp" />
 
     <TextView
+        android:text="七天天气预报"
         android:textColor="#8cffffff"
+        android:layout_width="match_parent"
         android:paddingTop="20dp"
         android:paddingBottom="10dp"
         android:gravity="center_horizontal"
-        android:text="白天天气"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <HorizontalScrollView
 
+
+    <HorizontalScrollView
+        android:scrollbars="none"
         android:fillViewport="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -35,10 +37,9 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="6"
+                android:weightSum="7"
                 >
                 <TextView
-                    android:textColor="#96ffffff"
                     android:id="@+id/week_1"
                     android:layout_weight="1"
                     android:layout_width="0dp"
@@ -86,6 +87,14 @@
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:id="@+id/week_7"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <LinearLayout
@@ -102,10 +111,9 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="6"
+                android:weightSum="7"
                 >
                 <TextView
-                    android:textColor="#96ffffff"
                     android:id="@+id/date_1"
                     android:layout_weight="1"
                     android:layout_width="0dp"
@@ -148,18 +156,19 @@
                     android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:id="@+id/date_7"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
         </LinearLayout>
 
     </HorizontalScrollView>
 
-    <TextView
-        android:paddingTop="10dp"
-        android:textColor="#8cffffff"
-        android:gravity="center_horizontal"
-        android:text="夜间天气"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
     <TextView
         android:layout_marginTop="20dp"

@@ -1,45 +1,33 @@
 package com.example.l.myweather;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
-import android.content.Context;
+
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.l.myweather.R;
+import android.widget.AdapterView;
 
 import java.util.ArrayList;
 
 public class CityManagerActivity extends AppCompatActivity {
 
-    private Context context = MyApplication.getContext();
-    private SQLiteDatabase db;
-    private ListView listView;
-    private ArrayList<String> city_list;
-    private MyAdapter adapter;
-    private ArrayList<String> cityId_list;
-    private int FLAG = 0;
-    public static int DELETE_FLAG = 0;
+    private DragListView listView;
+    private static com.example.l.myweather.MyAdapter adapter;
     private Toolbar toolbar;
+    private boolean isEditState = false;
+    private static CoordinatorLayout coordinatorLayout;
+
+    //private SharedPreferences sharedPreferences;
+    //public static String location_city;
+    //public static String location_city_id;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,18 +36,20 @@ public class CityManagerActivity extends AppCompatActivity {
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         setContentView(R.layout.activity_city_manager);
+
+        //initCityList();
         initView();
-        initCityList();
+        setListViewItemClick();
     }
 
     public void initView(){
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
-        CityDataBase cityDataBase = CityDataBase.getInstance();
-        db = cityDataBase.getWritableDatabase();
-        listView = (ListView)findViewById(R.id.city_list);
-        city_list = new ArrayList<String>();
-        cityId_list = new ArrayList<String>();
-        adapter = new MyAdapter();
+        toolbar = (Toolbar)findViewById(R.id.manager_toolbar);
+        setSupportActionBar(toolbar);
+        listView = (DragListView)findViewById(R.id.city_list);
+        //city_list = new ArrayList<String>();
+        //cityId_list = new ArrayList<String>();
+        adapter = new com.example.l.myweather.MyAdapter(listView);
+        adapter.setIsEditState(isEditState);
         listView.setAdapter(adapter);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,9 +57,17 @@ public class CityManagerActivity extends AppCompatActivity {
                 finish();
             }
         });
+        coordinatorLayout = (CoordinatorLayout)findViewById(R.id.container);
+
+        //sharedPreferences = getSharedPreferences("location_city", MODE_APPEND);
+        //location_city = sharedPreferences.getString("location_city","");
+        //location_city_id = sharedPreferences.getString("location_city_id","");
     }
-    public void initCityList(){
-        Cursor cursor = db.query("city", null, null, null, null, null, null);
+    /*public void initCityList(){
+        this.city_list = MainActivity.city_list;
+        this.cityId_list = MainActivity.cityId_list;
+        this.temp_list = MainActivity.tempList;
+        /*Cursor cursor = db.query("city", null, null, null, null, null, null);
         if (cursor.moveToFirst()){
             do {
                 city_list.add(cursor.getString(cursor.getColumnIndex("city")));
@@ -78,111 +76,70 @@ public class CityManagerActivity extends AppCompatActivity {
         }
         adapter.notifyDataSetChanged();
         cursor.close();
+
+    }*/
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_city_manager, menu);
+
+        return super.onCreateOptionsMenu(menu);
     }
 
-    public void deleteCity(int position){
-        if (position < city_list.size() + 1){
-            ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(listView.getChildAt(position),"translationX",listView.getWidth(),0f);
-            objectAnimator.setDuration(0);
-            objectAnimator.start();
-        }
-        adapter.notifyDataSetChanged();
-        Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent("com.lha.weather.CITY_MANAGER");
-        intent.putExtra("TYPE","DELETE");
-        intent.putExtra("POSITION",position);
-        sendBroadcast(intent);
-    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_edit:
+                isEditState = !isEditState;
+                if (isEditState){
+                    item.setTitle("确认");
+                    item.setIcon(R.drawable.ic_done_white_48dp);
+                    toolbar.setNavigationIcon(null);
 
-
-    class MyAdapter extends BaseAdapter {
-
-        public MyAdapter(){
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public int getCount() {
-            return city_list.size();
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            //final ViewHolder holder;
-            ViewHolder viewHolder = new ViewHolder();
-            if (convertView == null) {
-                convertView = LayoutInflater.from(context).inflate(R.layout.item_list,null);
-                viewHolder.itemText = (TextView)convertView.findViewById(R.id.item_text);
-                viewHolder.itemButton = (Button)convertView.findViewById(R.id.item_button);
-                viewHolder.changeButton = (Button)convertView.findViewById(R.id.change_button);
-                convertView.setTag(viewHolder);
-            } else {
-                viewHolder = (ViewHolder) convertView.getTag();
-            }
-            viewHolder.itemText.setText(city_list.get(position));
-            if (position == 0){
-                viewHolder.changeButton.setVisibility(View.GONE);
-            }
-
-
-            viewHolder.itemButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    MyApplication.getContext().deleteFile(cityId_list.get(position));
-                    ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(listView.getChildAt(position),"translationX",0f,listView.getWidth());
-                    objectAnimator.setDuration(300);
-                    objectAnimator.start();
-                    db.delete("city", "city=?", new String[]{city_list.get(position)});
-                    city_list.remove(position);
-                    cityId_list.remove(position);
-                    objectAnimator.addListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            deleteCity(position);
-                        }
-                    });
-
+                } else {
+                    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+                    item.setTitle("编辑");
+                    item.setIcon(R.drawable.ic_create_white_48dp);
+                    if (MyAdapter.CHANGE_FLAG == 1){
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.changeData();
+                            }
+                        }).start();
+                        MyAdapter.CHANGE_FLAG = 0;
+                    }
                 }
-            });
-            viewHolder.changeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    DELETE_FLAG = 1;
-                    String city = city_list.get(position);
-                    String city_id = cityId_list.get(position);
-                    city_list.remove(position);
-                    cityId_list.remove(position);
-                    city_list.add(0, city);
-                    cityId_list.add(0, city_id);
-                    adapter.notifyDataSetChanged();
-                    Intent intent = new Intent("com.lha.weather.CITY_MANAGER");
-                    intent.putExtra("TYPE", "CHANGE_DEFAULT");
-                    intent.putExtra("POSITION", position);
-                    sendBroadcast(intent);
+                adapter.setIsEditState(isEditState);
+                adapter.notifyDataSetChanged();
+                listView.setIsEditState(isEditState);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    public void setListViewItemClick(){
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (!isEditState) {
+                    Intent intent = new Intent();
+                    intent.putExtra("position", position);
+                    setResult(1, intent);
+                    finish();
+                    //Toast.makeText(CityManagerActivity.this, (String) adapter.getItem(position), Toast.LENGTH_SHORT).show();
                 }
-            });
-
-            return convertView;
-        }
-
-
-
-        class ViewHolder {
-            public TextView itemText;
-            public Button itemButton;
-            public Button changeButton;
-        }
+            }
+        });
     }
 
+
+    public static void showSnackBar(String text){
+        Snackbar.make(coordinatorLayout,text,Snackbar.LENGTH_LONG).setAction("撤销", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.cancelDelete();
+            }
+        }).show();
+    }
 
 }
