@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:id="@+id/relative_layout"
     android:orientation="horizontal"
+    android:paddingBottom="4dp"
     >
     <LinearLayout
+        android:paddingTop="10dp"
         android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
         android:paddingLeft="20dp"
         android:id="@+id/clock_layout"
         android:orientation="vertical"
@@ -17,103 +20,114 @@
 
         <TextView
             android:layout_weight="1"
-            android:textColor="@color/white"
             android:layout_gravity="center_vertical"
-            android:id="@+id/city"
             android:gravity="center_vertical"
+            android:textColor="@color/white"
+            android:id="@+id/date"
+            android:text="加载中..."
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
-        <LinearLayout
-            android:gravity="center_vertical"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_gravity="center_vertical"
-                android:textColor="@color/white"
-                android:id="@+id/date"
-                android:text="加载中..."
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="center_vertical"
-                android:textColor="@color/white"
-                android:id="@+id/chinese_calendar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-
-        </LinearLayout>
-
 
         <TextView
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:textColor="@color/white"
-            android:id="@+id/update_time"
+            android:id="@+id/chinese_calendar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textColor="@color/white"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/city"
+                android:gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="15dp"
+                android:textColor="@color/white"
+                android:id="@+id/update_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
 
 
     </LinearLayout>
 
 
-        <LinearLayout
-            android:paddingRight="20dp"
-            android:id="@+id/weather_layout"
-            android:gravity="bottom"
+    <LinearLayout
+        android:paddingRight="20dp"
+        android:id="@+id/weather_layout"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        >
 
-            android:orientation="vertical"
+        <LinearLayout
+            android:layout_gravity="right"
+
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="wrap_content">
             <TextView
-                android:textColor="@color/white"
-                android:layout_weight="2"
                 android:id="@+id/temp"
                 android:gravity="center_vertical"
                 android:textSize="40sp"
-                android:layout_gravity="right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-
-            <LinearLayout
-                android:layout_weight="1"
-                android:layout_gravity="right"
-                android:orientation="horizontal"
+            <TextView
+                android:layout_marginLeft="6dp"
+                android:id="@+id/high_low_temp"
+                android:gravity="center_vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_marginRight="15dp"
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/white"
-                    android:includeFontPadding="false"
-                    android:id="@+id/aqi"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/white"
-                    android:includeFontPadding="false"
-                    android:id="@+id/weather_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-
-
-
-            </LinearLayout>
+                android:layout_height="match_parent" />
 
 
 
         </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:gravity="center_horizontal"
+                android:textColor="@color/white"
+                android:id="@+id/aqi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_marginLeft="16dp"
+                android:gravity="center_horizontal"
+                android:textColor="@color/white"
+                android:id="@+id/weather_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 
 </LinearLayout>

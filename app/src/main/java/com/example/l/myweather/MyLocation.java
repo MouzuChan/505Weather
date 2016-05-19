@@ -74,7 +74,7 @@ public class MyLocation {
                 Toast.makeText(MyApplication.getContext(),"定位失败...",Toast.LENGTH_SHORT).show();
             }
             locationClient.stop();
-            StringBuffer sb = new StringBuffer(256);
+            /*StringBuffer sb = new StringBuffer(256);
             sb.append("time : ");
             sb.append(bdLocation.getTime());
             sb.append("\nerror code : ");
@@ -131,7 +131,7 @@ public class MyLocation {
                     sb.append(p.getId() + " " + p.getName() + " " + p.getRank());
                 }
             }
-            Log.d("BaiduLocationApiDem", sb.toString());
+            Log.d("BaiduLocationApiDem", sb.toString()); */
 
         }
 

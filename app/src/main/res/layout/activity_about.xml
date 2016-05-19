@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@color/color_primary"
+    tools:context="com.example.l.myweather.AboutActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="关于"
+            android:background="@color/color_primary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:id="@+id/linear_layout"
+        android:paddingTop="30dp"
+        android:layout_below="@id/appBarLayout"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:src="@mipmap/icon"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:paddingTop="10dp"
+            android:text="505天气"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/version"
+            android:paddingTop="10dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content" />
+        <TextView
+            android:paddingTop="40dp"
+            android:textSize="20sp"
+            android:text="纯粹的天气应用"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:paddingBottom="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+
+        <TextView
+            android:id="@+id/mail"
+            android:paddingTop="10dp"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="邮箱：liuhongan6@gmail.com"
+            />
+
+        <TextView
+            android:id="@+id/we_chat"
+            android:paddingTop="15dp"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="微信：liuhongan__"
+            />
+    </LinearLayout>
+
+
+
+</RelativeLayout>

@@ -38,7 +38,6 @@ public class FileHandle {
         BufferedReader reader = null;
         try {
             StringBuilder data = new StringBuilder();
-
             File file = new File(context.getFilesDir(),city_id);
             if (file.exists()){
                 FileInputStream in = context.openFileInput(city_id);
@@ -97,35 +96,45 @@ public class FileHandle {
         return null;
     }
 
-    static void saveImage(Bitmap bitmap,String fileName){
-        Log.d("FileHandle","saveImage");
-        //File fordl = Environment.getDataDirectory();
-        File file = new File(context.getExternalFilesDir(null), fileName);
-        BufferedOutputStream outputStream = null;
-        try {
-            //if (!fordl.exists()){
-            //    fordl.mkdirs();
-            //}
-            if (!file.exists()){
-                file.createNewFile();
-            }
-            outputStream = new BufferedOutputStream(new FileOutputStream(file));
-            bitmap.compress(Bitmap.CompressFormat.PNG,100,outputStream);
-            outputStream.flush();
+    static void saveImage(final Bitmap bitmap,final String fileName){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File file = new File(Environment.getExternalStorageDirectory() + "/Android/data/com.lha.weather/files", fileName);
+                BufferedOutputStream outputStream = null;
+                File fordl = new File(Environment.getExternalStorageDirectory() + "/Android/data/com.lha.weather/files");
+                try {
+                    if (!fordl.exists()){
+                        fordl.mkdirs();
+                    }
+                    if (!file.exists()){
+                        file.createNewFile();
+                    }
+                    outputStream = new BufferedOutputStream(new FileOutputStream(file));
+                    bitmap.compress(Bitmap.CompressFormat.PNG,100,outputStream);
+                    outputStream.flush();
 
-        } catch (Exception e){
-            e.printStackTrace();
-        } finally {
-            try {
-                if (outputStream != null){
-                    outputStream.close();
+                } catch (Exception e){
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (outputStream != null){
+                            outputStream.close();
+                        }
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
-            } catch (Exception e){
-                e.printStackTrace();
             }
-        }
+        }).start();
+
     }
 
+    static boolean deleteFile(String fileName){
+        File file = new File(Environment.getExternalStorageDirectory() + "/Android/data/com.lha.weather/files", fileName);
 
+        return file.exists() && file.delete();
+
+    }
 
 }

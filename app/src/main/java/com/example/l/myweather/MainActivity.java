@@ -3,7 +3,6 @@ package com.example.l.myweather;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -13,12 +12,17 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -33,9 +37,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
-
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -45,15 +48,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.Volley;
 import com.example.l.myweather.customView.Indicator;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -91,51 +92,58 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SharedPreferences preferences;
     private int location_position = -1;
     private ImageView location_icon;
-
-
-
-    CoordinatorLayout container;
+    private View headerView;
+    private CoordinatorLayout container;
 
     private String picDayString = "{\"晴\":\"1452688905.7999\",\"多云\":\"1445588313.6732\",\"阴\":\"1437731894.2717\",\"雷阵雨\":\"1437735721.0812\",\"雾\":\"\",\"沙尘暴\":\"\",\"浮尘\":\"\",\"扬沙\":\"\",\"霾\":\"\",\"强沙尘暴\":\"\"}";
     private JSONObject jsonObject;
     private ArrayList<String> weatherList;
     public static ArrayList<String> tempList;
     private String weatherCode;
+    private Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Window window = getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
         setContentView(R.layout.activity_main);
-
         initView();
         initCityList();
         setViewToDrawerLayout();
         initViewPager(0);
         initBroadcast();
         initIndicator(0);
-        startService(new Intent(this, UpdateService.class));
-        if (isFirstStart()){
+        if (start_count == 0){
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},0);
 
             } else {
                 firstStart();
             }
-            //firstStart();
             editor = startCount.edit();
             start_count++;
             editor.putInt("start_count", start_count);
             editor.apply();
         }else {
-
-
             initLocationCity();
         }
+        initHeaderViewBackground();
+        startService(new Intent(context,UpdateService.class));
+        Intent intent = getIntent();
+        if (intent != null){
+            if (intent.getAction() != null && intent.getAction().equals("notification")){
+                int i = intent.getIntExtra("position",-1);
+                if (i >= 2){
+                    viewPager.setCurrentItem(i - 2);
+                }
+            }
 
-}
+        }
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -164,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void initView(){
         location_icon = (ImageView)findViewById(R.id.location_icon);
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         relativeLayout = (RelativeLayout)findViewById(R.id.relative_layout);
         fragmentArrayList = new ArrayList<ContentFragment>();
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -183,29 +191,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tip_text.setOnClickListener(this);
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
-        View view  = navigationView.getHeaderView(0);
-
-        linearLayout = (LinearLayout)view.findViewById(R.id.linear_layout);
+        headerView  = navigationView.getHeaderView(0);
+        linearLayout = (LinearLayout)headerView.findViewById(R.id.linear_layout);
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-
-
+        headerView.findViewById(R.id.change_background).setOnClickListener(this);
         navigationView.setNavigationItemSelectedListener(onNavigationItemSelectedListener);
         toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerToggle.syncState();
-        drawerLayout.setDrawerListener(drawerToggle);
+        //drawerLayout.addDrawerListener(drawerToggle);
         viewPager.addOnPageChangeListener(onPageChangeListener);
         viewPager.setOffscreenPageLimit(10);
         indicator = (Indicator)findViewById(R.id.indicator);
-
         startCount = getPreferences(MODE_APPEND);
         start_count = startCount.getInt("start_count", 0);
         preferences = getSharedPreferences("location_city", MODE_APPEND);
 
-    }
-    public void initCityList(){
 
+    }
+
+    public void initCityList(){
         Cursor cursor = db.query("city",null,null,null,null,null,null);
         if (cursor.moveToFirst()){
             do {
@@ -218,27 +224,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cursor.close();
 
     }
-    public void initViewPager(int flag){
-        viewPager.setAdapter(mainAdapter);
-        if (city_list.size() > 0){
-            for (int i = 0;i < city_list.size();i++){
-                ContentFragment fragment = ContentFragment.newInstance(city_list.get(i),cityId_list.get(i),i,flag);
-                fragmentArrayList.add(fragment);
-            }
-            mainAdapter.notifyDataSetChanged();
-            viewPager.setCurrentItem(0);
-            toolbar.setTitle(city_list.get(0));
-            if (city_list.get(0).equals(location_city)){
-                location_icon.setVisibility(View.VISIBLE);
-            } else {
-                location_icon.setVisibility(View.GONE);
-            }
-        } else {
-            toolbar.setTitle("请添加城市");
-            location_icon.setVisibility(View.GONE);
-        }
+    public void initViewPager(final int flag){
+        //new Thread(new Runnable() {
+            //@Override
+            //public void run() {
+                viewPager.setAdapter(mainAdapter);
+                if (city_list.size() > 0){
+                    for (int i = 0;i < city_list.size();i++){
+                        ContentFragment fragment = ContentFragment.newInstance(city_list.get(i),cityId_list.get(i),i,flag);
+                        fragmentArrayList.add(fragment);
+                    }
+                    mainAdapter.notifyDataSetChanged();
+                    viewPager.setCurrentItem(0);
+                    toolbar.setTitle(city_list.get(0));
+                    if (city_list.get(0).equals(location_city)){
+                        location_icon.setVisibility(View.VISIBLE);
+                    } else {
+                        location_icon.setVisibility(View.GONE);
+                    }
+                } else {
+                    toolbar.setTitle("请添加城市");
+                    location_icon.setVisibility(View.GONE);
+                }
+            //}
+        //}).start();
+
     }
 
+    public void initHeaderViewBackground(){
+        Bitmap bitmap = FileHandle.getImage("header_view_background.png");
+        if (bitmap != null){
+            Resources resources = context.getResources();
+            headerView.setBackground(new BitmapDrawable(resources,bitmap));
+        }
+    }
 
     @Override
     public void onClick(View v) {
@@ -246,9 +265,107 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.tip_text:
                 startActivity(new Intent(MainActivity.this, AddCityActivity.class));
                 break;
+            case R.id.change_background:
+                //uri = Uri.parse("file:///storage/sdcard0/Pictures/Wallpapers/aaa.jpg");
+                //Toast.makeText(context,"FFFF",Toast.LENGTH_SHORT).show();
+
+                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
+
+                builder.setItems(new String[]{"选择图片","恢复默认"},new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case 0:
+                                File fordl = new File(Environment.getExternalStorageDirectory() + "/Android/data/com.lha.weather/files");
+                                File image = new File(Environment.getExternalStorageDirectory() + "/Android/data/com.lha.weather/files","header_view_background.png");
+                                try {
+                                    if (!fordl.exists()){
+                                        fordl.mkdirs();
+                                    }
+                                    if (!image.exists()){
+                                        image.createNewFile();
+                                    }
+
+                                } catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                                imageUri = Uri.fromFile(image);
+                                choosePictureForHeardViewBackground();
+                                break;
+                            case 1:
+                                headerView.setBackgroundResource(R.drawable.default_header_background);
+                                FileHandle.deleteFile("header_view_background.png");
+                                break;
+                        }
+                    }
+                });
+                builder.show();
+                break;
         }
     }
 
+    public void choosePictureForHeardViewBackground(){
+        Intent intent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, 10);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case 0:
+                if (resultCode == 1){
+                    int position = data.getIntExtra("position",0);
+                    viewPager.setCurrentItem(position);
+                }
+                break;
+            case 10:
+
+                Toast.makeText(context,"FFF" + resultCode,Toast.LENGTH_SHORT).show();
+                if (resultCode == RESULT_OK){
+                    Intent intent = new Intent("com.android.camera.action.CROP");
+                    intent.setDataAndType(data.getData(),"image/*");
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                    intent.putExtra("aspectX", headerView.getWidth());
+                    intent.putExtra("aspectY", MyApplication.dp2px(180));
+                    intent.putExtra("outputX", headerView.getWidth());
+                    intent.putExtra("outputY", MyApplication.dp2px(180));
+                    startActivityForResult(intent, 2);
+                }
+                break;
+            case 2:
+                if (resultCode == RESULT_OK){
+
+
+                   /* try{
+                        File file = new File(new URI(imageUri.toString()));
+                        if (file.exists()){
+                            Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
+                            if (bitmap != null){
+                                Resources re = getResources();
+                                headerView.setBackground(new BitmapDrawable(re,bitmap));
+                                FileHandle.saveImage(bitmap,"header_view_background");
+                            }
+                        }
+                        //Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver()
+                         //       .openInputStream(imageUri));
+
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }*/
+                    Bitmap bitmap = FileHandle.getImage("header_view_background.png");
+                    if (bitmap != null){
+                        Resources re = getResources();
+                        headerView.setBackground(new BitmapDrawable(re,bitmap));
+                    }
+
+
+                }
+                break;
+        }
+
+    }
 
     private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
         @Override
@@ -338,32 +455,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private NavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(MenuItem menuItem) {
-            int i = menuItem.getItemId();
-            switch (i){
-                case R.id.city_manager:
-                    drawerLayout.closeDrawers();
-                    setListener(0,0,"manager");
-                    break;
-                case R.id.add_city:
-                    drawerLayout.closeDrawers();
-                    setListener(0, 0, "add");
-                    break;
-                case R.id.settings:
-                    drawerLayout.closeDrawers();
-                    setListener(0, 0, "settings");
-                    break;
-                case R.id.exit:
-                    finish();
-                    break;
-                default:
-                    break;
-            }
-            return true;
-        }
-    };
 
     public void setViewToDrawerLayout(){
         linearLayout.removeAllViews();
@@ -410,7 +501,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 drawerLayout.closeDrawers();
-                setListener(1,i,"FUCK");
+                setListener(i,"");
             }
         });
     }
@@ -421,8 +512,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
         unregisterReceiver(cityBroadCastReceiver);
         unregisterReceiver(cityManagerBroadCastReceiver);
-        //unregisterReceiver(removeBroadcastReceiver);
-        System.exit(0);
     }
 
 
@@ -438,8 +527,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (tip_text != null){
                 tip_text.setVisibility(View.GONE);
             }
-
         }
+
     }
 
     public int getBarHeight(){
@@ -506,7 +595,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent = new Intent("com.lha.weather.UPDATE_FROM_LOCAL");
                 sendBroadcast(intent);
             }
-
         }
     }
 
@@ -514,6 +602,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void changeDefaultCity(){
         city_list.clear();
         cityId_list.clear();
+        tempList.clear();
         fragmentArrayList.clear();
         linearLayout.removeAllViews();
         cityViewList.clear();
@@ -526,8 +615,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (sharedPreferences.getBoolean("show_notification", false)){
             WeatherNotification.sendNotification(null,null);
         }
-        Intent intent = new Intent("com.lha.weather.UPDATE_FROM_LOCAL");
-        sendBroadcast(intent);
+        //Widget4x2.updateWidgetFromLocal();
+        //NewAppWidget.updateFromLocal();
+        //AppWidget2x1.updateFromLocal();
+        context.sendBroadcast(new Intent("com.lha.weather.UPDATE_FROM_LOCAL"));
+        //getWeatherDataFromInternet();
     }
 
     public void addCity(String city,String id){
@@ -557,7 +649,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             values.put("city", city);
             values.put("city_id", id);
             db.insert("city", null, values);
-            ContentFragment fragment = ContentFragment.newInstance(city,id,city_list.size()-1,0);
+            ContentFragment fragment = ContentFragment.newInstance(city,id,city_list.size()-1,3);
             fragmentArrayList.add(fragment);
             mainAdapter.notifyDataSetChanged();
             viewPager.setCurrentItem(city_list.size() - 1);
@@ -567,6 +659,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             initIndicator(city_list.size() - 1);
             toolbar.setTitle(city);
             tip_text.setVisibility(View.GONE);
+            //getWeatherDataFromInternet();
         }
     }
 
@@ -577,23 +670,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         indicator.invalidate();
     }
 
-    public boolean isFirstStart(){
-        return start_count == 0;
-    }
 
     @Override
     public void onBackPressed() {
-
         if (drawerLayout.isDrawerOpen(GravityCompat.START)){
             drawerLayout.closeDrawer(GravityCompat.START);
         } else{
             super.onBackPressed();
+
         }
     }
 
     public void showSnackbar(String text){
         container = (CoordinatorLayout) findViewById(R.id.container);
-        Snackbar.make(container,text, Snackbar.LENGTH_LONG).show();
+        Snackbar snackbar = Snackbar.make(container, text, Snackbar.LENGTH_LONG);
+        Snackbar.SnackbarLayout sl = (Snackbar.SnackbarLayout)snackbar.getView();
+        sl.setBackgroundColor(Color.parseColor("#64000000"));
+        snackbar.show();
     }
 
     public void setWeatherList(int i, String weather){
@@ -683,13 +776,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final String fileName = url.replace(".","").replace(":", "").replace("/","");
         Bitmap bitmap = FileHandle.getImage(fileName);
         if (bitmap != null){
-            relativeLayout.setBackground(new BitmapDrawable(bitmap));
+            Resources resources = context.getResources();
+            relativeLayout.setBackground(new BitmapDrawable(resources,bitmap));
         } else {
             HttpUtil.makeImageRequest(url, new ImageCallBack() {
                 @Override
                 public void onFinish(Bitmap bitmap) {
-                    relativeLayout.setBackground(new BitmapDrawable(bitmap));
-                    FileHandle.saveImage(bitmap, fileName);
+                    if (bitmap != null) {
+                        Resources resources = context.getResources();
+                        relativeLayout.setBackground(new BitmapDrawable(resources,bitmap));
+                        FileHandle.saveImage(bitmap, fileName);
+                    }
                 }
 
                 @Override
@@ -700,23 +797,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
+
+
     public int getCurrentItem(){
         return viewPager.getCurrentItem();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (resultCode){
-            case 1:
-                int position = data.getIntExtra("position",0);
-                viewPager.setCurrentItem(position);
-                break;
-        }
-    }
 
-
-    public void setListener(final int flag,final int i,final String activity){
+    public void setListener(final int i,final String activity_name){
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -736,23 +824,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onDrawerStateChanged(int newState) {
                 drawerLayout.removeDrawerListener(this);
-                if (newState == DrawerLayout.STATE_IDLE) {
-                    if (flag == 0) {
-                        switch (activity) {
-                            case "manager":
-                                startActivityForResult(new Intent(MainActivity.this, CityManagerActivity.class), 0);
-                                break;
-                            case "add":
-                                startActivity(new Intent(MainActivity.this, AddCityActivity.class));
-                                break;
-                            case "settings":
-                                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                                break;
-                            default:
-                                break;
-                        }
-                    } else {
+                if (activity_name.isEmpty()){
+                    if (newState == DrawerLayout.STATE_IDLE) {
                         viewPager.setCurrentItem(i);
+                    }
+                } else {
+                    switch (activity_name){
+                        case "add":
+                            startActivity(new Intent(MainActivity.this, AddCityActivity.class));
+                            break;
+                        case "manager":
+                            startActivityForResult(new Intent(MainActivity.this, CityManagerActivity.class), 0);
+                            break;
+                        case "settings":
+                            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                            break;
+                        case "about":
+                            startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                            break;
                     }
                 }
             }
@@ -765,7 +854,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         location_city_id = preferences.getString("location_city_id","");
         setLocation_position();
         if (sharedPreferences.getBoolean("update_location",true)){
-            Log.d("TAG", "KKK");
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},1);
             } else{
@@ -812,6 +900,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 }
 
                             }
+
                         }
 
                         @Override
@@ -831,7 +920,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (location_city_id.equals(cityId_list.get(i))){
                 location_position = i;
                 if (location_position == viewPager.getCurrentItem()){
-                    Log.d("TAG","FUU");
                     toolbar.setTitle(location_city);
                     location_icon.setVisibility(View.VISIBLE);
                 } else {
@@ -881,11 +969,196 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         values.clear();
         values.put("city_id", location_city_id);
         db.update("city", values, "city_id = ?", new String[]{oldId});
-        Log.d("TAG","FUCK");
     }
 
+    private NavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(MenuItem menuItem) {
+            int i = menuItem.getItemId();
+            switch (i){
+                case R.id.city_manager:
+                    drawerLayout.closeDrawers();
+                    setListener(0, "manager");
+                    //startActivityForResult(new Intent(MainActivity.this, CityManagerActivity.class), 0);
+                    break;
+                case R.id.add_city:
+                    drawerLayout.closeDrawers();
+                    setListener(0, "add");
+                    //startActivity(new Intent(MainActivity.this, AddCityActivity.class));
+                    break;
+                case R.id.settings:
+                    drawerLayout.closeDrawers();
+                    setListener(0, "settings");
+                    //startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                    break;
+                case R.id.about:
+                    drawerLayout.closeDrawers();
+                    setListener(0, "about");
+                    //startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                    break;
+                case R.id.exit:
+                    finish();
+                    System.exit(0);
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        }
+    };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.share_menu:
+                takeScreenPicture();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void takeScreenPicture(){
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("请稍等");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+
+                try {
+                    File fordl = new File(Environment.getExternalStorageDirectory() + "/Android/data/com.lha.weather/files");
+                    File imageFile = new File(Environment.getExternalStorageDirectory() + "/Android/data/com.lha.weather/files", "share.png");
+                   // Log.d("FUCK",MainActivity.this.getExternalFilesDir(null).toString());
+                    if (!fordl.exists()){
+                        fordl.mkdirs();
+                    }
+                    if (!imageFile.exists()){
+                        imageFile.createNewFile();
+                    }
+                    View v1 = getWindow().getDecorView();
+                   //ScrollView v1 = fragmentArrayList.get(getCurrentItem()).getScrollView();
+                    //View v1 = fragmentArrayList.get(getCurrentItem()).getScrollView().getChildAt(1);
+                    v1.setDrawingCacheEnabled(true);
+                    Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
+                    //final Canvas canvas = new Canvas(bitmap);
+                    //v1.draw(canvas);
+                    v1.setDrawingCacheEnabled(false);
+                    FileOutputStream outputStream = new FileOutputStream(imageFile);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 70, outputStream);
+                    outputStream.flush();
+                    outputStream.close();
+
+                    /*ScrollView scrollView = fragmentArrayList.get(getCurrentItem()).getScrollView();
+                    int h = 0;
+                    int w = scrollView.getWidth();
+                    for (int i = 0; i < scrollView.getChildCount(); i++){
+                        h += scrollView.getChildAt(i).getHeight();
+                    }
+
+                    Bitmap bitmap = Bitmap.createBitmap(w,h, Bitmap.Config.RGB_565);
+                    Canvas canvas = new Canvas(bitmap);
+                    scrollView.draw(canvas);
+                    FileOutputStream outputStream = new FileOutputStream(imageFile);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                    outputStream.flush();
+                    outputStream.close();
+                    progressDialog.cancel();
+                    */
+
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("image/*");
+                    Uri uri = Uri.fromFile(imageFile);
+                    intent.putExtra(Intent.EXTRA_STREAM, uri);
+                    progressDialog.cancel();
+                    startActivity(Intent.createChooser(intent,"分享到："));
+                } catch (Exception e){
+                    progressDialog.cancel();
+                    e.printStackTrace();
+                }
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(timerTask,1500);
+    }
+
+
+  /* public void getWeatherDataFromInternet(){
+       StringBuilder stringBuffer = new StringBuilder();
+       for (int i = 0; i < cityId_list.size(); i++){
+           if (i == cityId_list.size() - 1){
+               stringBuffer.append("cityIds=" + cityId_list.get(i));
+           } else {
+               stringBuffer.append("cityIds=" + cityId_list.get(i) + "&");
+           }
+       }
+       String url = "http://aider.meizu.com/app/weather/listWeather?" + stringBuffer.toString();
+
+       HttpUtil.makeHttpRequest(url, new CallBackListener() {
+           @Override
+           public void onFinish(JSONObject jsonObject) {
+               try {
+                   if (jsonObject.getString("code").equals("200")){
+                       Log.d("fuck","fuck");
+                       JSONArray value = jsonObject.getJSONArray("value");
+                       JSONObject jsonObject1;
+                       for (int i = 0; i < value.length(); i++){
+                           jsonObject1 = value.getJSONObject(i);
+                           fragmentArrayList.get(i).setData(jsonObject1);
+                       }
+                       FileHandle.saveJSONObject(jsonObject,"weather_data");
+                   }
+               } catch (Exception e){
+                   e.printStackTrace();
+               }
+           }
+
+           @Override
+           public void onError(String e) {
+                showSnackbar("网络错误");
+           }
+       });
+
+   }
+
+
+    public void getWeatherDataFromLocal(){
+        JSONObject jsonObject = FileHandle.getJSONObject("weather_data");
+        if (jsonObject != null){
+            try {
+                Log.d("fuck","fuck");
+                if (jsonObject.getString("code").equals("200")){
+                    JSONArray value = jsonObject.getJSONArray("value");
+                    for (int i = 0; i < city_list.size(); i++){
+                        JSONObject jsonObject1 = value.getJSONObject(i);
+                        fragmentArrayList.get(i).setData(jsonObject1);
+                    }
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                getWeatherDataFromInternet();
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(timerTask,2000);
+    }
+
+    public int getCityCount(){
+        return city_list.size();
+    }*/
+
 }
-
-
-
 

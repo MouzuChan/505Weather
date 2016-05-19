@@ -3,12 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:id="@+id/widget_layout"
+    android:layout_gravity="center"
     android:gravity="center"
+    android:id="@+id/widget_layout"
     >
 
     <LinearLayout
         android:layout_gravity="center_horizontal"
+        android:gravity="center"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:orientation="horizontal"
@@ -20,20 +22,45 @@
             android:layout_height="match_parent">
             <TextView
                 android:id="@+id/widget_time"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="50dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:layout_gravity="center_horizontal"
-                android:id="@+id/date"
-                android:maxLines="1"
+                android:layout_weight="1"
+                android:layout_height="0dp" />
+
+            <LinearLayout
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/date"
+                    android:maxLines="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center"
+                    android:id="@+id/chinese_calendar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+
+
             <LinearLayout
                 android:layout_gravity="center_horizontal"
                 android:id="@+id/refresh_layout"
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+
 
                 <TextView
                     android:layout_gravity="center_horizontal"
@@ -42,14 +69,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-
                 <TextView
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="5dp"
                     android:layout_gravity="center_horizontal"
-                    android:gravity="center"
                     android:id="@+id/update_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
+
             </LinearLayout>
 
         </LinearLayout>
@@ -62,22 +89,22 @@
             android:layout_height="match_parent"/>
 
         <LinearLayout
-            android:layout_marginBottom="4dp"
             android:id="@+id/weather_layout"
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
             <ImageView
-                android:layout_weight="1"
-                android:layout_gravity="center_horizontal"
+                android:layout_gravity="center"
                 android:id="@+id/weather_image"
-                android:layout_width="80dp"
-                android:layout_height="0dp"
+                android:layout_width="50dp"
+                android:layout_height="60dp"
                 />
+
             <TextView
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:id="@+id/weather"
-                android:layout_gravity="center_horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -95,20 +122,18 @@
 
     </LinearLayout>
 
-
     <TextView
         android:id="@+id/line"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="6dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:background="#c8ffffff"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_width="match_parent"
         android:layout_height="1dp" />
 
     <LinearLayout
+        android:paddingBottom="10dp"
         android:id="@+id/forecast_layout"
-        android:layout_marginBottom="10dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -158,7 +183,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
-
         <LinearLayout
 
             android:orientation="vertical"

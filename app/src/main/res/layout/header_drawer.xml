@@ -5,16 +5,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="180dp"
-    android:background="@drawable/www"
+    android:background="@drawable/default_header_background"
     >
 
     <HorizontalScrollView
+        android:id="@+id/scroll_view"
         android:layout_centerInParent="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
         >
         <LinearLayout
+            android:layout_gravity="center_vertical"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingTop="60dp"
@@ -23,11 +25,20 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             >
-
-
         </LinearLayout>
 
     </HorizontalScrollView>
+
+    <Button
+        android:id="@+id/change_background"
+        android:text="更换背景"
+        android:background="@color/touming"
+        android:textColor="@color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_width="80dp"
+        android:layout_height="40dp" />
+
 
 
 

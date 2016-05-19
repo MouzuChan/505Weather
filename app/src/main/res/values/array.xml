@@ -21,8 +21,12 @@
     </string-array>
 
     <string-array name="widget_color">
-        <item>蓝色</item>
+
         <item>透明</item>
+        <item>透明（带边框）</item>
+        <item>半透黑</item>
+        <item>半透白</item>
+        <item>蓝色</item>
     </string-array>
 
     <string-array name="notify_strings">
@@ -35,8 +39,12 @@
     <string-array name="notify_text_color">
         <item>黑色</item>
         <item>白色</item>
-
-
     </string-array>
+
+    <string-array name="icon_style_name">
+        <item>单色</item>
+        <item>彩色</item>
+    </string-array>
+
 
 </resources>

@@ -86,7 +86,7 @@ public class DragListView extends ListView{
                             tempView.setText(adapter.getTemp(dragPosition));
                             hideItem(position);
                             height = MyApplication.dp2px(50);
-                            startDrag(rawX, rawY - height / 2);
+                            startDrag(rawX, rawY - (height / 2));
                         }
                     }
                 }
@@ -233,7 +233,6 @@ public class DragListView extends ListView{
 
                         Message message = new Message();
                         message.what = 1;
-
                         handler.sendMessage(message);
                         //setSelection(dragPosition - 1);
                     }

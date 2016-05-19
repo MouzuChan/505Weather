@@ -3,6 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="20dp"
+    android:id="@+id/layout_aqi"
     >
 
 
@@ -28,12 +29,13 @@
         android:paddingRight="16dp"
         android:paddingLeft="16dp"
         android:id="@+id/suggest"
+        android:textSize="13sp"
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:paddingTop="20dp"
+        android:paddingTop="25dp"
         android:paddingBottom="10dp"
         android:textColor="#8cffffff"
         android:text="详细监测数据(ug/m³)"
@@ -44,7 +46,7 @@
 
 
     <LinearLayout
-        android:paddingTop="10dp"
+        android:paddingTop="15dp"
         android:paddingBottom="10dp"
         android:weightSum="3"
         android:orientation="horizontal"
@@ -57,15 +59,16 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:textColor="@color/white"
+                android:textColor="#8cffffff"
                 android:text="PM2.5"
                 android:layout_gravity="center"
+                android:textSize="12sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <TextView
                 android:textColor="@color/white"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:text="--"
                 android:id="@+id/pm25"
                 android:layout_gravity="center"
@@ -86,15 +89,16 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:textColor="@color/white"
+                android:textColor="#8cffffff"
                 android:text="PM10"
+                android:textSize="12sp"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <TextView
                 android:textColor="@color/white"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:text="--"
                 android:id="@+id/pm10"
                 android:layout_gravity="center"
@@ -115,15 +119,16 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:textColor="@color/white"
+                android:textColor="#8cffffff"
                 android:text="SO2"
+                android:textSize="12sp"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <TextView
                 android:textColor="@color/white"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:text="--"
                 android:id="@+id/so2"
                 android:layout_gravity="center"
@@ -158,15 +163,16 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:textColor="@color/white"
+                android:textColor="#8cffffff"
                 android:text="CO"
+                android:textSize="12sp"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <TextView
                 android:textColor="@color/white"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:text="--"
                 android:id="@+id/co"
                 android:layout_gravity="center"
@@ -186,15 +192,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content">
             <TextView
-                android:textColor="@color/white"
+                android:textColor="#8cffffff"
                 android:text="NO2"
-
+                android:textSize="12sp"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <TextView
                 android:textColor="@color/white"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:id="@+id/no2"
                 android:text="--"
                 android:layout_gravity="center"
@@ -214,14 +220,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content">
             <TextView
-                android:textColor="@color/white"
+                android:textColor="#8cffffff"
                 android:text="O3"
+                android:textSize="12sp"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <TextView
                 android:textColor="@color/white"
-                android:textSize="30sp"
+                android:textSize="25sp"
                 android:text="--"
                 android:id="@+id/o3"
                 android:layout_gravity="center"

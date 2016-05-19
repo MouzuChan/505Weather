@@ -86,6 +86,8 @@ public class MyAdapter extends BaseAdapter {
         viewHolder.itemText.setText(city_list.get(position));
         if (temp_list.get(position) != null && !temp_list.get(position).isEmpty()){
             viewHolder.temp_text.setText(temp_list.get(position));
+        } else {
+            viewHolder.temp_text.setText("N/A");
         }
 
         final View finalConvertView = convertView;
@@ -213,11 +215,32 @@ public class MyAdapter extends BaseAdapter {
     }
 
     public void cancelDelete(){
-        city_list.add(delete_position,delete_city);
+        city_list.add(delete_position, delete_city);
         cityId_list.add(delete_position,delete_cityId);
-        temp_list.add(delete_position,delete_temp);
+        temp_list.add(delete_position, delete_temp);
         notifyDataSetChanged();
     }
-
+    public void addCity(){
+        city_list.clear();
+        cityId_list.clear();
+        temp_list.clear();
+        city_list = (ArrayList)MainActivity.city_list.clone();
+        cityId_list = (ArrayList)MainActivity.cityId_list.clone();
+        temp_list = (ArrayList)MainActivity.tempList.clone();
+        notifyDataSetChanged();
+        /*boolean b = false;
+        for (int i = 0; i < cityId_list.size(); i++){
+            if (cityId_list.get(i).equals(city_id)){
+                b = true;
+                break;
+            }
+        }
+        if (!b){
+            cityId_list.add(city_id);
+            city_list.add(city_name);
+            temp_list.add("N/A");
+            notifyDataSetChanged();
+        }*/
+    }
 
 }

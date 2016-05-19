@@ -8,6 +8,7 @@
 
 
     <TextView
+        android:textSize="13sp"
         android:layout_marginRight="20dp"
         android:id="@+id/update_time"
         android:gravity="right"
@@ -18,9 +19,10 @@
 
 
     <TextView
-        android:paddingTop="30dp"
+
+        android:paddingTop="40dp"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="17sp"
         android:id="@+id/now_weather"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
@@ -29,62 +31,69 @@
         />
 
     <TextView
+        android:fontFamily="sans-serif-light"
         android:layout_gravity="center_horizontal"
         android:textColor="@color/white"
         android:id="@+id/now_temp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/temp_size"/>
-    <TextView
-        android:layout_gravity="center_horizontal"
-        android:paddingTop="5dp"
-        android:textColor="@color/white"
-        android:id="@+id/now_wind"
+
+    <LinearLayout
+        android:id="@+id/aqi_linear_layout"
+        android:background="@drawable/aqi_background"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
 
 
-    <TextView
-        android:paddingTop="5dp"
-        android:textColor="@color/white"
-        android:id="@+id/now_aqi"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <ImageView
+            android:id="@+id/aqi_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
+
+
+        <TextView
+            android:layout_marginLeft="5dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:id="@+id/now_aqi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
 
 
     <LinearLayout
         android:id="@+id/alarm_layout"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:background="@drawable/alarm_background"
         android:layout_marginTop="10dp"
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
+        android:layout_height="35dp">
 
-        android:layout_height="30dp">
-
-        <com.android.volley.toolbox.NetworkImageView
-            android:id="@+id/alarm_icon"
-            android:adjustViewBounds="true"
-            android:maxHeight="18dp"
-            android:layout_gravity="center_vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            />
 
         <TextView
-            android:text=" "
-            android:paddingLeft="5dp"
             android:textColor="@color/white"
             android:id="@+id/alarm_name"
             android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
     </LinearLayout>
+
+
 
 </LinearLayout>

@@ -2,7 +2,10 @@ package com.example.l.myweather;
 
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,29 +26,28 @@ public class CityManagerActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private boolean isEditState = false;
     private static CoordinatorLayout coordinatorLayout;
+    FloatingActionButton fab_add;
 
-    //private SharedPreferences sharedPreferences;
-    //public static String location_city;
-    //public static String location_city_id;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Window window = getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
         setContentView(R.layout.activity_city_manager);
-
-        //initCityList();
         initView();
         setListViewItemClick();
     }
 
-    public void initView(){
-        toolbar = (Toolbar)findViewById(R.id.manager_toolbar);
+    public void initView() {
+        fab_add = (FloatingActionButton) findViewById(R.id.fab_add);
+        toolbar = (Toolbar) findViewById(R.id.manager_toolbar);
         setSupportActionBar(toolbar);
-        listView = (DragListView)findViewById(R.id.city_list);
+        listView = (DragListView) findViewById(R.id.city_list);
         //city_list = new ArrayList<String>();
         //cityId_list = new ArrayList<String>();
         adapter = new com.example.l.myweather.MyAdapter(listView);
@@ -57,27 +59,15 @@ public class CityManagerActivity extends AppCompatActivity {
                 finish();
             }
         });
-        coordinatorLayout = (CoordinatorLayout)findViewById(R.id.container);
-
-        //sharedPreferences = getSharedPreferences("location_city", MODE_APPEND);
-        //location_city = sharedPreferences.getString("location_city","");
-        //location_city_id = sharedPreferences.getString("location_city_id","");
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.container);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        fab_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(CityManagerActivity.this, AddCityActivity.class), 1);
+            }
+        });
     }
-    /*public void initCityList(){
-        this.city_list = MainActivity.city_list;
-        this.cityId_list = MainActivity.cityId_list;
-        this.temp_list = MainActivity.tempList;
-        /*Cursor cursor = db.query("city", null, null, null, null, null, null);
-        if (cursor.moveToFirst()){
-            do {
-                city_list.add(cursor.getString(cursor.getColumnIndex("city")));
-                cityId_list.add(cursor.getString(cursor.getColumnIndex("city_id")));
-            } while (cursor.moveToNext());
-        }
-        adapter.notifyDataSetChanged();
-        cursor.close();
-
-    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -94,10 +84,10 @@ public class CityManagerActivity extends AppCompatActivity {
                 if (isEditState){
                     item.setTitle("确认");
                     item.setIcon(R.drawable.ic_done_white_48dp);
-                    toolbar.setNavigationIcon(null);
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
                 } else {
-                    toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                     item.setTitle("编辑");
                     item.setIcon(R.drawable.ic_create_white_48dp);
                     if (MyAdapter.CHANGE_FLAG == 1){
@@ -134,12 +124,27 @@ public class CityManagerActivity extends AppCompatActivity {
 
 
     public static void showSnackBar(String text){
-        Snackbar.make(coordinatorLayout,text,Snackbar.LENGTH_LONG).setAction("撤销", new View.OnClickListener() {
+
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, text, Snackbar.LENGTH_LONG).setAction("撤销", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 adapter.cancelDelete();
             }
-        }).show();
+        });
+        Snackbar.SnackbarLayout sl = (Snackbar.SnackbarLayout)snackbar.getView();
+        sl.setBackgroundColor(Color.parseColor("#B4000000"));
+        snackbar.show();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case 1:
+                if (resultCode == 1){
+                    adapter.addCity();
+                }
+                break;
+        }
+    }
 }

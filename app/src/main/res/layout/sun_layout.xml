@@ -2,15 +2,121 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
     android:paddingTop="20dp"
     >
+
+
+    <!--
 
     <LinearLayout
         android:id="@+id/sun_layout"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></LinearLayout>
+
+        -->
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:id="@+id/sun_layout"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
+
+
+        <TextView
+            android:background="#32ffffff"
+            android:layout_width="1dp"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:src="@drawable/body_temp"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp" />
+            <TextView
+                android:id="@+id/body_temp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="20dp"
+        android:background="#32ffffff"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+
+    <LinearLayout
+        android:paddingTop="16dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:src="@drawable/wind"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp" />
+            <TextView
+                android:id="@+id/wind"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <TextView
+            android:background="#32ffffff"
+            android:layout_width="1dp"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:src="@drawable/humidity"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp" />
+            <TextView
+                android:id="@+id/shidu"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+
+    </LinearLayout>
 
 
     <TextView

@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.l.myweather.ContentFragment"
-    android:id="@+id/fragment_content"
-    >
+    android:id="@+id/fragment_content">
 
    <android.support.v4.widget.SwipeRefreshLayout
        android:id="@+id/swipe_refresh_layout"
@@ -34,5 +33,6 @@
        </ScrollView>
 
    </android.support.v4.widget.SwipeRefreshLayout>
+
 
 </FrameLayout>

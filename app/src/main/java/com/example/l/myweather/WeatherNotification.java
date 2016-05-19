@@ -11,12 +11,15 @@ package com.example.l.myweather;
         import android.graphics.Bitmap;
 
         import android.graphics.Color;
+        import android.os.Build;
         import android.preference.PreferenceManager;
         import android.widget.RemoteViews;
 
         import org.json.JSONObject;
 
         import java.util.Calendar;
+        import java.util.HashMap;
+        import java.util.Map;
 
 
 /**
@@ -27,9 +30,13 @@ public class WeatherNotification {
     private static Context mContext = MyApplication.getContext();
     private static NotificationManager notificationManager = (NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE);
     private static String city;
-    private static String weatherCode = "{\"晴\":\"100\",\"多云\":\"101\",\"阴\":\"104\",\"阵雨\":\"300\",\"雷阵雨\":\"302\",\"雷阵雨伴有冰雹\":\"304\",\"雨夹雪\":\"404\",\"小雨\":\"305\",\"小到中雨\":\"305\",\"中雨\":\"306\",\"中到大雨\":\"306\",\"大雨\":\"307\",\"大到暴雨\":\"307\",\"暴雨\":\"310\",\"大暴雨\":\"311\",\"特大暴雨\":\"312\",\"阵雪\":\"407\",\"小雪\":\"400\",\"中雪\":\"401\",\"大雪\":\"402\",\"暴雪\":\"403\",\"雾\":\"501\",\"冻雨\":\"313\",\"沙尘暴\":\"507\",\"浮尘\":\"504\",\"扬沙\":\"503\",\"霾\":\"502\",\"强沙尘暴\":\"508\"}";
+    //private static Map<String,Integer> map_day = new HashMap<>();
+    //private static Map<String,Integer> map_night = new HashMap<>();
+    //private static Map<String,Integer> map_day_small = new HashMap<>();
+    //private static Map<String,Integer> map_night_small = new HashMap<>();
+    //private static String weatherCode = "{\"晴\":\"100\",\"多云\":\"101\",\"阴\":\"104\",\"阵雨\":\"300\",\"雷阵雨\":\"302\",\"雷阵雨伴有冰雹\":\"304\",\"雨夹雪\":\"404\",\"小雨\":\"305\",\"小到中雨\":\"305\",\"中雨\":\"306\",\"中到大雨\":\"306\",\"大雨\":\"307\",\"大到暴雨\":\"307\",\"暴雨\":\"310\",\"大暴雨\":\"311\",\"特大暴雨\":\"312\",\"阵雪\":\"407\",\"小雪\":\"400\",\"中雪\":\"401\",\"大雪\":\"402\",\"暴雪\":\"403\",\"雾\":\"501\",\"冻雨\":\"313\",\"沙尘暴\":\"507\",\"浮尘\":\"504\",\"扬沙\":\"503\",\"霾\":\"502\",\"强沙尘暴\":\"508\"}";
 
-    private static JSONObject weatherObject;
+    //private static JSONObject weatherObject;
 
     public static void sendNotification(JSONObject jsonObject,String cityName){
         Notification.Builder builder = new Notification.Builder(mContext);
@@ -50,18 +57,44 @@ public class WeatherNotification {
             for (int i = 0; i < 3; i++){
                 if (notify_strings[i] != null && !notify_strings[i].isEmpty()){
                     if (i == 2){
-                        views.setTextViewText(views_id[i],"空气指数：" + notify_strings[i]);
-                    } else {
+                        views.setTextViewText(views_id[i]," " + notify_strings[i] + " " + notify_strings[6]);
+                    } else if (i == 1) {
+                        views.setTextViewText(views_id[i],notify_strings[i] + "   " +  notify_strings[4] + "/" + notify_strings[5]);
+                    }else {
                         views.setTextViewText(views_id[i],notify_strings[i]);
                     }
 
                 }
             }
+            switch (notify_strings[6]){
+                case "优":
+                    views.setImageViewResource(R.id.aqi_icon,R.drawable.tree_leaf_1);
+                    break;
+                case "良":
+                    views.setImageViewResource(R.id.aqi_icon,R.drawable.tree_leaf_2);
+                    break;
+                case "轻度污染":
+                    views.setImageViewResource(R.id.aqi_icon,R.drawable.tree_leaf_3);
+                    break;
+                case "中度污染":
+                    views.setImageViewResource(R.id.aqi_icon,R.drawable.tree_leaf_4);
+                    break;
+                case "重度污染":
+                    views.setImageViewResource(R.id.aqi_icon,R.drawable.tree_leaf_5);
+                    break;
+                case "严重污染":
+                    views.setImageViewResource(R.id.aqi_icon,R.drawable.tree_leaf_6);
+                    break;
+                default:
+                    views.setImageViewResource(R.id.aqi_icon,R.drawable.tree_leaf_1);
+                    break;
+            }
             views.setTextViewText(R.id.city, city + "  " + notify_strings[3]);
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-            String notify_string = sharedPreferences.getString("notify_background","系统默认底色");
+            String icon_style = sharedPreferences.getString("icon_style","单色");
+            String notify_background = sharedPreferences.getString("notify_background","系统默认底色");
             String notify_text_color = sharedPreferences.getString("notify_text_color","黑色");
-            switch (notify_string){
+            switch (notify_background){
                 case "白色":
                     views.setInt(R.id.notify_layout, "setBackgroundColor", Color.WHITE);
                     break;
@@ -78,65 +111,63 @@ public class WeatherNotification {
                         views.setTextColor(views_id[i],Color.WHITE);
                     }
                     views.setTextColor(R.id.city, Color.WHITE);
+                    if (icon_style.equals("单色")){
+                        views.setInt(R.id.weather_image,"setColorFilter",Color.WHITE);
+                    }else {
+                        views.setInt(R.id.weather_image,"setColorFilter",Color.TRANSPARENT);
+                    }
                     break;
                 case "黑色":
                     for (int i = 0; i < 3; i++){
                         views.setTextColor(views_id[i],Color.BLACK);
                     }
                     views.setTextColor(R.id.city,Color.BLACK);
+                    if (icon_style.equals("单色")){
+                        views.setInt(R.id.weather_image,"setColorFilter",Color.DKGRAY);
+                    }else {
+                        views.setInt(R.id.weather_image,"setColorFilter",Color.TRANSPARENT);
+                    }
+                    break;
+                default:
+                    if (icon_style.equals("单色")){
+                        views.setInt(R.id.weather_image,"setColorFilter",Color.DKGRAY);
+                    } else {
+                        views.setInt(R.id.weather_image,"setColorFilter",Color.TRANSPARENT);
+                    }
                     break;
             }
 
             Intent intent = new Intent(mContext,MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(mContext,0,intent,0);
+            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, intent, 0);
             builder.setContentIntent(pendingIntent);
-            builder.setSmallIcon(R.drawable.ic_wb_cloudy_white_18dp);
+            Calendar calendar = Calendar.getInstance();
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+            WeatherToCode weatherToCode = WeatherToCode.newInstance();
+            int drawable_id = weatherToCode.getDrawableId(notify_strings[1],hour);
+            int drawable_small_id = weatherToCode.getDrawableSmallId(notify_strings[1],hour);
+
+            if (icon_style.equals("单色")){
+                if (drawable_small_id != 0){
+                    views.setImageViewResource(R.id.weather_image,drawable_small_id);
+                }
+            } else {
+                if (drawable_id != 0){
+                    views.setImageViewResource(R.id.weather_image,drawable_id);
+                }
+            }
+            if (drawable_small_id != 0){
+                builder.setSmallIcon(drawable_small_id);
+            }
             builder.setContent(views);
             Notification notification = builder.build();
             notification.flags = Notification.FLAG_NO_CLEAR;
-            if (weatherObject == null){
-                try {
-                    weatherObject = new JSONObject(weatherCode);
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-            try {
-                String code = weatherObject.getString(notify_strings[1]);
-                String url = "http://files.heweather.com/cond_icon/" + code + ".png";
-                String fileName = url.replace("/","").replace(".","").replace(":", "");
-                Bitmap bitmap = FileHandle.getImage(fileName);
-                views.setInt(R.id.weather_image, "setColorFilter", Color.WHITE);
-                if (bitmap == null){
-                    getImage(url, views,builder);
-                }
-                else {
-                    views.setImageViewBitmap(R.id.weather_image, bitmap);
-                }
-            } catch (Exception e){
-                e.printStackTrace();
-            }
             notificationManager.notify(1, notification);
         }
+
     }
 
-    public static void getImage(String url, final RemoteViews views, final Notification.Builder builder){
-        HttpUtil.makeImageRequest(url, new ImageCallBack() {
-            @Override
-            public void onFinish(Bitmap bitmap) {
-                views.setImageViewBitmap(R.id.weather_image, bitmap);
-                builder.setContent(views);
-                Notification notification = builder.build();
-                notification.flags = Notification.FLAG_NO_CLEAR;
-                notificationManager.notify(1, notification);
-            }
 
-            @Override
-            public void onError() {
-
-            }
-        });
-    }
 
     public static JSONObject getJSONObject(){
         CityDataBase cityDataBase = CityDataBase.getInstance();
@@ -155,5 +186,22 @@ public class WeatherNotification {
         notificationManager.cancelAll();
     }
 
+
+
+    public static void sendNotification(String title,String content,int i){
+        Notification.Builder builder = new Notification.Builder(mContext);
+        builder.setContentText(content);
+        builder.setContentTitle(title);
+        builder.setSmallIcon(R.drawable.warning);
+        Intent intent = new Intent(mContext,MainActivity.class);
+        intent.putExtra("position",i);
+        intent.setAction("notification");
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext,i,intent,PendingIntent.FLAG_CANCEL_CURRENT);
+        builder.setContentIntent(pendingIntent);
+        Notification notification = builder.build();
+        notification.flags = Notification.FLAG_AUTO_CANCEL;
+        notification.defaults = Notification.DEFAULT_SOUND;
+        notificationManager.notify(i,notification);
+    }
 
 }

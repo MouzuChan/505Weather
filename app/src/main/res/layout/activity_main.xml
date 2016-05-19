@@ -8,7 +8,6 @@
     android:id="@+id/relative_layout"
     >
     <com.example.l.myweather.customView.MyDrawerLayout
-
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -22,18 +21,22 @@
                     android:id="@+id/main_toolbar"
                     app:titleTextColor="@color/white"
                     app:title="天气"
-                    android:background="@color/touming"
-                    android:layout_width="match_parent"
                     android:theme="@style/AppTheme.AppBarOverlay"
+                    android:layout_width="match_parent"
+                    app:popupTheme="@style/AppTheme.PopupOverlay"
                     android:layout_height="?actionBarSize">
 
                     <ImageView
                         android:id="@+id/location_icon"
                         android:src="@drawable/ic_place_white_18dp"
                         android:layout_width="20dp"
-                        android:layout_height="20dp" />
+                        android:layout_height="20dp"
+                        />
 
                 </android.support.v7.widget.Toolbar>
+
+
+
             <android.support.v4.view.ViewPager
                 android:id="@+id/viewpager"
                 android:layout_width="match_parent"
@@ -49,6 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />
+
             </LinearLayout>
 
 
@@ -74,16 +78,26 @@
             android:layout_width="wrap_content"
             android:layout_gravity="start"
             android:layout_height="match_parent"
-            app:itemTextColor="#222222"
-            app:itemIconTint="#222222"
             app:menu="@menu/menu_drawer"
             app:headerLayout="@layout/header_drawer"
 
             />
 
 
+            <!-- app:itemTextColor="#222222"
+            app:itemIconTint="#222222"  -->
+
+
+
 
     </com.example.l.myweather.customView.MyDrawerLayout>
 
+
+    <ImageView
+
+        android:layout_alignParentBottom="true"
+        android:id="@+id/image_test"
+        android:layout_width="match_parent"
+        android:layout_height="180dp" />
 
 </RelativeLayout>

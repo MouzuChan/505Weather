@@ -5,15 +5,21 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.SurfaceView;
 import android.view.View;
 
 import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.R;
+import com.example.l.myweather.WeatherToCode;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,6 +37,8 @@ public class Table extends View {
     private int[] Xs;
     private int[] Ys;
 
+    //private int[] drawable_ids;
+    //private Bitmap[] bitmaps;
 
     private int jiange = 40;
 
@@ -38,14 +46,11 @@ public class Table extends View {
     private int[] secData;
     private String[] weatherData;
 
-    private int i;
-    private Point currentPoint;
+    //private int[] drawable_ids;
+    private Bitmap[] bitmaps;
 
-    public Table(Context context,AttributeSet attrs){
-        super(context, attrs);
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        setWillNotDraw(false);
-    }
+
+
 
     public Table(Context context){
         super(context);
@@ -56,7 +61,7 @@ public class Table extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         setMeasuredDimension(dp2px((pointCount) * jiange), heightMeasureSpec);
-        Log.d("Table", "onMeasure");
+      //  Log.d("Table", "onMeasure");
 
     }
 
@@ -65,28 +70,75 @@ public class Table extends View {
         super.onDraw(canvas);
         mPaint.setAntiAlias(true);
         mPaint.setColor(Color.WHITE);
-        mPaint.setStrokeWidth(MyApplication.dp2px(2));
-        for (int i = 0; i < Xs.length; i++) {
-            canvas.drawCircle(Xs[i], Ys[i], MyApplication.dp2px(4), mPaint);
-            mPaint.setTextSize(MyApplication.sp2px(15));
-            mPaint.setTextAlign(Paint.Align.CENTER);
-            if (data[i] != null){
-                canvas.drawText(data[i],Xs[i],getHeight() - dp2px(10),mPaint);
-            }
-            if (weatherData[i] != null){
-                canvas.drawText(weatherData[i],Xs[i],getHeight() - dp2px(30),mPaint);
-            }
-            canvas.drawText(secData[i] + "°", Xs[i], Ys[i] - 30, mPaint);
-        }
-
+        mPaint.setStrokeWidth(MyApplication.dp2px(1));
         for (int a = 1; a < Xs.length; a++){
             canvas.drawLine(Xs[a - 1],Ys[a - 1],Xs[a],Ys[a],mPaint);
         }
+        for (int i = 0; i < Xs.length; i++) {
+            canvas.drawCircle(Xs[i], Ys[i], MyApplication.dp2px(3), mPaint);
+            mPaint.setTextSize(MyApplication.sp2px(13));
+            mPaint.setTextAlign(Paint.Align.CENTER);
+            if (data[i] != null){
+                canvas.drawText(data[i],Xs[i],dp2px(175),mPaint);
+            }
+            if (weatherData[i] != null){
+                canvas.drawText(weatherData[i],Xs[i],dp2px(120),mPaint);
+            }
+            canvas.drawText(secData[i] + "°", Xs[i], Ys[i] - 30, mPaint);
+            RectF rectF;
+            if (bitmaps[i] != null){
+                rectF = new RectF(Xs[i] - dp2px(13),dp2px(130),Xs[i] + dp2px(13),dp2px(156));
+                canvas.drawBitmap(bitmaps[i],null,rectF,mPaint);
+            }
 
 
+            //int time = Integer.parseInt(data[i].substring(0,2));
+            //Log.d("TABLE",time + "");
+            /*if (i > 0 && i != 7 && i != 18){
+                if (weatherData[i].equals(weatherData[i - 1])){
+                    if (bitmap != null){
+                        RectF rectF = new RectF(Xs[i] - dp2px(13),dp2px(130),Xs[i] + dp2px(13),dp2px(156));
+                        canvas.drawBitmap(bitmap,null,rectF,mPaint);
+                    }
+                } else {
+                    drawable_id = weatherToCode.getDrawableId(weatherData[i],time);
+                    bitmap = BitmapFactory.decodeResource(getResources(),drawable_id);
+                    RectF rectF = new RectF(Xs[i] - dp2px(13),dp2px(130),Xs[i] + dp2px(13),dp2px(156));
+                    canvas.drawBitmap(bitmap,null,rectF,mPaint);
+                }
+            }else {
+                drawable_id = weatherToCode.getDrawableId(weatherData[i],time);
+                bitmap = BitmapFactory.decodeResource(getResources(),drawable_id);
+                RectF rectF = new RectF(Xs[i] - dp2px(13),dp2px(130),Xs[i] + dp2px(13),dp2px(156));
+                canvas.drawBitmap(bitmap,null,rectF,mPaint);
+            }*/
+
+        }
 
 
     }
+
+    public void initBitmap(int flag){
+        WeatherToCode weatherToCode = WeatherToCode.newInstance();
+        int drawable_id;
+        if (flag == 0) {
+            for (int i = 0; i < 24; i++){
+                int time = Integer.parseInt(data[i].substring(0,2));
+                drawable_id = weatherToCode.getDrawableId(weatherData[i],time);
+                bitmaps[i] = BitmapFactory.decodeResource(getResources(),drawable_id);
+            }
+        } else {
+            for (int i = 0; i < 24; i++){
+                int time = Integer.parseInt(data[i].substring(0,2));
+                drawable_id = weatherToCode.getDrawableSmallId(weatherData[i],time);
+                if (drawable_id != 0){
+                    bitmaps[i] = BitmapFactory.decodeResource(getResources(),drawable_id);
+                }
+
+            }
+        }
+    }
+
 
     /*public void startAnim(final int i){
         this.i = i;
@@ -145,7 +197,8 @@ public class Table extends View {
         this.pointCount = pointCount;
         Xs = new int[pointCount];
         Ys = new int[pointCount];
-
+//        drawable_ids = new int[pointCount];
+        bitmaps = new Bitmap[pointCount];
     }
 
     public void addPoint(int point,float x,float y){
@@ -169,7 +222,8 @@ public class Table extends View {
         return (int) (dpValue * scale + 0.5f);
     }
 
-    public class Point{
+
+    /*  public class Point{
         private  float x;
         private  float y;
 
@@ -185,9 +239,9 @@ public class Table extends View {
         public float getY() {
             return y;
         }
-    }
+    }*/
 
-    public class PointEvaluator implements TypeEvaluator {
+   /* public class PointEvaluator implements TypeEvaluator {
         @Override
         public Object evaluate(float fraction, Object startValue, Object endValue) {
             Point startPoint = (Point) startValue;
@@ -196,10 +250,6 @@ public class Table extends View {
             float y = startPoint.getY() + fraction * (endPoint.getY() - startPoint.getY());
             return new Point(x,y);
         }
-    }
+    }*/
 
-
-    public void setCurrentPoint(){
-        currentPoint = null;
-    }
 }

@@ -41,16 +41,14 @@ public class ForecastTable extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Log.d("forecastTable", "onDraw");
-
         mPaint.setAntiAlias(true);
         mPaint.setColor(Color.WHITE);
-        mPaint.setStrokeWidth(MyApplication.dp2px(2));
-        mPaint.setTextSize(MyApplication.sp2px(15));
+        mPaint.setStrokeWidth(MyApplication.dp2px(1));
+        mPaint.setTextSize(MyApplication.sp2px(13));
         mPaint.setTextAlign(Paint.Align.CENTER);
         for (int i = 0; i < maxXs.length; i++){
-            canvas.drawCircle(maxXs[i], maxYs[i], MyApplication.dp2px(4), mPaint);
-            canvas.drawCircle(minXs[i], minYs[i], MyApplication.dp2px(4), mPaint);
+            canvas.drawCircle(maxXs[i], maxYs[i], MyApplication.dp2px(3), mPaint);
+            canvas.drawCircle(minXs[i], minYs[i], MyApplication.dp2px(3), mPaint);
             canvas.drawText(maxData[i] + "°", maxXs[i], maxYs[i] - MyApplication.dp2px(20), mPaint);
             canvas.drawText(minData[i] + "°", minXs[i], minYs[i] + MyApplication.dp2px(30), mPaint);
         }

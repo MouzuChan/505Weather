@@ -1,100 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <PreferenceCategory
-        android:title="通知栏设置">
-        <SwitchPreference
-            android:key="show_notification"
-            android:defaultValue="false"
-            android:title="在通知栏显示"/>
+    <PreferenceScreen
+        android:key="main_screen"
+        >
+        <PreferenceCategory
+            android:title="通知栏设置">
+            <CheckBoxPreference
+                android:key="show_notification"
+                android:defaultValue="false"
+                android:title="在通知栏显示"/>
 
-        <ListPreference
-            android:key="notify_background"
-            android:title="通知栏底色"
-            android:dialogTitle="通知栏底色"
-            android:entryValues="@array/notify_strings"
-            android:entries="@array/notify_strings"
-            android:defaultValue="系统默认底色"
-            />
+            <ListPreference
+                android:key="notify_background"
+                android:title="通知栏底色"
+                android:dialogTitle="通知栏底色"
+                android:entryValues="@array/notify_strings"
+                android:entries="@array/notify_strings"
+                android:defaultValue="系统默认底色"
+                />
 
-        <ListPreference
-            android:key="notify_text_color"
-            android:title="通知栏字体颜色"
-            android:dialogTitle="通知栏字体颜色"
-            android:entryValues="@array/notify_text_color"
-            android:entries="@array/notify_text_color"
-            android:defaultValue="黑色"
-            />
-
-
-
-
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="小部件设置">
-
-        <SwitchPreference
-            android:key="show_frame"
-            android:title="是否带边框"
-            android:defaultValue="false"
-            />
-
-        <ListPreference
-            android:key="widget_color"
-            android:title="小部件背景颜色"
-            android:dialogTitle="小部件背景颜色"
-            android:entryValues="@array/widget_color"
-            android:entries="@array/widget_color"
-            android:defaultValue="透明"
-            />
-        <ListPreference
-            android:key="widget_text_color"
-            android:title="小部件字体颜色"
-            android:dialogTitle="小部件字体颜色"
-            android:entryValues="@array/notify_text_color"
-            android:entries="@array/notify_text_color"
-            android:defaultValue="白色"
-            />
+            <ListPreference
+                android:key="notify_text_color"
+                android:title="通知栏字体颜色"
+                android:dialogTitle="通知栏字体颜色"
+                android:entryValues="@array/notify_text_color"
+                android:entries="@array/notify_text_color"
+                android:defaultValue="黑色"
+                />
 
 
-    </PreferenceCategory>
+            <CheckBoxPreference
+                android:key="alarm_notification"
+                android:title="天气预警通知"
+                android:summary="需打开自动更新才能生效"
+                android:defaultValue="true"
+                />
 
-    <PreferenceCategory
-        android:title="更新设置"
+
+        </PreferenceCategory>
+
+        <PreferenceCategory android:title="小部件设置">
+            <ListPreference
+                android:key="widget_color"
+                android:title="小部件背景颜色"
+                android:dialogTitle="小部件背景颜色"
+                android:entryValues="@array/widget_color"
+                android:entries="@array/widget_color"
+                android:defaultValue="透明"
+                />
+            <ListPreference
+                android:key="widget_text_color"
+                android:title="小部件字体颜色"
+                android:dialogTitle="小部件字体颜色"
+                android:entryValues="@array/notify_text_color"
+                android:entries="@array/notify_text_color"
+                android:defaultValue="白色"
+                />
+            <Preference android:key="custom_click"
+                android:title="自定义点击事件"
+                />
+        </PreferenceCategory>
+
+        <PreferenceCategory
+            android:title="更新设置"
+            >
+
+            <CheckBoxPreference
+                android:key="update_switch"
+                android:defaultValue="false"
+                android:title="自动更新通知栏和小部件"
+                android:summaryOff="已关闭"
+                android:summaryOn="已开启"
+                />
+            <ListPreference
+                android:key="update_rate"
+                android:title="更新频率"
+                android:dialogTitle="更新频率"
+                android:entryValues="@array/entries_preference"
+                android:entries="@array/entries_preference"
+                android:defaultValue="1个小时"
+                />
+
+            <CheckBoxPreference
+                android:key="update_location"
+                android:title="自动更新位置"
+                android:defaultValue="true"
+                android:summary="启动应用时自动更新位置"
+                />
+
+        </PreferenceCategory>
+
+        <PreferenceCategory
+            android:title="其他设置"
+            >
+            <ListPreference
+                android:key="icon_style"
+                android:title="图标风格(需重启)"
+                android:dialogTitle="请选择"
+                android:entryValues="@array/icon_style_name"
+                android:entries="@array/icon_style_name"
+                android:defaultValue="单色"
+                />
+        </PreferenceCategory>
+
+    </PreferenceScreen>
+
+    <PreferenceScreen
+        android:key="custom_screen"
         >
 
-        <SwitchPreference
-            android:key="update_switch"
-            android:defaultValue="false"
-            android:title="自动更新小部件和通知栏"
-            android:summaryOff="已关闭"
-            android:summaryOn="已开启"
-            />
-        <ListPreference
-            android:key="update_rate"
-            android:title="更新频率"
-            android:dialogTitle="更新频率"
-            android:entryValues="@array/entries_preference"
-            android:entries="@array/entries_preference"
-            android:defaultValue="1个小时"
-            />
+        <PreferenceCategory
+            android:title="自定义点击事件">
+            <Preference android:key="click_time_event"
+                android:title="点击时间时打开"
+                />
+
+            <Preference android:key="click_date_event"
+                android:title="点击日期时打开"
+                />
+
+            <Preference android:key="click_weather_event"
+                android:title="点击天气时打开"
+                android:summary="505天气"
+                />
+        </PreferenceCategory>
 
 
 
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:title="其他设置"
-        >
-        <SwitchPreference
-            android:key="update_location"
-            android:title="自动更新位置"
-            android:defaultValue="true"
-            android:summary="启动应用时自动更新位置"
-            />
-    </PreferenceCategory>
-
-
-
+    </PreferenceScreen>
 </PreferenceScreen>
+
+

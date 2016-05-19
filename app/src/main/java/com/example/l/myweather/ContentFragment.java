@@ -11,19 +11,14 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-import com.android.volley.toolbox.Volley;
 import com.example.l.myweather.customView.AqiArc;
 import com.example.l.myweather.customView.ForecastTable;
 import com.example.l.myweather.customView.SunRiseAndSet;
@@ -31,8 +26,6 @@ import com.example.l.myweather.customView.Table;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -40,9 +33,6 @@ import java.util.TimerTask;
  * A simple {@link Fragment} subclass.
  */
 public class ContentFragment extends Fragment{
-
-    private RequestQueue mQueue;
-    private ImageLoader imageLoader;
 
     private Context context = MyApplication.getContext();
     private View view;
@@ -57,7 +47,11 @@ public class ContentFragment extends Fragment{
     private AqiArc aqiArc;
     private JSONObject object,hour_object;
     private SharedPreferences sharedPreferences;
+    private SharedPreferences defaultPreferences;
 
+    //private ScrollView scrollView;
+    //private FloatingActionButton fab_refresh;
+    //private ScrollView scrollView;
     //now_layout
     private LinearLayout now_layout;
     private TextView[] now_layout_text_views;
@@ -65,7 +59,6 @@ public class ContentFragment extends Fragment{
 
     private TextView alarm_name;
     private String[] alarm_strings;
-    private NetworkImageView alarm_icon;
     private LinearLayout alarm_layout;
     //hour_layout
     private String[] hour_layout_time_strings;
@@ -79,6 +72,7 @@ public class ContentFragment extends Fragment{
     private ForecastTable forecastTable;
     private TextView[] forecast_night_views;
     private TextView[] forecast_day_views;
+    private ImageView[] imageViews;
     private String[] forecast_day_strings;
     private LinearLayout forecast_table_layout;
 
@@ -98,6 +92,7 @@ public class ContentFragment extends Fragment{
     //sun_layout
     private SunRiseAndSet sunRiseAndSet;
     private LinearLayout sun_layout;
+    private String[] sun_rise_down_time;
 
     //index_layout
     private TextView[] index_layout_text_views;
@@ -105,6 +100,7 @@ public class ContentFragment extends Fragment{
     public ContentFragment() {
         // Required empty public constructor
     }
+
 
 
     @Override
@@ -137,53 +133,49 @@ public class ContentFragment extends Fragment{
     public void initView(){
 
         WindowManager windowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
-
-
         DisplayMetrics dm = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(dm);
         totalHeight = dm.heightPixels;
         totalWidth = dm.widthPixels;
         mainActivity = (MainActivity)getActivity();
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        //scrollView = (ScrollView) view.findViewById(R.id.scroll_view);
+
+        final SwipeRefreshLayout.OnRefreshListener onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 TimerTask timerTask = new TimerTask() {
                     @Override
                     public void run() {
+
                         initDate();
                         initDataFromInternet();
                     }
                 };
                 Timer timer = new Timer();
                 timer.schedule(timerTask,2000);
-
             }
-        });
+        };
+        swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
 
 
 
         //view of now_layout
         now_layout = (LinearLayout) view.findViewById(R.id.now_layout);
-        now_layout_text_views = new TextView[5];
+        now_layout_text_views = new TextView[4];
         now_layout_text_views[0] = (TextView) view.findViewById(R.id.now_weather);
         now_layout_text_views[1] = (TextView) view.findViewById(R.id.now_aqi);
         now_layout_text_views[2] = (TextView) view.findViewById(R.id.now_temp);
-        now_layout_text_views[3] = (TextView) view.findViewById(R.id.now_wind);
-        now_layout_text_views[4] = (TextView) view.findViewById(R.id.update_time);
+        now_layout_text_views[3] = (TextView) view.findViewById(R.id.update_time);
 
         alarm_name = (TextView) view.findViewById(R.id.alarm_name);
         alarm_layout = (LinearLayout) view.findViewById(R.id.alarm_layout);
         alarm_layout.setVisibility(View.GONE);
-        mQueue = Volley.newRequestQueue(context);
-        imageLoader = new ImageLoader(mQueue,new BitmapCache());
-        alarm_icon = (NetworkImageView) view.findViewById(R.id.alarm_icon);
         alarm_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (alarm_strings[1] != null && !alarm_strings[1].isEmpty()){
-
-
                     AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
                     builder.setTitle(alarm_strings[1]);
                     if (alarm_strings[2] != null){
@@ -194,6 +186,8 @@ public class ContentFragment extends Fragment{
 
             }
         });
+
+
 
 
         //view of hour_layout
@@ -214,6 +208,7 @@ public class ContentFragment extends Fragment{
 
         forecast_day_views = new TextView[7];
         forecast_night_views = new TextView[7];
+        imageViews = new ImageView[7];
 
         forecast_night_views[0] = (TextView) view.findViewById(R.id.date_1);
         forecast_night_views[1] = (TextView) view.findViewById(R.id.date_2);
@@ -230,6 +225,16 @@ public class ContentFragment extends Fragment{
         forecast_day_views[4] = (TextView) view.findViewById(R.id.week_5);
         forecast_day_views[5] = (TextView) view.findViewById(R.id.week_6);
         forecast_day_views[6] = (TextView) view.findViewById(R.id.week_7);
+
+        imageViews[0] = (ImageView) view.findViewById(R.id.image_1);
+        imageViews[1] = (ImageView) view.findViewById(R.id.image_2);
+        imageViews[2] = (ImageView) view.findViewById(R.id.image_3);
+        imageViews[3] = (ImageView) view.findViewById(R.id.image_4);
+        imageViews[4] = (ImageView) view.findViewById(R.id.image_5);
+        imageViews[5] = (ImageView) view.findViewById(R.id.image_6);
+        imageViews[6] = (ImageView) view.findViewById(R.id.image_7);
+
+
         //view of aqi_layout
         aqi_layout = (LinearLayout) view.findViewById(R.id.aqi_layout);
         aqi_strings = new String[7];
@@ -257,66 +262,74 @@ public class ContentFragment extends Fragment{
 
         //view of sun_layout
         sun_layout = (LinearLayout)view.findViewById(R.id.sun_layout);
+
+
+        /*scrollView = (ScrollView) view.findViewById(R.id.scroll_view);
+        fab_refresh = (FloatingActionButton) view.findViewById(R.id.fab_refresh);
+        fab_refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!swipeRefreshLayout.isRefreshing()) {
+                    scrollView.fullScroll(ScrollView.FOCUS_UP);
+                    swipeRefreshLayout.setRefreshing(true);
+                    onRefreshListener.onRefresh();
+                }
+            }
+        });*/
+
+        /*
+        final float translationY = fab_refresh.getTranslationY();
+        OnMyScrollChangeListener onMyScrollChangeListener = new OnMyScrollChangeListener() {
+            @Override
+            public void onChange(int y, int oldY) {
+                Log.d("scrollY", "--- >  " + y);
+                int i = y - oldY;
+                float newTranslationY = fab_refresh.getTranslationY();
+                if (i > 0){
+                    if (fab_refresh.getY() < totalHeight - mainActivity.getBarHeight()){
+                        fab_refresh.setTranslationY(newTranslationY + i);
+                    }
+
+                } else {
+                    if (newTranslationY > translationY){
+                        if (newTranslationY + i < translationY){
+                            fab_refresh.setTranslationY(translationY);
+                        } else {
+                            fab_refresh.setTranslationY(newTranslationY + i);
+                        }
+
+                    }
+                }
+            }
+        };
+        MyScrollView myScrollView = (MyScrollView) view.findViewById(R.id.scroll_view);
+        myScrollView.setOnMyScrollChangeListener(onMyScrollChangeListener);*/
+        final LinearLayout aqi_linear_layout = (LinearLayout) view.findViewById(R.id.aqi_linear_layout);
+        aqi_linear_layout.post(new Runnable() {
+            @Override
+            public void run() {
+                aqi_linear_layout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //int i = now_layout.getHeight() + hour_table_layout.getHeight() + forecast_table_layout.getHeight() +
+                        //        mainActivity.getBarHeight() + MyApplication.dp2px(100);
+                        //scrollView.scrollTo(0,i);
+                        LinearLayout layout = (LinearLayout)view.findViewById(R.id.layout_aqi);
+                        layout.getParent().requestChildFocus(layout,layout);
+                    }
+                });
+            }
+        });
     }
 
-    public void initDate(){
+    public void initDate() {
+        TimeAndDate timeAndDate = new TimeAndDate();
+        week_strings = timeAndDate.getFullWeek();
+        hour = timeAndDate.getHour();
+        minute = timeAndDate.getMinute();
+        date_strings = timeAndDate.getDateStrings();
         week_strings[0] = "今天";
         week_strings[1] = "明天";
-        week_strings[2] = "后天";
-        Calendar calendar = Calendar.getInstance();
-        hour = calendar.get(Calendar.HOUR_OF_DAY);
-        minute = calendar.get(Calendar.MINUTE);
-        int week = calendar.get(Calendar.DAY_OF_WEEK);
-        switch (week){
-            case 1:
-                week_strings[3] = "周三";
-                week_strings[4] = "周四";
-                week_strings[5] = "周五";
-                week_strings[6] = "周六";
-                break;
-            case 2:
-                week_strings[3] = "周四";
-                week_strings[4] = "周五";
-                week_strings[5] = "周六";
-                week_strings[6] = "周日";
-                break;
-            case 3:
-                week_strings[3] = "周五";
-                week_strings[4] = "周六";
-                week_strings[5] = "周日";
-                week_strings[6] = "周一";
-                break;
-            case 4:
-                week_strings[3] = "周六";
-                week_strings[4] = "周日";
-                week_strings[5] = "周一";
-                week_strings[6] = "周二";
-                break;
-            case 5:
-                week_strings[3] = "周日";
-                week_strings[4] = "周一";
-                week_strings[5] = "周二";
-                week_strings[6] = "周三";
-                break;
-            case 6:
-                week_strings[3] = "周一";
-                week_strings[4] = "周二";
-                week_strings[5] = "周三";
-                week_strings[6] = "周四";
-                break;
-            case 7:
-                week_strings[3] = "周二";
-                week_strings[4] = "周三";
-                week_strings[5] = "周四";
-                week_strings[6] = "周五";
-                break;
-        }
-        int day = calendar.get(Calendar.DAY_OF_YEAR);
-        for (int i = 0; i<7; i++){
-            calendar.set(Calendar.DAY_OF_YEAR,day);
-            date_strings[i] = calendar.get(Calendar.MONTH) + 1 + "-" + calendar.get(Calendar.DATE);
-            day++;
-        }
     }
 
     public void initData(){
@@ -332,47 +345,57 @@ public class ContentFragment extends Fragment{
                 }
             };
             Timer timer = new Timer();
-            timer.schedule(timerTask, 2000);
+            timer.schedule(timerTask, 1500);
         }
     }
 
     public void initDataFromLocal(){
-        object = FileHandle.getJSONObject(city_id);
-        if (object != null){
-            jsonHandle(object);
-            if (position == 0){
-                updateWidget(object);
+
+       // mainActivity.runOnUiThread(new Runnable() {
+       //     @Override
+        //    public void run() {
+            object = FileHandle.getJSONObject(city_id);
+            if (object != null){
+                jsonHandle(object);
             }
-        }
-        initHourTable();
+            initHourTable();
+      //      }
+      //  });
     }
 
     public void initDataFromInternet(){
         String url = "http://aider.meizu.com/app/weather/listWeather?cityIds=" + city_id;
         HttpUtil.makeHttpRequest(url, new CallBackListener() {
             @Override
-            public void onFinish(JSONObject jsonObject) {
-                if (object == null || !jsonObject.toString().equals(object.toString())){
-                    jsonHandle(jsonObject);
-                    object = jsonObject;
-                    FileHandle.saveJSONObject(jsonObject, city_id);
-                    if (position == 0){
-                        updateWidget(jsonObject);
+            public void onFinish(JSONObject object1) {
+                try {
+                    if (object1.getString("code").equals("200")){
+                        JSONObject jsonObject = object1.getJSONArray("value").getJSONObject(0);
+                        if (object == null || !jsonObject.toString().equals(object.toString())){
+                            jsonHandle(jsonObject);
+                            object = jsonObject;
+                            if (position == 0){
+                                updateWidget(jsonObject);
+                            }
+                            if (swipeRefreshLayout.isRefreshing()){
+                                mainActivity.showSnackbar("刷新成功");
+                            }
+                            object = jsonObject;
+                        } else {
+                            if (swipeRefreshLayout.isRefreshing()){
+                                mainActivity.showSnackbar("数据已最新");
+                            }
+                        }
+                        if (swipeRefreshLayout.isRefreshing()) {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                        FileHandle.saveJSONObject(jsonObject, city_id);
                     }
-                    if (swipeRefreshLayout.isRefreshing()){
-                        mainActivity.showSnackbar("刷新成功");
-                    }
-                    object = jsonObject;
-                } else {
-                    //jsonHandle(jsonObject);
-                    //FileHandle.saveJSONObject(jsonObject, city_id);
-                    if (swipeRefreshLayout.isRefreshing()){
-                        mainActivity.showSnackbar("数据已最新");
-                    }
+                } catch (Exception e){
+                    e.printStackTrace();
                 }
-                if (swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
+
+
             }
 
             @Override
@@ -384,7 +407,11 @@ public class ContentFragment extends Fragment{
             }
         });
 
+        getHourDataFromInternet();
+    }
 
+
+    public void getHourDataFromInternet(){
         String hourUrl = "http://m.weather.com.cn/mpub/hours/" + city_id + ".html";
         HttpUtil.makeHttpRequest(hourUrl, new CallBackListener() {
             @Override
@@ -399,8 +426,6 @@ public class ContentFragment extends Fragment{
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-
             }
 
             @Override
@@ -416,8 +441,11 @@ public class ContentFragment extends Fragment{
             WeatherNotification.sendNotification(jsonObject,city_name);
         }
         Intent intent = new Intent("com.lha.weather.UPDATE_FROM_LOCAL");
+        intent.putExtra("data",jsonObject.toString());
+        intent.putExtra("city",city_name);
         context.sendBroadcast(intent);
     }
+
     public void initHourTable(){
         hour_object = FileHandle.getJSONObject(city_id + "hour");
         if (hour_object != null){
@@ -452,8 +480,6 @@ public class ContentFragment extends Fragment{
     }
 
     public void initPadding(){
-
-
         now_layout.post(new Runnable() {
             @Override
             public void run() {
@@ -463,9 +489,6 @@ public class ContentFragment extends Fragment{
 
             }
         });
-
-            //hour_layout.setPadding(0, height, 0, 0);
-        //}
     }
 
     public void jsonHandle(JSONObject jsonObject){
@@ -486,8 +509,8 @@ public class ContentFragment extends Fragment{
         alarm_strings = jsonHandle.getAlarm_strings();
         setAlarm_layout();
         setAqiLayout();
-        String[] sun_rise_down_time = jsonHandle.getSun_rise_down_time();
-        setSunLayout(sun_rise_down_time[0],sun_rise_down_time[1]);
+        sun_rise_down_time = jsonHandle.getSun_rise_down_time();
+        setSunLayout();
         index_strings = jsonHandle.getIndex_strings();
         setIndexLayout();
         mainActivity.setView(position,now_layout_strings[2]);
@@ -495,10 +518,12 @@ public class ContentFragment extends Fragment{
         if (position == mainActivity.getCurrentItem()){
             mainActivity.setWeatherImage(now_layout_strings[0]);
         }
+
+
     }
 
     public void setNow_layout(){
-        for (int i = 0; i < 5; i++){
+        for (int i = 0; i < 4; i++){
             if (now_layout_strings[i] != null && !now_layout_strings[i].isEmpty())
             now_layout_text_views[i].setText(now_layout_strings[i]);
         }
@@ -517,6 +542,19 @@ public class ContentFragment extends Fragment{
         table.setJiange(60);
         table.setPointCount(hour_layout_temp_ints.length);
         table.setData(hour_layout_time_strings, hour_layout_weather_strings,hour_layout_temp_ints);
+
+        switch (defaultPreferences.getString("icon_style","单色")){
+            case "单色":
+                table.initBitmap(1);
+                break;
+            case "彩色":
+                table.initBitmap(0);
+                break;
+            default:
+                table.initBitmap(1);
+                break;
+        }
+
         for (int i : hour_layout_temp_ints){
 
             if (i > maxTemp){
@@ -530,22 +568,42 @@ public class ContentFragment extends Fragment{
         if (!(maxTemp - minTemp == 0)){
             float y = 60 / (maxTemp - minTemp);
             for (int i = 0; i < hour_layout_temp_ints.length; i++){
-                table.addPoint(i, i * 60 + 30, (maxTemp - hour_layout_temp_ints[i]) * y + 50);
+                table.addPoint(i, i * 60 + 30, (maxTemp - hour_layout_temp_ints[i]) * y + 30);
             }
         }
 
     }
 
     public void setForecastTable(){
+
+        WeatherToCode weatherToCode = WeatherToCode.newInstance();
+        String icon_style = defaultPreferences.getString("icon_style","单色");
+        int drawable_id;
         for (int i = 0; i < 7; i++){
             if (forecast_day_strings[i] != null && !forecast_day_strings[i].isEmpty()){
-                forecast_day_views[i].setText(week_strings[i] + "\n" + forecast_day_strings[i]);
+                forecast_day_views[i].setText(week_strings[i] + "\n" + "\n" + forecast_day_strings[i]);
             } else {
                 forecast_day_views[i].setText(week_strings[i]);
             }
             forecast_night_views[i].setText(date_strings[i]);
+            switch (icon_style){
+                case "单色":
+                    drawable_id = weatherToCode.getDrawableSmallId(forecast_day_strings[i],12);
+                    break;
+                case "彩色":
+                    drawable_id = weatherToCode.getDrawableId(forecast_day_strings[i],12);
+                    break;
+                default:
+                    drawable_id = weatherToCode.getDrawableSmallId(forecast_day_strings[i],12);
+                    break;
+            }
+            if (drawable_id != 0){
+                imageViews[i].setImageResource(drawable_id);
+            }
             forecast_night_views[i].setTextColor(Color.WHITE);
             forecast_day_views[i].setTextColor(Color.WHITE);
+            forecast_day_views[i].setTextSize(13);
+            forecast_night_views[i].setTextSize(13);
 
         }
         int maxTemp = -100;
@@ -590,27 +648,53 @@ public class ContentFragment extends Fragment{
             aqiArc.invalidate();
         }
         aqiArc.setAqi(aqi, aqi_quality);
-
         for (int i = 0; i < 7; i++){
             if (aqi_strings[i] != null && !aqi_strings[i].isEmpty() && !aqi_strings[i].equals("0")){
                 aqi_layout_text_views[i].setText(aqi_strings[i]);
             } else if (i == 6){
                 aqi_layout_text_views[i].setText("暂无数据");
             }
-
         }
+        ImageView imageView = (ImageView) view.findViewById(R.id.aqi_icon);
+        switch (aqi_quality){
+            case "优":
+                imageView.setImageResource(R.drawable.tree_leaf_1);
+                break;
+            case "良":
+                imageView.setImageResource(R.drawable.tree_leaf_2);
+                break;
+            case "轻度污染":
+                imageView.setImageResource(R.drawable.tree_leaf_3);
+                break;
+            case "中度污染":
+                imageView.setImageResource(R.drawable.tree_leaf_4);
+                break;
+            case "重度污染":
+                imageView.setImageResource(R.drawable.tree_leaf_5);
+                break;
+            case "严重污染":
+                imageView.setImageResource(R.drawable.tree_leaf_6);
+                break;
+            default:
+                imageView.setImageResource(R.drawable.tree_leaf_1);
+                break;
+        }
+
+
     }
 
 
 
-    public void setSunLayout(String sunRiseTime,String sunSetTime){
+    public void setSunLayout(){
         if (sunRiseAndSet == null){
             sunRiseAndSet = new SunRiseAndSet(context);
-            sunRiseAndSet.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,(totalWidth - MyApplication.dp2px(100)) / 2 + MyApplication.dp2px(60)));
+            sunRiseAndSet.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,totalWidth / 4 + MyApplication.dp2px(10)));
             sun_layout.addView(sunRiseAndSet);
         } else {
             sunRiseAndSet.invalidate();
         }
+        String sunRiseTime = sun_rise_down_time[0];
+        String sunSetTime = sun_rise_down_time[1];
         if (sunRiseTime != null && sunSetTime != null){
             sunRiseAndSet.setString(sunRiseTime, sunSetTime);
             int sunRiseHour = Integer.valueOf(sunRiseTime.substring(0,2));
@@ -626,6 +710,13 @@ public class ContentFragment extends Fragment{
             sunRiseAndSet.setString("--", "--");
             sunRiseAndSet.setTime(0,0);
         }
+        TextView body_temp = (TextView) view.findViewById(R.id.body_temp);
+        TextView wind = (TextView) view.findViewById(R.id.wind);
+        TextView shidu = (TextView) view.findViewById(R.id.shidu);
+
+        body_temp.setText(sun_rise_down_time[2]);
+        wind.setText(sun_rise_down_time[3]);
+        shidu.setText(sun_rise_down_time[4]);
     }
 
     public void setIndexLayout(){
@@ -655,15 +746,6 @@ public class ContentFragment extends Fragment{
         ContentFragment fragment = new ContentFragment();
         fragment.setArguments(args);
         return fragment;
-    }
-
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (swipeRefreshLayout.isRefreshing()){
-            swipeRefreshLayout.setRefreshing(false);
-        }
     }
 
     public void changeCity(String city_name,String city_id){

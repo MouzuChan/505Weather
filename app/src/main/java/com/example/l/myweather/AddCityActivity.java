@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -45,8 +46,10 @@ public class AddCityActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Window window = getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
         setContentView(R.layout.activity_add_city);
         initView();
         initLocation();
@@ -58,19 +61,13 @@ public class AddCityActivity extends AppCompatActivity implements View.OnClickLi
         locationButton = (Button)findViewById(R.id.location);
         cityListView = (ListView)findViewById(R.id.city_list);
         locationButton.setOnClickListener(this);
-        city_list = new ArrayList<String>();
-        list = new ArrayList<String>();
-        id_list = new ArrayList<String>();
+        city_list = new ArrayList<>();
+        list = new ArrayList<>();
+        id_list = new ArrayList<>();
         adapter = new ListAdapter(list);
         cityListView.setAdapter(adapter);
         toolbar = (Toolbar)findViewById(R.id.add_toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
+        setSupportActionBar(toolbar);
         location_city_view = (TextView) findViewById(R.id.location_city_view);
         location_city_view.setOnClickListener(this);
         locationButton.setVisibility(View.INVISIBLE);
@@ -111,7 +108,13 @@ public class AddCityActivity extends AppCompatActivity implements View.OnClickLi
 
             }
         });
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         cityListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -121,6 +124,8 @@ public class AddCityActivity extends AppCompatActivity implements View.OnClickLi
                     intent.putExtra("city_name", city_list.get(position));
                     intent.putExtra("city_id", id_list.get(position));
                     sendBroadcast(intent);
+                    Intent intent1 = new Intent();
+                    setResult(1,intent1);
                     finish();
                 }
 
@@ -234,6 +239,8 @@ public class AddCityActivity extends AppCompatActivity implements View.OnClickLi
                     intent.putExtra("city_name",location_city);
                     intent.putExtra("city_id",location_city_id);
                     sendBroadcast(intent);
+                    Intent intent1 = new Intent();
+                    setResult(1, intent1);
                     finish();
                 } else {
                     initLocation();
@@ -313,6 +320,6 @@ public class AddCityActivity extends AppCompatActivity implements View.OnClickLi
             }
         };
         Timer timer = new Timer();
-        timer.schedule(timerTask,2000);
+        timer.schedule(timerTask,1000);
     }
 }
