@@ -1,77 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/night_background"
-    android:orientation="vertical"
-    android:id="@+id/relative_layout"
+    android:id="@+id/container"
+
     >
     <com.example.l.myweather.customView.MyDrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
-            android:fitsSystemWindows="true"
             android:orientation="vertical"
+            android:fitsSystemWindows="true"
+            android:id="@+id/content_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/default_background"
+            >
+
+            <RelativeLayout
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/main_toolbar"
-                    app:titleTextColor="@color/white"
                     app:title="天气"
                     android:theme="@style/AppTheme.AppBarOverlay"
                     android:layout_width="match_parent"
                     app:popupTheme="@style/AppTheme.PopupOverlay"
                     android:layout_height="?actionBarSize">
-
-                    <ImageView
-                        android:id="@+id/location_icon"
-                        android:src="@drawable/ic_place_white_18dp"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        />
-
                 </android.support.v7.widget.Toolbar>
 
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/viewpager"
+                    android:layout_width="match_parent"
+                    android:layout_below="@+id/main_toolbar"
+                    android:layout_height="match_parent"
+                    />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tip_text"
+                        android:text="点击添加城市"
+                        android:textColor="#ffffff"
+                        android:layout_width="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerInParent="true"
+                        android:layout_height="wrap_content" />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
 
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/viewpager"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-            />
-            <com.example.l.myweather.customView.Indicator
-                android:id="@+id/indicator"
-                android:layout_width="match_parent"
-                android:layout_height="20dp" />
-            <android.support.design.widget.CoordinatorLayout
-                android:id="@+id/container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
-
-            </LinearLayout>
 
 
-        <RelativeLayout
+        <com.example.l.myweather.customView.Indicator
+            android:id="@+id/indicator"
+            android:layout_below="@+id/viewpager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="20dp" />
 
-            <TextView
-                android:id="@+id/tip_text"
-                android:text="点击添加城市"
-                android:textColor="#ffffff"
-                android:layout_width="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerInParent="true"
-                android:layout_height="wrap_content" />
-
-        </RelativeLayout>
-
-
+    </LinearLayout>
 
         <android.support.design.widget.NavigationView
             android:id="@+id/navigation_view"
@@ -80,24 +75,8 @@
             android:layout_height="match_parent"
             app:menu="@menu/menu_drawer"
             app:headerLayout="@layout/header_drawer"
-
             />
 
 
-            <!-- app:itemTextColor="#222222"
-            app:itemIconTint="#222222"  -->
-
-
-
-
     </com.example.l.myweather.customView.MyDrawerLayout>
-
-
-    <ImageView
-
-        android:layout_alignParentBottom="true"
-        android:id="@+id/image_test"
-        android:layout_width="match_parent"
-        android:layout_height="180dp" />
-
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

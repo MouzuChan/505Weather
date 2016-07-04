@@ -9,7 +9,8 @@
 
     >
 
-    <HorizontalScrollView
+    <com.example.l.myweather.customView.MyHorizontalScrollView
+        android:id="@+id/hour_scroll_view"
         android:scrollbars="none"
         android:fillViewport="true"
         android:layout_width="match_parent"
@@ -23,7 +24,8 @@
 
         </LinearLayout>
 
-    </HorizontalScrollView>
+    </com.example.l.myweather.customView.MyHorizontalScrollView>
+
 </LinearLayout>
 
 

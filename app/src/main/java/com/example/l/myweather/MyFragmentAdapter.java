@@ -2,9 +2,10 @@ package com.example.l.myweather;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.util.Log;
+import android.view.ViewGroup;
+
+import com.example.l.myweather.ui.ContentFragment;
 
 import java.util.ArrayList;
 
@@ -31,4 +32,8 @@ public class MyFragmentAdapter extends FragmentStatePagerAdapter {
         return list.get(position);
     }
 
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        super.destroyItem(container, position, object);
+    }
 }

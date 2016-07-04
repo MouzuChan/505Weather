@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by L on 2016-01-30.
  */
-class ListAdapter extends BaseAdapter {
+public class ListAdapter extends BaseAdapter {
 
     private List<String> city_list;
 

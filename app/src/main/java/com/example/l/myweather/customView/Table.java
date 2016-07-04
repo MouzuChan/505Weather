@@ -11,6 +11,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.example.l.myweather.MyApplication;
 import com.example.l.myweather.R;
 import com.example.l.myweather.WeatherToCode;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -47,14 +49,31 @@ public class Table extends View {
     private String[] weatherData;
 
     //private int[] drawable_ids;
-    private Bitmap[] bitmaps;
+    //private Bitmap[] bitmaps;
+
+    private ArrayList<Integer> pointX = new ArrayList<>();
+    private ArrayList<Integer> pointY = new ArrayList<>();
+
+    private ArrayList<String> weatherName = new ArrayList<>();
+
+    private int screenWidth;
+
+    private int scrollX = 0;
+
+
+    private int[] x_ints;
 
 
 
-
-    public Table(Context context){
+    public Table(Context context,int screenWidth){
         super(context);
+        this.screenWidth = screenWidth;
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint.setAntiAlias(true);
+        mPaint.setColor(Color.WHITE);
+        mPaint.setStrokeWidth(MyApplication.dp2px(1));
+        mPaint.setTextSize(MyApplication.sp2px(13));
+        mPaint.setTextAlign(Paint.Align.CENTER);
     }
 
     @Override
@@ -68,77 +87,93 @@ public class Table extends View {
     @Override
     protected void onDraw(final Canvas canvas) {
         super.onDraw(canvas);
-        mPaint.setAntiAlias(true);
-        mPaint.setColor(Color.WHITE);
-        mPaint.setStrokeWidth(MyApplication.dp2px(1));
+
+        drawLine(canvas);
+        drawWeatherText(canvas);
+
+
+
+    }
+
+    public void drawLine(Canvas canvas){
         for (int a = 1; a < Xs.length; a++){
             canvas.drawLine(Xs[a - 1],Ys[a - 1],Xs[a],Ys[a],mPaint);
         }
         for (int i = 0; i < Xs.length; i++) {
             canvas.drawCircle(Xs[i], Ys[i], MyApplication.dp2px(3), mPaint);
-            mPaint.setTextSize(MyApplication.sp2px(13));
-            mPaint.setTextAlign(Paint.Align.CENTER);
             if (data[i] != null){
                 canvas.drawText(data[i],Xs[i],dp2px(175),mPaint);
             }
-            if (weatherData[i] != null){
-                canvas.drawText(weatherData[i],Xs[i],dp2px(120),mPaint);
-            }
             canvas.drawText(secData[i] + "°", Xs[i], Ys[i] - 30, mPaint);
-            RectF rectF;
-            if (bitmaps[i] != null){
-                rectF = new RectF(Xs[i] - dp2px(13),dp2px(130),Xs[i] + dp2px(13),dp2px(156));
-                canvas.drawBitmap(bitmaps[i],null,rectF,mPaint);
+        }
+
+        for (int i = 1; i < pointX.size()- 1; i++){
+            canvas.drawLine(pointX.get(i),pointY.get(i),pointX.get(i),getHeight() - dp2px(20),mPaint);
+        }
+    }
+
+
+    public void drawWeatherText(Canvas canvas){
+        for (int i = 0; i < x_ints.length; i++) {
+            if (x_ints[i] > pointX.get(i + 1) - dp2px(30)){
+                x_ints[i] = pointX.get(i + 1) - dp2px(30);
+            } else if (x_ints[i] < pointX.get(i) + dp2px(30)){
+                x_ints[i] = pointX.get(i) + dp2px(30);
             }
+            canvas.drawText(weatherName.get(i),x_ints[i],dp2px(120),mPaint);
+        }
+    }
 
+    public void initPoint(){
+        pointX.clear();
+        pointY.clear();
+        weatherName.clear();
+        String weather = weatherData[0];
+        weatherName.add(weather);
+        pointX.add(Xs[0]);
+        pointY.add(Ys[0]);
+        for (int i = 1; i < pointCount - 2; i++){
+            if (!weather.equals(weatherData[i])){
+                pointX.add(Xs[i]);
+                pointY.add(Ys[i]);
+                weather = weatherData[i];
+                weatherName.add(weatherData[i]);
+            }
+        }
+        pointX.add(Xs[pointCount - 1]);
+        pointY.add(Ys[pointCount - 1]);
+        x_ints = new int[pointX.size() - 1];
+        onScroll();
+    }
 
-            //int time = Integer.parseInt(data[i].substring(0,2));
-            //Log.d("TABLE",time + "");
-            /*if (i > 0 && i != 7 && i != 18){
-                if (weatherData[i].equals(weatherData[i - 1])){
-                    if (bitmap != null){
-                        RectF rectF = new RectF(Xs[i] - dp2px(13),dp2px(130),Xs[i] + dp2px(13),dp2px(156));
-                        canvas.drawBitmap(bitmap,null,rectF,mPaint);
-                    }
+    public void onScroll(){
+        int size = pointX.size();
+        for (int i = 0; i < size - 1;i++){
+            int x = pointX.get(i + 1);
+            if (x > scrollX + screenWidth){
+                if (pointX.get(i) > scrollX){
+                    x_ints[i] = (scrollX + screenWidth - pointX.get(i)) / 2 + pointX.get(i);
                 } else {
-                    drawable_id = weatherToCode.getDrawableId(weatherData[i],time);
-                    bitmap = BitmapFactory.decodeResource(getResources(),drawable_id);
-                    RectF rectF = new RectF(Xs[i] - dp2px(13),dp2px(130),Xs[i] + dp2px(13),dp2px(156));
-                    canvas.drawBitmap(bitmap,null,rectF,mPaint);
+                    x_ints[i] = screenWidth / 2 + scrollX;
                 }
-            }else {
-                drawable_id = weatherToCode.getDrawableId(weatherData[i],time);
-                bitmap = BitmapFactory.decodeResource(getResources(),drawable_id);
-                RectF rectF = new RectF(Xs[i] - dp2px(13),dp2px(130),Xs[i] + dp2px(13),dp2px(156));
-                canvas.drawBitmap(bitmap,null,rectF,mPaint);
-            }*/
-
-        }
-
-
-    }
-
-    public void initBitmap(int flag){
-        WeatherToCode weatherToCode = WeatherToCode.newInstance();
-        int drawable_id;
-        if (flag == 0) {
-            for (int i = 0; i < 24; i++){
-                int time = Integer.parseInt(data[i].substring(0,2));
-                drawable_id = weatherToCode.getDrawableId(weatherData[i],time);
-                bitmaps[i] = BitmapFactory.decodeResource(getResources(),drawable_id);
-            }
-        } else {
-            for (int i = 0; i < 24; i++){
-                int time = Integer.parseInt(data[i].substring(0,2));
-                drawable_id = weatherToCode.getDrawableSmallId(weatherData[i],time);
-                if (drawable_id != 0){
-                    bitmaps[i] = BitmapFactory.decodeResource(getResources(),drawable_id);
+            } else {
+                if (pointX.get(i) > scrollX){
+                    x_ints[i] = (x - pointX.get(i)) / 2 + pointX.get(i);
+                } else {
+                    x_ints[i] = (x - scrollX) / 2 + scrollX;
                 }
 
             }
         }
+        invalidate();
     }
 
+
+
+    public void setX(int scrollX) {
+        this.scrollX = scrollX;
+        onScroll();
+    }
 
     /*public void startAnim(final int i){
         this.i = i;
@@ -197,8 +232,6 @@ public class Table extends View {
         this.pointCount = pointCount;
         Xs = new int[pointCount];
         Ys = new int[pointCount];
-//        drawable_ids = new int[pointCount];
-        bitmaps = new Bitmap[pointCount];
     }
 
     public void addPoint(int point,float x,float y){

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="color_primary">#007167</color>
+    <color name="color_primary">#FF00786F</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#181818</color>
     <color name="huise">#c0c0c0</color>
@@ -11,6 +11,6 @@
     <color name="red">#d40029</color>
     <color name="notification_black">#b4000000</color>
     <color name="touming">#00000000</color>
-
+    <color name="divider_line_color">#b4ffffff</color>
 
 </resources>

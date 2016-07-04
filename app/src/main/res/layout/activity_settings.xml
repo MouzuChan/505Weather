@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="@color/color_primary"
-    tools:context="com.example.l.myweather.SettingsActivity"
+    tools:context=".ui.SettingsActivity"
     android:orientation="vertical">
 
 

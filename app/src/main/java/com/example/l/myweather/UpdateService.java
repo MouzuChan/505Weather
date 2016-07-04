@@ -17,6 +17,14 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.example.l.myweather.callback.CallBackListener;
+import com.example.l.myweather.database.CityDataBase;
+import com.example.l.myweather.util.FileHandle;
+import com.example.l.myweather.util.HttpUtil;
+import com.example.l.myweather.widget.AppWidget2x1;
+import com.example.l.myweather.widget.NewAppWidget;
+import com.example.l.myweather.widget.Widget4x2;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -177,7 +185,6 @@ public class UpdateService extends Service {
         if (updateSwitch || appWidgetIds.length > 0){
             //Log.d("updateService","yes");
             if (!(showNotification || newWidgetIds.length > 0 || appWidget2x1Ids.length > 0 || appWidgetIds.length > 0 || alarm_notification)){
-                Log.d("updateService","stopSelf");
                 stopSelf();
             }
         } else {
@@ -205,10 +212,6 @@ public class UpdateService extends Service {
                 city_id_list.add(cursor.getString(cursor.getColumnIndex("city_id")));
             } while (cursor.moveToNext());
         }
-       // if (city_list.size() > 0 && city_id_list.size() > 0){
-            //city = city_list.get(0);
-            //city_id = city_id_list.get(0);
-       // }
         cursor.close();
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < city_id_list.size(); i++){
@@ -220,8 +223,6 @@ public class UpdateService extends Service {
         }
         if (city_id_list.size() > 0){
             String url = "http://aider.meizu.com/app/weather/listWeather?" + stringBuilder.toString();
-            //final String finalCity_id = city_id;
-           // final String finalCity = city;
             HttpUtil.makeHttpRequest(url, new CallBackListener() {
                 @Override
                 public void onFinish(JSONObject jsonObject) {

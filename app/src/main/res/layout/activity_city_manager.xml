@@ -1,63 +1,62 @@
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
-    tools:context="com.example.l.myweather.CityManager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/color_primary"
-    android:fitsSystemWindows="true"
+
     >
-    <android.support.v7.widget.Toolbar
-            app:theme="@style/AppTheme.AppBarOverlay"
-            android:id="@+id/manager_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/color_primary"
-            app:title="城市管理"
-            app:titleTextColor="@color/white"
-            />
-
-        <LinearLayout
-            android:background="@color/white"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp">
-
-            <com.example.l.myweather.DragListView
-                android:paddingTop="16dp"
-                android:id="@+id/city_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-        </LinearLayout>
-
-
-    <LinearLayout
-        android:background="@color/white"
-        android:layout_width="match_parent"
-        android:gravity="right"
-        android:layout_height="wrap_content">
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
-            app:elevation="6dp"
-            app:borderWidth="0dp"
-            app:rippleColor="#b4ffffff"
-            android:src="@drawable/ic_add_white_36dp" />
-    </LinearLayout>
 
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent">
+        <LinearLayout
+
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:fitsSystemWindows="true"
+                android:background="@color/color_primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.Toolbar
+                    app:theme="@style/AppTheme.AppBarOverlay"
+                    android:id="@+id/manager_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:title="城市管理"
+                    app:titleTextColor="@color/white"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:background="@color/white"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+
+                <com.example.l.myweather.customView.DragListView
+                    android:id="@+id/city_list"
+                    android:divider="@color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
 
-</LinearLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+
+
+
+
+
+</RelativeLayout>
 
 

@@ -8,18 +8,19 @@ package com.example.l.myweather;
         import android.content.SharedPreferences;
         import android.database.Cursor;
         import android.database.sqlite.SQLiteDatabase;
-        import android.graphics.Bitmap;
 
         import android.graphics.Color;
-        import android.os.Build;
         import android.preference.PreferenceManager;
         import android.widget.RemoteViews;
+
+        import com.example.l.myweather.database.CityDataBase;
+        import com.example.l.myweather.ui.MainActivity;
+        import com.example.l.myweather.util.FileHandle;
+        import com.example.l.myweather.util.HandleJSON;
 
         import org.json.JSONObject;
 
         import java.util.Calendar;
-        import java.util.HashMap;
-        import java.util.Map;
 
 
 /**

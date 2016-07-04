@@ -6,14 +6,13 @@
     android:paddingTop="20dp"
     >
     <TextView
-        android:background="#32ffffff"
+        android:background="@color/divider_line_color"
         android:layout_width="match_parent"
         android:layout_height="1dp" />
 
     <TextView
         android:text="七天天气预报"
         android:textColor="#8cffffff"
-        android:textSize="12sp"
         android:layout_width="match_parent"
         android:paddingTop="20dp"
         android:paddingBottom="10dp"
@@ -27,220 +26,21 @@
         android:fillViewport="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+
         <LinearLayout
+            android:id="@+id/forecast_table_layout"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent" />
 
-
-            <LinearLayout
-                android:id="@+id/date_week_layout"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="7"
-                >
-                <TextView
-                    android:id="@+id/week_1"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-
-                    />
-                <TextView
-
-                    android:id="@+id/week_2"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-                <TextView
-
-                    android:id="@+id/week_3"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    />
-                <TextView
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:id="@+id/week_4"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-                <TextView
-
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:id="@+id/week_5"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:id="@+id/week_6"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:id="@+id/week_7"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/forecast_table_layout"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <LinearLayout
-                android:id="@+id/image_layout"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="7" >
-                <ImageView
-                    android:id="@+id/image_1"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    />
-                <ImageView
-                    android:id="@+id/image_2"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    />
-                <ImageView
-                    android:id="@+id/image_3"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    />
-                <ImageView
-                    android:id="@+id/image_4"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    />
-                <ImageView
-                    android:id="@+id/image_5"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    />
-                <ImageView
-                    android:id="@+id/image_6"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    />
-                <ImageView
-                    android:id="@+id/image_7"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    />
-
-            </LinearLayout>
-
-
-
-            <LinearLayout
-                android:paddingTop="6dp"
-                android:id="@+id/date_layout"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="7"
-                >
-                <TextView
-                    android:id="@+id/date_1"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"/>
-                <TextView
-                    android:id="@+id/date_2"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:id="@+id/date_3"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    />
-                <TextView
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:id="@+id/date_4"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:id="@+id/date_5"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:id="@+id/date_6"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:id="@+id/date_7"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-        </LinearLayout>
 
     </HorizontalScrollView>
 
 
     <TextView
         android:layout_marginTop="20dp"
-        android:background="#32ffffff"
+        android:background="@color/divider_line_color"
         android:layout_width="match_parent"
         android:layout_height="1dp" />
 

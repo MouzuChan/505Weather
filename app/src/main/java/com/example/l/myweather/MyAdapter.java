@@ -6,19 +6,18 @@ import android.animation.ObjectAnimator;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.l.myweather.database.CityDataBase;
+import com.example.l.myweather.ui.CityManagerActivity;
+import com.example.l.myweather.ui.MainActivity;
 
 import java.util.ArrayList;
 
@@ -40,7 +39,7 @@ public class MyAdapter extends BaseAdapter {
 
     public Context context = MyApplication.getContext();
     public MyAdapter(ListView listView){
-        this.city_list = (ArrayList)MainActivity.city_list.clone();
+        this.city_list = (ArrayList) MainActivity.city_list.clone();
         this.cityId_list = (ArrayList)MainActivity.cityId_list.clone();
         this.temp_list = (ArrayList)MainActivity.tempList.clone();
         this.listView = listView;
@@ -104,8 +103,6 @@ public class MyAdapter extends BaseAdapter {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
-                        //Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show();
-                        //deleteFile(position);
                         delete_position = position;
                         delete_city = city_list.get(position);
                         delete_cityId = cityId_list.get(position);
@@ -134,23 +131,11 @@ public class MyAdapter extends BaseAdapter {
 
 
     public void deleteCity(int position) {
-        //db.delete("city", "city=?", new String[]{city_list.get(position)});
-        /*if (city_list.get(position).equals(CityManagerActivity.location_city)){
-            SharedPreferences sharedPreferences = context.getSharedPreferences("location_city", Context.MODE_APPEND);
-            SharedPreferences.Editor editor= sharedPreferences.edit();
-            editor.remove("location_city");
-            editor.remove("location_city_id");
-            editor.apply();
-        }*/
         city_list.remove(position);
         cityId_list.remove(position);
         temp_list.remove(position);
         notifyDataSetChanged();
         CHANGE_FLAG = 1;
-        //Intent intent = new Intent("com.lha.weather.CITY_MANAGER");
-        //intent.putExtra("TYPE", "DELETE");
-        //intent.putExtra("POSITION", position);
-        //context.sendBroadcast(intent);
     }
 
     public void hideItem(int position){
@@ -167,18 +152,10 @@ public class MyAdapter extends BaseAdapter {
         String firstCityId = cityId_list.get(position);
         String secondCity = city_list.get(p);
         String secondCityId = cityId_list.get(p);
-        //city_list.remove(position);
-        //city_list.add(position, secondCity);
-        //city_list.remove(p);
-        //city_list.add(p, firstCity);
         city_list.set(position,secondCity);
         city_list.set(p,firstCity);
         cityId_list.set(position,secondCityId);
         cityId_list.set(p,firstCityId);
-        //cityId_list.remove(position);
-        //cityId_list.add(position, secondCityId);
-        //cityId_list.remove(p);
-        //cityId_list.add(p, firstCityId);
 
         String temp = temp_list.get(position);
         temp_list.set(position,temp_list.get(p));
@@ -203,7 +180,6 @@ public class MyAdapter extends BaseAdapter {
         db.delete("city", null, null);
         ContentValues values = new ContentValues();
         for (int i = 0; i < city_list.size(); i++){
-            Log.d("TAG",city_list.get(i));
             values.put("city",city_list.get(i));
             values.put("city_id",cityId_list.get(i));
             db.insert("city", null, values);
@@ -224,23 +200,10 @@ public class MyAdapter extends BaseAdapter {
         city_list.clear();
         cityId_list.clear();
         temp_list.clear();
-        city_list = (ArrayList)MainActivity.city_list.clone();
-        cityId_list = (ArrayList)MainActivity.cityId_list.clone();
-        temp_list = (ArrayList)MainActivity.tempList.clone();
+        city_list = (ArrayList<String>)MainActivity.city_list.clone();
+        cityId_list = (ArrayList<String>)MainActivity.cityId_list.clone();
+        temp_list = (ArrayList<String>)MainActivity.tempList.clone();
         notifyDataSetChanged();
-        /*boolean b = false;
-        for (int i = 0; i < cityId_list.size(); i++){
-            if (cityId_list.get(i).equals(city_id)){
-                b = true;
-                break;
-            }
-        }
-        if (!b){
-            cityId_list.add(city_id);
-            city_list.add(city_name);
-            temp_list.add("N/A");
-            notifyDataSetChanged();
-        }*/
     }
 
 }

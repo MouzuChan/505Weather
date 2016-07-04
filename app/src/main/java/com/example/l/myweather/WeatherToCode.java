@@ -87,8 +87,8 @@ public class WeatherToCode {
         map_day_small.put("阵雨",R.drawable.zhenyu_day_small);
         map_day_small.put("雷阵雨",R.drawable.leizhenyu);
         map_day_small.put("雨夹雪",R.drawable.yubingbao);
-        map_day_small.put("小雨",R.drawable.xiaoyu_day_small);
-        map_day_small.put("小到中雨",R.drawable.xiaoyu_day_small);
+        map_day_small.put("小雨",R.drawable.xiaoyu);
+        map_day_small.put("小到中雨",R.drawable.xiaoyu);
         map_day_small.put("中雨",R.drawable.dayu_small);
         map_day_small.put("中到大雨",R.drawable.dayu_small);
         map_day_small.put("大雨",R.drawable.dayu_small);
@@ -117,8 +117,8 @@ public class WeatherToCode {
         map_night_small.put("阵雨",R.drawable.zhongyu_night);
         map_night_small.put("雷阵雨",R.drawable.leizhenyu);
         map_night_small.put("雨夹雪",R.drawable.yubingbao);
-        map_night_small.put("小雨",R.drawable.xiaoyu_night_small);
-        map_night_small.put("小到中雨",R.drawable.xiaoyu_night_small);
+        map_night_small.put("小雨",R.drawable.xiaoyu);
+        map_night_small.put("小到中雨",R.drawable.xiaoyu);
         map_night_small.put("中雨",R.drawable.dayu_small);
         map_night_small.put("中到大雨",R.drawable.dayu_small);
         map_night_small.put("大雨",R.drawable.dayu_small);
@@ -141,38 +141,7 @@ public class WeatherToCode {
         map_night_small.put("强沙尘暴",R.drawable.fog_night_small);
     }
 
-
-
-   /* public int getDrawableSmallId(String weather){
-        Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        //int sdk_int = Build.VERSION.SDK_INT;
-        //int version_code = Build.VERSION_CODES.KITKAT;
-        int drawable_small_id;
-        if (hour > 18 || hour < 7){
-            //drawable_id = map_night.get(notify_strings[1]);
-            //if (sdk_int > version_code){
-                drawable_small_id = map_night_small.get(weather);
-            //} else {
-            //    drawable_small_id = map_night.get(weather);
-            //}
-        } else {
-            //drawable_id = map_day.get(notify_strings[1]);
-            //if (sdk_int > version_code){
-                drawable_small_id = map_day_small.get(weather);
-            //} else {
-             //   drawable_small_id = map_day.get(weather);
-            //}
-        }
-        return drawable_small_id;
-    }*/
-
-
     public int getDrawableId(String weather,int hour){
-        //Calendar calendar = Calendar.getInstance();
-        //int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        //int sdk_int = Build.VERSION.SDK_INT;
-        //int version_code = Build.VERSION_CODES.KITKAT;
         int drawable_id = 0;
         if (hour > 18 || hour < 7){
             if (map_night.containsKey(weather)){
@@ -212,5 +181,6 @@ public class WeatherToCode {
         }
         return weatherToCode;
     }
+
 
 }

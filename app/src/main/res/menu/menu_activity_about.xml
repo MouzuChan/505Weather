@@ -5,7 +5,4 @@
         android:id="@+id/menu_rate"
         app:showAsAction="never" />
 
-    <item android:title="请我喝可乐"
-        android:id="@+id/menu_cola"
-        app:showAsAction="never" />
 </menu>

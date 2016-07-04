@@ -11,7 +11,6 @@
         android:gravity="center_horizontal"
         android:textColor="#8cffffff"
         android:text="空气质量指数"
-        android:textSize="12sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -23,221 +22,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:textColor="@color/white"
-        android:paddingTop="20dp"
-        android:paddingRight="16dp"
-        android:paddingLeft="16dp"
-        android:id="@+id/suggest"
-        android:textSize="13sp"
-        android:gravity="center_horizontal"
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/aqi_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
-    <TextView
-        android:paddingTop="25dp"
-        android:paddingBottom="10dp"
-        android:textColor="#8cffffff"
-        android:text="详细监测数据(ug/m³)"
-        android:textSize="12sp"
-        android:gravity="center_horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-
-    <LinearLayout
-        android:paddingTop="15dp"
-        android:paddingBottom="10dp"
-        android:weightSum="3"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:textColor="#8cffffff"
-                android:text="PM2.5"
-                android:layout_gravity="center"
-                android:textSize="12sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:textColor="@color/white"
-                android:textSize="25sp"
-                android:text="--"
-                android:id="@+id/pm25"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <TextView
-            android:background="#32ffffff"
-            android:layout_width="1dp"
-            android:layout_height="match_parent" />
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:textColor="#8cffffff"
-                android:text="PM10"
-                android:textSize="12sp"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:textColor="@color/white"
-                android:textSize="25sp"
-                android:text="--"
-                android:id="@+id/pm10"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <TextView
-            android:background="#32ffffff"
-            android:layout_width="1dp"
-            android:layout_height="match_parent" />
-
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:textColor="#8cffffff"
-                android:text="SO2"
-                android:textSize="12sp"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:textColor="@color/white"
-                android:textSize="25sp"
-                android:text="--"
-                android:id="@+id/so2"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-
-    </LinearLayout>
-
-
-
-    <TextView
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#32ffffff"
-        />
-
-    <LinearLayout
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:weightSum="3"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:textColor="#8cffffff"
-                android:text="CO"
-                android:textSize="12sp"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:textColor="@color/white"
-                android:textSize="25sp"
-                android:text="--"
-                android:id="@+id/co"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <TextView
-            android:background="#32ffffff"
-            android:layout_width="1dp"
-            android:layout_height="match_parent" />
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content">
-            <TextView
-                android:textColor="#8cffffff"
-                android:text="NO2"
-                android:textSize="12sp"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:textColor="@color/white"
-                android:textSize="25sp"
-                android:id="@+id/no2"
-                android:text="--"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <TextView
-            android:background="#32ffffff"
-            android:layout_width="1dp"
-            android:layout_height="match_parent" />
-
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content">
-            <TextView
-                android:textColor="#8cffffff"
-                android:text="O3"
-                android:textSize="12sp"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:textColor="@color/white"
-                android:textSize="25sp"
-                android:text="--"
-                android:id="@+id/o3"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-
-    </LinearLayout>
 
 
 
@@ -245,6 +34,6 @@
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#32ffffff"/>
+        android:background="@color/divider_line_color"/>
 
 </LinearLayout>

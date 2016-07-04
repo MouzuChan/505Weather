@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="@color/color_primary"
-    tools:context="com.example.l.myweather.AboutActivity">
+    tools:context=".ui.AboutActivity">
+
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"

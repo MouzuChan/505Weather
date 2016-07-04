@@ -26,7 +26,8 @@
             android:value="fU4leM8tXAFN9NRbbZbXzbrp" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
+            android:launchMode="singleTop"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -36,7 +37,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".NewAppWidget"
+        <receiver android:name=".widget.NewAppWidget"
             android:process=":background"
             >
             <intent-filter>
@@ -51,13 +52,13 @@
         </receiver>
 
         <activity
-            android:name=".SettingsActivity"
+            android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.l.myweather.MainActivity" />
+                android:value=".ui.MainActivity" />
         </activity>
 
         <service
@@ -66,7 +67,7 @@
             android:exported="false"
             android:process=":background" />
 
-        <receiver android:name=".Widget4x2"
+        <receiver android:name=".widget.Widget4x2"
             android:process=":background"
             >
             <intent-filter>
@@ -101,34 +102,34 @@
 
         <activity
             android:screenOrientation="portrait"
-            android:name=".AddCityActivity"
+            android:name=".ui.AddCityActivity"
             android:label="@string/title_activity_add_city"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".ui.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.l.myweather.MainActivity" />
+                android:value=".ui.MainActivity" />
         </activity>
         <activity
             android:screenOrientation="portrait"
-            android:name=".CityManagerActivity"
+            android:name=".ui.CityManagerActivity"
             android:label="@string/title_activity_city_manager"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".ui.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.l.myweather.MainActivity" />
+                android:value=".ui.MainActivity" />
         </activity>
         <activity
             android:screenOrientation="portrait"
-            android:name=".AboutActivity"
+            android:name=".ui.AboutActivity"
             android:label="@string/title_activity_about"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.l.myweather.MainActivity" />
+                android:value=".ui.MainActivity" />
         </activity>
 
-        <receiver android:name=".AppWidget2x1"
+        <receiver android:name=".widget.AppWidget2x1"
             android:process=":background"
             >
             <intent-filter>

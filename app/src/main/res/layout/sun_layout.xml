@@ -5,18 +5,15 @@
     android:paddingTop="20dp"
     >
 
-
-    <!--
-
-    <LinearLayout
-        android:id="@+id/sun_layout"
-        android:orientation="vertical"
+    <TextView
+        android:gravity="center"
+        android:text="其他信息"
+        android:textColor="#8cffffff"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></LinearLayout>
-
-        -->
+        android:layout_height="wrap_content" />
 
     <LinearLayout
+        android:layout_marginTop="16dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -121,7 +118,7 @@
 
     <TextView
         android:layout_marginTop="20dp"
-        android:background="#32ffffff"
+        android:background="@color/divider_line_color"
         android:layout_width="match_parent"
         android:layout_height="1dp" />
 </LinearLayout>

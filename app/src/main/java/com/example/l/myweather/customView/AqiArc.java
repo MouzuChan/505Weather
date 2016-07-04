@@ -8,6 +8,8 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 
 import com.example.l.myweather.MyApplication;
@@ -23,10 +25,17 @@ public class AqiArc extends View{
 
     public AqiArc(Context context,AttributeSet attrs){
         super(context,attrs);
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        init();
+
     }
     public AqiArc(Context context){
         super(context);
+        init();
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    }
+
+    public void init(){
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
