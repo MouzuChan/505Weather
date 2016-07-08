@@ -11,9 +11,9 @@ import com.example.l.myweather.callback.OnScrollChangedListener;
 /**
  * Created by L on 2016-06-30.
  */
-public class MyHorizontalScrollView extends HorizontalScrollView {
+public class HourTableHorizontalScrollView extends HorizontalScrollView {
 
-    public MyHorizontalScrollView(Context context, AttributeSet attrs) {
+    public HourTableHorizontalScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
     private OnScrollChangedListener onScrollChangedListener;

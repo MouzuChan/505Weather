@@ -1,4 +1,4 @@
-package com.example.l.myweather;
+package com.example.l.myweather.util.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

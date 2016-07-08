@@ -1,10 +1,13 @@
-package com.example.l.myweather;
+package com.example.l.myweather.util.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.R;
 
 /**
  * Created by L on 2016-06-30.

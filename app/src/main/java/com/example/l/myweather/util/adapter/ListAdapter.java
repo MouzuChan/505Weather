@@ -1,4 +1,4 @@
-package com.example.l.myweather;
+package com.example.l.myweather.util.adapter;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.R;
 
 import java.util.List;
 

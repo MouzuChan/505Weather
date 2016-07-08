@@ -1,8 +1,7 @@
-package com.example.l.myweather;
+package com.example.l.myweather.util;
 
-import android.os.Build;
+import com.example.l.myweather.R;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +20,7 @@ public class WeatherToCode {
     public static WeatherToCode weatherToCode;
 
     public WeatherToCode(){
-        map_day.put("晴",R.drawable.sunny);
+        map_day.put("晴", R.drawable.sunny);
         map_day.put("多云",R.drawable.cloudy2);
         map_day.put("阴",R.drawable.cloudy5);
         map_day.put("阵雨",R.drawable.shower1);

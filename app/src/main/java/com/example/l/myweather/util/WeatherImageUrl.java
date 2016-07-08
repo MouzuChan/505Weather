@@ -1,4 +1,4 @@
-package com.example.l.myweather;
+package com.example.l.myweather.util;
 
 import java.util.HashMap;
 import java.util.Map;
