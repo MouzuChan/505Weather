@@ -3,46 +3,36 @@ package com.example.l.myweather.ui;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 
+import com.example.l.myweather.BaseActivity;
 import com.example.l.myweather.customView.DragListView;
-import com.example.l.myweather.MyAdapter;
+import com.example.l.myweather.util.adapter.MyAdapter;
 import com.example.l.myweather.R;
 
-public class CityManagerActivity extends AppCompatActivity {
+public class CityManagerActivity extends BaseActivity {
 
     private DragListView listView;
-    private static com.example.l.myweather.MyAdapter adapter;
-    private Toolbar toolbar;
+    private static MyAdapter adapter;
+    public static Toolbar toolbar;
     private boolean isEditState = false;
     private static CoordinatorLayout coordinatorLayout;
-    FloatingActionButton fab_add;
+    private Menu menu;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Window window = getWindow();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
         setContentView(R.layout.activity_city_manager);
         initView();
-        setListViewItemClick();
     }
 
     public void initView() {
@@ -50,30 +40,33 @@ public class CityManagerActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.manager_toolbar);
         setSupportActionBar(toolbar);
         listView = (DragListView) findViewById(R.id.city_list);
-        adapter = new com.example.l.myweather.MyAdapter(listView);
+        adapter = new MyAdapter(listView);
         adapter.setIsEditState(isEditState);
         listView.setAdapter(adapter);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.container);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        /*fab_add.setOnClickListener(new View.OnClickListener() {
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(CityManagerActivity.this, AddCityActivity.class), 1);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (!isEditState){
+                    Intent intent = new Intent();
+                    intent.putExtra("position",position);
+                    setResult(RESULT_OK,intent);
+                    finish();
+                }
+
             }
-        });*/
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_city_manager, menu);
 
+        getMenuInflater().inflate(R.menu.menu_city_manager, menu);
+        this.menu = menu;
         return super.onCreateOptionsMenu(menu);
+
     }
 
     @Override
@@ -107,19 +100,6 @@ public class CityManagerActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    public void setListViewItemClick(){
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (!isEditState) {
-                    Intent intent = new Intent();
-                    intent.putExtra("position", position);
-                    setResult(1, intent);
-                    finish();
-                }
-            }
-        });
-    }
 
 
     public static void showSnackBar(String text){
@@ -135,15 +115,33 @@ public class CityManagerActivity extends AppCompatActivity {
         snackbar.show();
     }
 
+    public static int getToolbarHeight(){
+        return toolbar.getHeight();
+    }
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-            case 1:
-                if (resultCode == 1){
-                    adapter.addCity();
-                }
-                break;
+    public void onBackPressed() {
+        //super.onBackPressed();
+        if (isEditState){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            MenuItem item = menu.getItem(0);
+            item.setTitle("编辑");
+            item.setIcon(R.drawable.ic_create_white_48dp);
+            if (MyAdapter.CHANGE_FLAG == 1){
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.changeData();
+                    }
+                }).start();
+                MyAdapter.CHANGE_FLAG = 0;
+            }
+            isEditState = !isEditState;
+            adapter.setIsEditState(isEditState);
+            adapter.notifyDataSetChanged();
+            listView.setIsEditState(isEditState);
+        } else {
+            super.onBackPressed();
         }
     }
 }

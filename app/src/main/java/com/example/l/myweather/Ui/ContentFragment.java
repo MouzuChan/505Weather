@@ -12,22 +12,18 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.example.l.myweather.RecyclerViewAdapter;
+import com.example.l.myweather.util.adapter.RecyclerViewAdapter;
 import com.example.l.myweather.callback.CallBackListener;
 import com.example.l.myweather.callback.OnScrollChangedListener;
-import com.example.l.myweather.customView.MyHorizontalScrollView;
+import com.example.l.myweather.customView.HourTableHorizontalScrollView;
 import com.example.l.myweather.customView.MyScrollView;
 import com.example.l.myweather.util.Divider;
 import com.example.l.myweather.util.FileHandle;
@@ -258,8 +254,8 @@ public class ContentFragment extends Fragment{
             }
         });
 
-        MyHorizontalScrollView myHorizontalScrollView = (MyHorizontalScrollView) view.findViewById(R.id.hour_scroll_view);
-        myHorizontalScrollView.setOnScrollChangedListener(new OnScrollChangedListener() {
+        HourTableHorizontalScrollView hourTableHorizontalScrollView = (HourTableHorizontalScrollView) view.findViewById(R.id.hour_scroll_view);
+        hourTableHorizontalScrollView.setOnScrollChangedListener(new OnScrollChangedListener() {
             @Override
             public void onChange(int x, int oldX) {
                 if (table != null){
@@ -274,12 +270,8 @@ public class ContentFragment extends Fragment{
 
     public void initDate() {
         TimeAndDate timeAndDate = new TimeAndDate();
-        //week_strings = timeAndDate.getFullWeek();
         hour = timeAndDate.getHour();
         minute = timeAndDate.getMinute();
-        //date_strings = timeAndDate.getDateStrings();
-        //week_strings[0] = "今天";
-        //week_strings[1] = "明天";
     }
 
     public void initData(){
@@ -287,17 +279,11 @@ public class ContentFragment extends Fragment{
             initDataFromLocal();
         } else {
             initDataFromLocal();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    initDataFromInternet();
-                }
-            }).start();
+            initDataFromInternet();
         }
     }
 
     public void initDataFromLocal(){
-
         object = FileHandle.getJSONObject(city_id);
         if (object != null){
             jsonHandle(object);
@@ -320,12 +306,12 @@ public class ContentFragment extends Fragment{
                                 updateWidget(jsonObject);
                             }
                             if (swipeRefreshLayout.isRefreshing()){
-                                mainActivity.showSnackbar("刷新成功");
+                                mainActivity.showSnackbar(null,"刷新成功");
                             }
                             object = jsonObject;
                         } else {
                             if (swipeRefreshLayout.isRefreshing()){
-                                mainActivity.showSnackbar("数据已最新");
+                                mainActivity.showSnackbar(null,"数据已最新");
                             }
                         }
                         if (swipeRefreshLayout.isRefreshing()) {
@@ -345,7 +331,7 @@ public class ContentFragment extends Fragment{
                 if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
-                mainActivity.showSnackbar("网络错误");
+                mainActivity.showSnackbar(null,"网络错误");
             }
         });
 
@@ -465,8 +451,7 @@ public class ContentFragment extends Fragment{
         aqiRecyclerViewAdapter.notifyDataSetChanged();
         indexRecyclerViewAdapter.notifyDataSetChanged();
 
-        //setIndexLayout();
-        mainActivity.setView(position,now_layout_strings[2]);
+        mainActivity.setTempList(position,now_layout_strings[2]);
         mainActivity.setWeatherList(position,now_layout_strings[0]);
         if (position == mainActivity.getCurrentItem()){
             mainActivity.setWeatherImage(now_layout_strings[0]);

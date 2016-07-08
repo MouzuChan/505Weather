@@ -14,6 +14,7 @@ import com.example.l.myweather.R;
  */
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
 
+
     private String[] data1;
     private String[] data2;
 

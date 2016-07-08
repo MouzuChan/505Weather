@@ -20,6 +20,7 @@ import com.example.l.myweather.R;
 import com.example.l.myweather.database.CityDataBase;
 import com.example.l.myweather.ui.CityManagerActivity;
 import com.example.l.myweather.ui.MainActivity;
+import com.example.l.myweather.util.City;
 
 import java.util.ArrayList;
 
@@ -28,22 +29,17 @@ import java.util.ArrayList;
  */
 public class MyAdapter extends BaseAdapter {
 
-    private ArrayList<String> city_list;
-    private ArrayList<String> cityId_list,temp_list;
+    private ArrayList<City> cityArrayList;
     private SQLiteDatabase db;
     private ListView listView;
     private boolean isEditState = false;
     private int delete_position;
-    private String delete_city;
-    private String delete_cityId;
-    private String delete_temp;
     public static int CHANGE_FLAG = 0;
+    private City deletedCity;
 
     public Context context = MyApplication.getContext();
     public MyAdapter(ListView listView){
-        this.city_list = (ArrayList) MainActivity.city_list.clone();
-        this.cityId_list = (ArrayList)MainActivity.cityId_list.clone();
-        this.temp_list = (ArrayList)MainActivity.tempList.clone();
+        this.cityArrayList = MainActivity.cityArrayList;
         this.listView = listView;
         CityDataBase cityDataBase = CityDataBase.getInstance();
         db = cityDataBase.getWritableDatabase();
@@ -52,13 +48,9 @@ public class MyAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return city_list.get(position);
+        return cityArrayList.get(position).getCityName();
     }
 
-
-    public String getTemp(int position){
-        return temp_list.get(position);
-    }
 
     @Override
     public long getItemId(int position) {
@@ -67,7 +59,7 @@ public class MyAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return city_list.size();
+        return cityArrayList.size();
     }
 
     @Override
@@ -76,20 +68,14 @@ public class MyAdapter extends BaseAdapter {
         if (convertView == null) {
             viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(context).inflate(R.layout.item_list,null);
-            viewHolder.itemText = (TextView)convertView.findViewById(R.id.item_text);
+            viewHolder.itemText = (TextView)convertView.findViewById(R.id.tv_city_name);
             viewHolder.itemButton = (ImageView)convertView.findViewById(R.id.item_button);
             viewHolder.dragImage = (ImageView)convertView.findViewById(R.id.drag_image);
-            viewHolder.temp_text = (TextView)convertView.findViewById(R.id.temp_view);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        viewHolder.itemText.setText(city_list.get(position));
-        if (temp_list.get(position) != null && !temp_list.get(position).isEmpty()){
-            viewHolder.temp_text.setText(temp_list.get(position));
-        } else {
-            viewHolder.temp_text.setText("N/A");
-        }
+        viewHolder.itemText.setText(cityArrayList.get(position).getCityName());
 
         final View finalConvertView = convertView;
         viewHolder.itemButton.setOnClickListener(new View.OnClickListener() {
@@ -106,13 +92,11 @@ public class MyAdapter extends BaseAdapter {
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
                         delete_position = position;
-                        delete_city = city_list.get(position);
-                        delete_cityId = cityId_list.get(position);
-                        delete_temp = temp_list.get(position);
+                        deletedCity = cityArrayList.get(position);
                         deleteCity(position);
 
-                        CityManagerActivity.showSnackBar(delete_city + "  已删除");
-                        if (position < city_list.size() + 1) {
+                        CityManagerActivity.showSnackBar(deletedCity.getCityName() + "  已删除");
+                        if (position < cityArrayList.size() + 1) {
                             ObjectAnimator objectAnimator1 = ObjectAnimator.ofFloat(finalConvertView, "X", parent.getWidth(), x);
                             objectAnimator1.setDuration(0);
                             objectAnimator1.start();
@@ -133,9 +117,7 @@ public class MyAdapter extends BaseAdapter {
 
 
     public void deleteCity(int position) {
-        city_list.remove(position);
-        cityId_list.remove(position);
-        temp_list.remove(position);
+        cityArrayList.remove(position);
         notifyDataSetChanged();
         CHANGE_FLAG = 1;
     }
@@ -150,18 +132,12 @@ public class MyAdapter extends BaseAdapter {
         view.setVisibility(View.VISIBLE);
     }
     public void changePosition(int position,int p){
-        String firstCity = city_list.get(position);
-        String firstCityId = cityId_list.get(position);
-        String secondCity = city_list.get(p);
-        String secondCityId = cityId_list.get(p);
-        city_list.set(position,secondCity);
-        city_list.set(p,firstCity);
-        cityId_list.set(position,secondCityId);
-        cityId_list.set(p,firstCityId);
+        City city1 = cityArrayList.get(position);
+        City city2 = cityArrayList.get(p);
 
-        String temp = temp_list.get(position);
-        temp_list.set(position,temp_list.get(p));
-        temp_list.set(p,temp);
+        cityArrayList.set(position,city2);
+        cityArrayList.set(p,city1);
+
         notifyDataSetChanged();
         CHANGE_FLAG = 1;
     }
@@ -170,7 +146,6 @@ public class MyAdapter extends BaseAdapter {
         public TextView itemText;
         public ImageView itemButton;
         public ImageView dragImage;
-        public TextView temp_text;
     }
 
 
@@ -181,9 +156,9 @@ public class MyAdapter extends BaseAdapter {
     public void changeData(){
         db.delete("city", null, null);
         ContentValues values = new ContentValues();
-        for (int i = 0; i < city_list.size(); i++){
-            values.put("city",city_list.get(i));
-            values.put("city_id",cityId_list.get(i));
+        for (int i = 0; i < cityArrayList.size(); i++){
+            values.put("city",cityArrayList.get(i).getCityName());
+            values.put("city_id",cityArrayList.get(i).getCityId());
             db.insert("city", null, values);
             values.clear();
         }
@@ -193,18 +168,7 @@ public class MyAdapter extends BaseAdapter {
     }
 
     public void cancelDelete(){
-        city_list.add(delete_position, delete_city);
-        cityId_list.add(delete_position,delete_cityId);
-        temp_list.add(delete_position, delete_temp);
-        notifyDataSetChanged();
-    }
-    public void addCity(){
-        city_list.clear();
-        cityId_list.clear();
-        temp_list.clear();
-        city_list = (ArrayList<String>)MainActivity.city_list.clone();
-        cityId_list = (ArrayList<String>)MainActivity.cityId_list.clone();
-        temp_list = (ArrayList<String>)MainActivity.tempList.clone();
+        cityArrayList.add(delete_position,deletedCity);
         notifyDataSetChanged();
     }
 

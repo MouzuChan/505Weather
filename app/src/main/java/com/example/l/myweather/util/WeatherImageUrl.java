@@ -35,7 +35,7 @@ public class WeatherImageUrl {
         map_day.put("冰雹","http://static.etouch.cn/imgs/upload/1464156806.3523.jpg");
         map_day.put("薄雾","http://static.etouch.cn/imgs/upload/1464157261.3416.jpg");
         map_day.put("雾","http://static.etouch.cn/imgs/upload/1464157261.3416.jpg");
-        map_day.put("霾","http://static.etouch.cn/imgs/upload/1442471142.3815.jpg");
+        map_day.put("霾","http://static.etouch.cn/imgs/upload/1464157104.4627.jpg");
         map_day.put("浮尘","http://static.etouch.cn/imgs/upload/1442471142.3815.jpg");
         map_day.put("扬沙","http://static.etouch.cn/imgs/upload/1442471142.3815.jpg");
         map_day.put("沙尘暴","http://static.etouch.cn/imgs/upload/1442471142.3815.jpg");
@@ -65,7 +65,7 @@ public class WeatherImageUrl {
         map_night.put("冰雹","http://static.etouch.cn/imgs/upload/1464156806.3523.jpg");
         map_night.put("薄雾","http://static.etouch.cn/imgs/upload/1464157261.3416.jpg");
         map_night.put("雾","http://static.etouch.cn/imgs/upload/1464157261.3416.jpg");
-        map_night.put("霾","http://static.etouch.cn/imgs/upload/1442472108.7831.jpg");
+        map_night.put("霾","http://static.etouch.cn/imgs/upload/1464157104.4627.jpg");
         map_night.put("浮尘","http://static.etouch.cn/imgs/upload/1442472108.7831.jpg");
         map_night.put("扬沙","http://static.etouch.cn/imgs/upload/1442472108.7831.jpg");
         map_night.put("沙尘暴","http://static.etouch.cn/imgs/upload/1442472108.7831.jpg");

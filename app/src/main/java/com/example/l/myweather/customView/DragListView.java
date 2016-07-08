@@ -5,17 +5,15 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.*;
 
-import com.example.l.myweather.MyAdapter;
+import com.example.l.myweather.ui.CityManagerActivity;
+import com.example.l.myweather.util.adapter.MyAdapter;
 import com.example.l.myweather.MyApplication;
 import com.example.l.myweather.R;
 
@@ -49,6 +47,7 @@ public class DragListView extends ListView{
     public DragListView(Context context, AttributeSet attrs) {
 
         super(context, attrs);
+
         handler = new Handler(){
             public void handleMessage(Message message){
                 switch (message.what){
@@ -77,20 +76,17 @@ public class DragListView extends ListView{
                     dragPosition = pointToPosition(downX, downY);
                     position = dragPosition - getFirstVisiblePosition();
                     int rawX = (int) ev.getRawX();
-                    int rawY = (int) ev.getRawY();
                     if (dragPosition != INVALID_POSITION) {
                         View view = getChildAt(position);
                         ImageView imageView = (ImageView) view.findViewById(R.id.drag_image);
-                        if (downX > imageView.getLeft() + view.getLeft() && downX < imageView.getRight()) {
+                        if (downX > imageView.getLeft() + view.getPaddingLeft() && downX < imageView.getRight() + view.getPaddingLeft()) {
                             adapter = (MyAdapter) getAdapter();
                             itemView = LayoutInflater.from(getContext()).inflate(R.layout.item_list, null);
-                            TextView textView = (TextView) itemView.findViewById(R.id.item_text);
-                            TextView tempView = (TextView) itemView.findViewById(R.id.temp_view);
+                            TextView textView = (TextView) itemView.findViewById(R.id.tv_city_name);
                             textView.setText((String) adapter.getItem(dragPosition));
-                            tempView.setText(adapter.getTemp(dragPosition));
                             hideItem(position);
-                            height = MyApplication.dp2px(50);
-                            startDrag(rawX, rawY - (height / 2));
+                            height = MyApplication.dp2px(70);
+                            startDrag(rawX, (int) view.getY() + CityManagerActivity.getToolbarHeight() + MyApplication.dp2px(25));
                         }
                     }
                 }
@@ -114,7 +110,7 @@ public class DragListView extends ListView{
                     int y1 = (int)ev.getY();
                     int p = pointToPosition(x1,y1);
                     View view = (View)getParent();
-                    if (rawY1 >= view.getTop() && rawY1 <= view.getTop() + getHeight() - height && position != INVALID_POSITION){
+                    if (rawY1 >= view.getTop() && rawY1 <= view.getTop() + getHeight() && position != INVALID_POSITION){
                         onDrag(rawX1, rawY1);
                         if (p != INVALID_POSITION){
                             changePosition(p,y1);
@@ -215,7 +211,6 @@ public class DragListView extends ListView{
                     downTimerTask();
                 }
                 else if (y > i){
-                    //View view = getChildAt(p - getFirstVisiblePosition());
                     setSelectionFromTop(p,view.getTop() - view.getHeight() - 20);
                 }
             }
@@ -234,7 +229,6 @@ public class DragListView extends ListView{
                 @Override
                 public void run() {
                     if (position <= 1 && getFirstVisiblePosition() > 0){
-
                         Message message = new Message();
                         message.what = 1;
                         handler.sendMessage(message);
@@ -242,7 +236,7 @@ public class DragListView extends ListView{
                     }
                 }
             };
-            timer.schedule(timerTask, 0, 800);
+            timer.schedule(timerTask, 0, 500);
         }
 
     }
@@ -257,11 +251,13 @@ public class DragListView extends ListView{
                         Message message = new Message();
                         message.what = 2;
                         handler.sendMessage(message);
+                    } else {
+                        this.cancel();
                     }
 
                 }
             };
-            downTimer.schedule(downTimerTask,0,800);
+            downTimer.schedule(downTimerTask,0,500);
         }
     }
 

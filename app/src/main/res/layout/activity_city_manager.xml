@@ -33,14 +33,17 @@
             </LinearLayout>
 
             <LinearLayout
-                android:background="@color/white"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="0dp">
 
                 <com.example.l.myweather.customView.DragListView
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="16dp"
+                    android:footerDividersEnabled="true"
+                    android:dividerHeight="10dp"
                     android:id="@+id/city_list"
-                    android:divider="@color/black"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 

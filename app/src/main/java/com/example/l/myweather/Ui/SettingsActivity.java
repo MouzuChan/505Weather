@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.l.myweather.BaseActivity;
 import com.example.l.myweather.MyApplication;
 import com.example.l.myweather.R;
 import com.example.l.myweather.UpdateService;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SettingsActivity extends AppCompatActivity{
+public class SettingsActivity extends BaseActivity{
     private static Toolbar toolbar;
     private static int FIRST_SCREEN_FLAG = 0;
     private static int CHILD_SCREEN_FLAG = 1;
@@ -47,11 +48,6 @@ public class SettingsActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
         setContentView(R.layout.activity_settings);
         initView();
         getFragmentManager().beginTransaction().add(R.id.content, settingsFragment).commit();
@@ -60,11 +56,9 @@ public class SettingsActivity extends AppCompatActivity{
     }
     public void initView(){
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        //toolbar.setTitle("设置");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         settingsFragment = new SettingsFragment();
-
 
         app_info_list = new ArrayList<>();
 
@@ -96,13 +90,12 @@ public class SettingsActivity extends AppCompatActivity{
         private SharedPreferences app_name_preferences;
 
         private ListPreference icon_style;
-        //SharedPreferences.Editor editor;
-        //SharedPreferences package_preferences = context.getSharedPreferences("package_preferences",MODE_MULTI_PROCESS);
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preference);
+
             listPreference = (ListPreference) findPreference("update_rate");
             widgetColorList = (ListPreference) findPreference("widget_color");
             notify_background = (ListPreference) findPreference("notify_background");
@@ -125,11 +118,9 @@ public class SettingsActivity extends AppCompatActivity{
             preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
+
                     flag = CHILD_SCREEN_FLAG;
-
-
-
-                        setScreen();
+                    setScreen();
 
                     return false;
                 }
@@ -165,9 +156,6 @@ public class SettingsActivity extends AppCompatActivity{
         }
 
         public void initAppInfoList(){
-            // TimerTask timerTask = new TimerTask() {
-            //   @Override
-            //    public void run() {
             app_info_list.clear();
             PackageManager packageManager = MyApplication.getContext().getPackageManager();
             Intent mIntent = new Intent(Intent.ACTION_MAIN, null);
@@ -181,13 +169,7 @@ public class SettingsActivity extends AppCompatActivity{
                 appInfo.setPackage_name(resolveInfo.activityInfo.packageName);
                 app_info_list.add(appInfo);
             }
-            //   }
-            //  };
-            // Timer timer = new Timer();
-            // timer.schedule(timerTask,2000);
         }
-
-
 
 
         @Override
@@ -203,7 +185,6 @@ public class SettingsActivity extends AppCompatActivity{
             sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         }
         public void showSelectedDialog(final int f){
-
 
             View view = LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.selected_app_layout,null);
             app_list = (ListView) view.findViewById(R.id.app_list);

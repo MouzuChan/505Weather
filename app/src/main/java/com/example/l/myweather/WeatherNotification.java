@@ -17,6 +17,7 @@ package com.example.l.myweather;
         import com.example.l.myweather.ui.MainActivity;
         import com.example.l.myweather.util.FileHandle;
         import com.example.l.myweather.util.HandleJSON;
+        import com.example.l.myweather.util.WeatherToCode;
 
         import org.json.JSONObject;
 
@@ -31,13 +32,6 @@ public class WeatherNotification {
     private static Context mContext = MyApplication.getContext();
     private static NotificationManager notificationManager = (NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE);
     private static String city;
-    //private static Map<String,Integer> map_day = new HashMap<>();
-    //private static Map<String,Integer> map_night = new HashMap<>();
-    //private static Map<String,Integer> map_day_small = new HashMap<>();
-    //private static Map<String,Integer> map_night_small = new HashMap<>();
-    //private static String weatherCode = "{\"晴\":\"100\",\"多云\":\"101\",\"阴\":\"104\",\"阵雨\":\"300\",\"雷阵雨\":\"302\",\"雷阵雨伴有冰雹\":\"304\",\"雨夹雪\":\"404\",\"小雨\":\"305\",\"小到中雨\":\"305\",\"中雨\":\"306\",\"中到大雨\":\"306\",\"大雨\":\"307\",\"大到暴雨\":\"307\",\"暴雨\":\"310\",\"大暴雨\":\"311\",\"特大暴雨\":\"312\",\"阵雪\":\"407\",\"小雪\":\"400\",\"中雪\":\"401\",\"大雪\":\"402\",\"暴雪\":\"403\",\"雾\":\"501\",\"冻雨\":\"313\",\"沙尘暴\":\"507\",\"浮尘\":\"504\",\"扬沙\":\"503\",\"霾\":\"502\",\"强沙尘暴\":\"508\"}";
-
-    //private static JSONObject weatherObject;
 
     public static void sendNotification(JSONObject jsonObject,String cityName){
         Notification.Builder builder = new Notification.Builder(mContext);

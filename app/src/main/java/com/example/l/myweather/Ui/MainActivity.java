@@ -3,6 +3,7 @@ package com.example.l.myweather.ui;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -16,46 +17,43 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.*;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.l.myweather.WeatherImageUrl;
-import com.example.l.myweather.customView.MyScrollView;
+import com.example.l.myweather.BaseActivity;
+import com.example.l.myweather.callback.CheckUpdateCallBack;
+import com.example.l.myweather.callback.OnRecyclerViewItemClickListener;
+import com.example.l.myweather.customView.MyDrawerLayout;
+import com.example.l.myweather.util.CheckUpdate;
+import com.example.l.myweather.util.City;
+import com.example.l.myweather.util.WeatherImageUrl;
 import com.example.l.myweather.database.CityDataBase;
 import com.example.l.myweather.callback.ImageCallBack;
 import com.example.l.myweather.callback.LocationCallBack;
 import com.example.l.myweather.LocationCityId;
 import com.example.l.myweather.MyApplication;
-import com.example.l.myweather.MyFragmentAdapter;
+import com.example.l.myweather.util.adapter.HeaderRecyclerViewAdapter;
+import com.example.l.myweather.util.adapter.MyFragmentAdapter;
 import com.example.l.myweather.MyLocation;
 import com.example.l.myweather.R;
 import com.example.l.myweather.UpdateService;
@@ -67,8 +65,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -76,26 +72,33 @@ import java.util.TimerTask;
 
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener,
+        NavigationView.OnNavigationItemSelectedListener{
+
+    private int DRAWER_LAYOUT_TYPE = -1;
+
+    final private int DRAWER_LAYOUT_TYPE_0 = 0;
+    final private int DRAWER_LAYOUT_TYPE_1 = 1;
+    final private int DRAWER_LAYOUT_TYPE_2 = 2;
+    final private int DRAWER_LAYOUT_TYPE_3 = 3;
+    final private int DRAWER_LAYOUT_TYPE_4 = 4;
+    final private int DRAWER_LAYOUT_TYPE_5 = 5;
+
+    private int CLICK_POSITION;
+
+
     private ViewPager viewPager;
     private ArrayList<ContentFragment> fragmentArrayList;
     private MyFragmentAdapter mainAdapter;
     private SQLiteDatabase db;
-    public static ArrayList<String> city_list;
-    public static ArrayList<String> cityId_list;
     private int start_count;
     private SharedPreferences startCount;
     private TextView tip_text;
-    private NavigationView navigationView;
-    private DrawerLayout drawerLayout;
+    private MyDrawerLayout drawerLayout;
     private Toolbar toolbar;
-    private LinearLayout linearLayout;
     private LinearLayout contentLayout;
-    private List<TextView> cityViewList;
-    private List<TextView> weatherViewList;
-    private List<LinearLayout> linearLayoutList;
     private SharedPreferences sharedPreferences;
-    public static Context context = MyApplication.getContext();
+    public Context context = MyApplication.getContext();
     private Indicator indicator;
     private String currentWeather;
     private String location_city,location_city_id;
@@ -103,37 +106,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int location_position = -1;
     private View headerView;
     private CoordinatorLayout container;
-    private ArrayList<String> weatherList;
-    public static ArrayList<String> tempList;
+
     private Uri imageUri;
     private WeatherImageUrl weatherImageUrl;
+    private HeaderRecyclerViewAdapter headerRecyclerViewAdapter;
+    private RecyclerView recyclerView;
+
+    public static ArrayList<City> cityArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Window window = getWindow();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
         setContentView(R.layout.activity_main);
         initView();
         initCityList();
-        setViewToDrawerLayout();
         initViewPager(0);
         initBroadcast();
         initIndicator(0);
-        if (start_count == 0){
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},0);
-
-            } else {
-                firstStart();
-            }
-         startCount.edit().putInt("start_count", 2).apply();
-        }else {
-            initLocationCity();
-        }
         initHeaderViewBackground();
         startService(new Intent(context,UpdateService.class));
         Intent intent = getIntent();
@@ -145,66 +134,67 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }
-    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
-            case 0:
-                if (grantResults.length > 0){
-                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                        firstStart();
-                    } else {
-                        showSnackbar("授权失败");
-                    }
-                }
-
-                break;
-            case 1:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    location();
-                } else {
-                    showSnackbar("授权失败");
-                }
-                break;
+        if (start_count == 0){
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},0);
+            } else {
+                firstStart();
+            }
+            startCount.edit().putInt("start_count", 2).apply();
+        }else {
+            initLocationCity();
         }
-
     }
 
     public void initView(){
         container = (CoordinatorLayout) findViewById(R.id.container);
-        //location_icon = (ImageView)findViewById(R.id.location_icon);
-
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         contentLayout = (LinearLayout) findViewById(R.id.content_layout);
-        fragmentArrayList = new ArrayList<ContentFragment>();
+        fragmentArrayList = new ArrayList<>();
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         mainAdapter = new MyFragmentAdapter(getSupportFragmentManager(),fragmentArrayList);
         CityDataBase cityDataBase = CityDataBase.getInstance();
         db = cityDataBase.getWritableDatabase();
-        city_list = new ArrayList<String>();
-        cityId_list = new ArrayList<String>();
-        cityViewList = new ArrayList<TextView>();
-        weatherViewList = new ArrayList<TextView>();
-        linearLayoutList = new ArrayList<LinearLayout>();
-        weatherList = new ArrayList<String>();
-        tempList = new ArrayList<String>();
+
+
+        cityArrayList = new ArrayList<>();
 
         tip_text = (TextView) findViewById(R.id.tip_text);
         tip_text.setOnClickListener(this);
-        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
         headerView  = navigationView.getHeaderView(0);
-        linearLayout = (LinearLayout)headerView.findViewById(R.id.linear_layout);
-        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+
+        recyclerView = (RecyclerView)headerView.findViewById(R.id.recycler_view);
+        LinearLayoutManager llm = new LinearLayoutManager(context);
+        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(llm);
+        headerRecyclerViewAdapter = new HeaderRecyclerViewAdapter(cityArrayList);
+        recyclerView.setAdapter(headerRecyclerViewAdapter);
+        headerRecyclerViewAdapter.setOnRecyclerViewItemClickListener(new OnRecyclerViewItemClickListener() {
+            @Override
+            public void onClick(View v, int position) {
+                CLICK_POSITION = position;
+                DRAWER_LAYOUT_TYPE = DRAWER_LAYOUT_TYPE_5;
+                drawerLayout.closeDrawers();
+            }
+
+            @Override
+            public void onLongClick(View v, int position) {
+
+            }
+        });
+
+
+        drawerLayout = (MyDrawerLayout)findViewById(R.id.drawer_layout);
         headerView.findViewById(R.id.change_background).setOnClickListener(this);
-        navigationView.setNavigationItemSelectedListener(onNavigationItemSelectedListener);
+        navigationView.setNavigationItemSelectedListener(this);
         toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerToggle.syncState();
-        //drawerLayout.addDrawerListener(drawerToggle);
+        drawerLayout.addDrawerListener(drawerToggle);
         viewPager.addOnPageChangeListener(onPageChangeListener);
         viewPager.setOffscreenPageLimit(10);
         indicator = (Indicator)findViewById(R.id.indicator);
@@ -212,43 +202,80 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         start_count = startCount.getInt("start_count", 0);
         preferences = getSharedPreferences("location_city", MODE_APPEND);
 
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
 
+            }
 
+            @Override
+            public void onDrawerOpened(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                switch (DRAWER_LAYOUT_TYPE){
+                    case DRAWER_LAYOUT_TYPE_0:
+                        startActivity(new Intent(MainActivity.this,AddCityActivity.class));
+                        break;
+                    case DRAWER_LAYOUT_TYPE_1:
+                        startActivityForResult(new Intent(MainActivity.this,CityManagerActivity.class),0);
+                        break;
+                    case DRAWER_LAYOUT_TYPE_2:
+                        startActivity(new Intent(MainActivity.this,SettingsActivity.class));
+                        break;
+                    case DRAWER_LAYOUT_TYPE_3:
+                        startActivity(new Intent(MainActivity.this,AboutActivity.class));
+                        break;
+                    case DRAWER_LAYOUT_TYPE_4:
+                        finish();
+                        break;
+                    case DRAWER_LAYOUT_TYPE_5:
+                        viewPager.setCurrentItem(CLICK_POSITION);
+                        break;
+                }
+                DRAWER_LAYOUT_TYPE = -1;
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
     }
 
     public void initCityList(){
         Cursor cursor = db.query("city",null,null,null,null,null,null);
         if (cursor.moveToFirst()){
             do {
-                city_list.add(cursor.getString(cursor.getColumnIndex("city")));
-                cityId_list.add(cursor.getString(cursor.getColumnIndex("city_id")));
-                weatherList.add("");
-                tempList.add("");
+                City city = new City();
+                city.setCityName(cursor.getString(cursor.getColumnIndex("city")));
+                city.setCityId(cursor.getString(cursor.getColumnIndex("city_id")));
+                city.setCityTemp("");
+                city.setCityWeather("");
+                cityArrayList.add(city);
                 } while (cursor.moveToNext());
         }
         cursor.close();
+        headerRecyclerViewAdapter.notifyDataSetChanged();
     }
 
 
     public void initViewPager(final int flag){
-        //new Thread(new Runnable() {
-            //@Override
-            //public void run() {
                 viewPager.setAdapter(mainAdapter);
-                if (city_list.size() > 0){
-                    for (int i = 0;i < city_list.size();i++){
-                        ContentFragment fragment = ContentFragment.newInstance(city_list.get(i),cityId_list.get(i),i,flag);
+                if (cityArrayList.size() > 0){
+                    for (int i = 0;i < cityArrayList.size();i++){
+                        ContentFragment fragment = ContentFragment.newInstance(cityArrayList.get(i).getCityName(),
+                                cityArrayList.get(i).getCityId(),i,flag);
                         fragmentArrayList.add(fragment);
                     }
                     mainAdapter.notifyDataSetChanged();
                     viewPager.setCurrentItem(0);
-                    toolbar.setTitle(city_list.get(0));
+                    toolbar.setTitle(cityArrayList.get(0).getCityName());
                 } else {
                     toolbar.setTitle("请添加城市");
                 }
-            //}
-        //}).start();
-
     }
 
     public void initHeaderViewBackground(){
@@ -314,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
             case 0:
-                if (resultCode == 1){
+                if (resultCode == RESULT_OK){
                     int position = data.getIntExtra("position",0);
                     viewPager.setCurrentItem(position);
                 }
@@ -353,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onPageSelected(int position) {
-            toolbar.setTitle(city_list.get(position));
+            toolbar.setTitle(cityArrayList.get(position).getCityName());
             initIndicator(position);
         }
 
@@ -361,11 +388,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void onPageScrollStateChanged(int state) {
             if (state == ViewPager.SCROLL_STATE_IDLE){
                 int position = viewPager.getCurrentItem();
-                if (weatherList.size() != 0 && weatherList.size() >= position && weatherList.get(position) != null && !weatherList.get(position).isEmpty()){
-                    setWeatherImage(weatherList.get(position));
+                if (cityArrayList.size() >= position + 1){
+                    String weather = cityArrayList.get(position).getCityWeather();
+                    setWeatherImage(weather);
                 }
-
-
             }
         }
     };
@@ -426,59 +452,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-
-
-    public void setViewToDrawerLayout(){
-        linearLayout.removeAllViews();
-        cityViewList.clear();
-        weatherViewList.clear();
-        linearLayoutList.clear();
-        for (int i = 0; i < cityId_list.size(); i++){
-            addLayout();  //添加layout
-        }
-    }
-
-    public void addLayout(){
-        final LinearLayout layout = new LinearLayout(MainActivity.this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        layout.setPadding(20, 0, 20, 0);
-        layout.setHorizontalGravity(Gravity.CENTER_HORIZONTAL);
-        TextView weather_text = new TextView(MainActivity.this);
-        TextView city_text = new TextView(MainActivity.this);
-        city_text.setSingleLine(false);
-        weather_text.setBackgroundResource(R.drawable.yuanxing);
-        weather_text.setLayoutParams(new LinearLayout.LayoutParams(MyApplication.dp2px(50), MyApplication.dp2px(50)));
-        weather_text.setTextSize(18);
-        city_text.setLayoutParams(new LinearLayout.LayoutParams(MyApplication.dp2px(50), MyApplication.dp2px(50)));
-        city_text.setGravity(Gravity.CENTER_HORIZONTAL);
-        city_text.setPadding(0,10,0,0);
-        weather_text.setGravity(Gravity.CENTER);
-        weather_text.setTextColor(Color.WHITE);
-        city_text.setTextColor(Color.WHITE);
-        layout.addView(weather_text);
-        layout.addView(city_text);
-        linearLayout.addView(layout);
-        cityViewList.add(city_text);
-        weatherViewList.add(weather_text);
-        linearLayoutList.add(layout);
-    }
-
-    public void setView(final int i,String weather){
-
-        cityViewList.get(i).setText(city_list.get(i));
-        weatherViewList.get(i).setText(weather);
-        tempList.set(i, weather);
-        linearLayoutList.get(i).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawerLayout.closeDrawers();
-                setListener(i,"");
-            }
-        });
-    }
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -490,7 +463,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        if (city_list == null || city_list.size() == 0){
+        if (cityArrayList == null || cityArrayList.size() == 0){
             if (tip_text != null){
                 tip_text.setVisibility(View.VISIBLE);
             }
@@ -504,15 +477,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public int getBarHeight(){
-        int i = toolbar.getHeight();
-        return i + indicator.getHeight();
+        return toolbar.getHeight() + indicator.getHeight();
     }
 
 
     public void initBroadcast(){
         IntentFilter intentFilter = new IntentFilter("com.lha.weather.ADD_CITY");
         registerReceiver(cityBroadCastReceiver,intentFilter);
-
         IntentFilter intentFilter1 = new IntentFilter("com.lha.weather.CITY_MANAGER");
         registerReceiver(cityManagerBroadCastReceiver,intentFilter1);
     }
@@ -545,17 +516,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void deleteCity(int position) {
         if (position >= 0){
-            city_list.remove(position);
-            cityId_list.remove(position);
+            //city_list.remove(position);
+            //cityId_list.remove(position);
+            //weatherList.remove(position);
+            //tempList.remove(position);
+            cityArrayList.remove(position);
             fragmentArrayList.clear();
-            weatherList.remove(position);
-            tempList.remove(position);
             initViewPager(1);
-            linearLayout.removeViewAt(position);
-            cityViewList.remove(position);
-            weatherViewList.remove(position);
-            linearLayoutList.remove(position);
-            if (city_list.size() == 0){
+            if (cityArrayList.size() == 0){
                 tip_text.setVisibility(View.VISIBLE);
             }
             viewPager.setCurrentItem(0);
@@ -572,69 +540,59 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     public void changeDefaultCity(){
-        city_list.clear();
-        cityId_list.clear();
-        tempList.clear();
+        //city_list.clear();
+        //cityId_list.clear();
+        //tempList.clear();
+        //weatherList.clear();
+        cityArrayList.clear();
         fragmentArrayList.clear();
-        linearLayout.removeAllViews();
-        cityViewList.clear();
-        weatherViewList.clear();
-        linearLayoutList.clear();
+
         initCityList();
-        setViewToDrawerLayout();
         initViewPager(1);
         initIndicator(0);
         if (sharedPreferences.getBoolean("show_notification", false)){
             WeatherNotification.sendNotification(null,null);
         }
-        //Widget4x2.updateWidgetFromLocal();
-        //NewAppWidget.updateFromLocal();
-        //AppWidget2x1.updateFromLocal();
         context.sendBroadcast(new Intent("com.lha.weather.UPDATE_FROM_LOCAL"));
-        //getWeatherDataFromInternet();
     }
 
-    public void addCity(String city,String id){
+    public void addCity(String cityName,String cityId){
         boolean b =true;
-        Cursor cursor = db.query("city", new String[]{"city_id"}, null, null, null, null, null);
-        if (cursor.moveToFirst()){
-            do {
-                if (cursor.getString(cursor.getColumnIndex("city_id")).equals(id)){
-                    b = false;
-                    for (int i = 0;i<city_list.size();i++){
-                        if (id.equals(cityId_list.get(i))){
-                            Toast.makeText(context,"该城市已存在...",Toast.LENGTH_SHORT).show();
-                            break;
-                        }
-                    }
-                }
-            } while (cursor.moveToNext());
+        for (int i = 0;i < cityArrayList.size();i++){
+            if (cityId.equals(cityArrayList.get(i).getCityId())){
+                b = false;
+                Toast.makeText(MainActivity.this,"该城市已存在...",Toast.LENGTH_SHORT).show();
+                break;
+            }
         }
-        cursor.close();
         if (b) {
-            addLayout();
             ContentValues values = new ContentValues();
-            city_list.add(city);
-            cityId_list.add(id);
-            weatherList.add("");
-            tempList.add("");
-            values.put("city", city);
-            values.put("city_id", id);
+            City city = new City();
+            city.setCityName(cityName);
+            city.setCityId(cityId);
+            city.setCityTemp("");
+            city.setCityWeather("");
+            cityArrayList.add(city);
+            //city_list.add(cityName);
+            //cityId_list.add(cityId);
+            //weatherList.add("");
+            //tempList.add("");
+            values.put("city", cityName);
+            values.put("city_id", cityId);
             db.insert("city", null, values);
-            ContentFragment fragment = ContentFragment.newInstance(city,id,city_list.size()-1,3);
+            ContentFragment fragment = ContentFragment.newInstance(cityName,cityId,cityArrayList.size()-1,3);
             fragmentArrayList.add(fragment);
             mainAdapter.notifyDataSetChanged();
-            viewPager.setCurrentItem(city_list.size() - 1);
-            initIndicator(city_list.size() - 1);
-            toolbar.setTitle(city);
+            viewPager.setCurrentItem(cityArrayList.size() - 1);
+            initIndicator(cityArrayList.size() - 1);
+            toolbar.setTitle(cityName);
             tip_text.setVisibility(View.GONE);
-            //getWeatherDataFromInternet();
         }
     }
 
 
     public void initIndicator(int pageSelected){
-        indicator.setCircleCount(city_list.size());
+        indicator.setCircleCount(cityArrayList.size());
         indicator.setPageSelected(pageSelected);
         indicator.invalidate();
     }
@@ -650,15 +608,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void showSnackbar(String text){
-        Snackbar snackbar = Snackbar.make(container, text, Snackbar.LENGTH_LONG);
-        Snackbar.SnackbarLayout sl = (Snackbar.SnackbarLayout)snackbar.getView();
-        sl.setBackgroundColor(Color.parseColor("#64000000"));
-        snackbar.show();
+
+    @Override
+    public void showSnackbar(View v, String content) {
+        if (v == null){
+            v = container;
+        }
+        super.showSnackbar(v, content);
     }
 
-    public void setWeatherList(int i, String weather){
-        weatherList.set(i, weather);
+    public void setTempList(int i, String temp){
+        if (cityArrayList.size() >= i + 1){
+            cityArrayList.get(i).setCityTemp(temp);
+        }
+        headerRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    public void setWeatherList(int i,String weather){
+        if (cityArrayList.size() >= i + 1){
+            cityArrayList.get(i).setCityWeather(weather);
+        }
     }
 
     public void setWeatherImage(final String weather){
@@ -672,7 +641,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         weatherImageUrl = new WeatherImageUrl();
                     }
                     String url = weatherImageUrl.get_url(weather,hour);
-                    if (!url.isEmpty()){
+                    if (url != null && !url.isEmpty()){
                         makeImageRequest(url);
                     }
                 }
@@ -718,52 +687,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return viewPager.getCurrentItem();
     }
 
-
-    public void setListener(final int i,final String activity_name){
-        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-                drawerLayout.removeDrawerListener(this);
-                if (activity_name.isEmpty()){
-                    if (newState == DrawerLayout.STATE_IDLE) {
-                        viewPager.setCurrentItem(i);
-                    }
-                } else {
-                    switch (activity_name){
-                        case "add":
-                            startActivity(new Intent(MainActivity.this, AddCityActivity.class));
-                            break;
-                        case "manager":
-                            startActivityForResult(new Intent(MainActivity.this, CityManagerActivity.class), 0);
-                            break;
-                        case "settings":
-                            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                            break;
-                        case "about":
-                            startActivity(new Intent(MainActivity.this, AboutActivity.class));
-                            break;
-                    }
-                }
-            }
-        });
-    }
-
-
     public void initLocationCity(){
         location_city = preferences.getString("location_city","");
         location_city_id = preferences.getString("location_city_id","");
@@ -791,8 +714,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     locationCityId.getLocationCityId(city, district, new LocationCallBack() {
                         @Override
                         public void onFinish(String return_id,String city_name) {
-                            //return_id = "101010200";
-                            //city_name = "海淀";
                             if (return_id != null){
                                 if (location_position >= 0){
                                     if (!location_city.equals(city_name) && !location_city_id.equals(return_id)){
@@ -831,12 +752,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void setLocation_position(){
-        for (int i = 0; i < cityId_list.size(); i++){
-            if (location_city_id.equals(cityId_list.get(i))){
+        for (int i = 0; i < cityArrayList.size(); i++){
+            if (location_city_id.equals(cityArrayList.get(i).getCityId())){
                 location_position = i;
                 if (location_position == viewPager.getCurrentItem()){
                     toolbar.setTitle(location_city);
-                } else {
                 }
                 break;
             }
@@ -857,7 +777,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                showSnackbar(location_city + "    添加成功");
+                showSnackbar(container,location_city + "    添加成功");
                 addCity(location_city, location_city_id);
             }
         });
@@ -870,55 +790,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editor.putString("location_city", location_city);
         editor.putString("location_city_id", location_city_id);
         editor.apply();
-        String oldCity = city_list.get(location_position);
-        String oldId = cityId_list.get(location_position);
-        city_list.set(location_position, location_city);
-        cityId_list.set(location_position, location_city_id);
+        String oldCity = cityArrayList.get(location_position).getCityName();
+        String oldId = cityArrayList.get(location_position).getCityName();
+        cityArrayList.get(location_position).setCityName(location_city);
+        cityArrayList.get(location_position).setCityId(location_city_id);
         ContentValues values = new ContentValues();
         values.put("city", location_city);
-        //values.put("city_id",location_city_id);
-        //sqLiteDatabase.update(DEMO_DB_NAME, values, "uid = ? ", new String[]{uid});
         db.update("city",values,"city = ?",new String[]{oldCity});
         values.clear();
         values.put("city_id", location_city_id);
         db.update("city", values, "city_id = ?", new String[]{oldId});
     }
-
-    private NavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(MenuItem menuItem) {
-            int i = menuItem.getItemId();
-            switch (i){
-                case R.id.city_manager:
-                    drawerLayout.closeDrawers();
-                    setListener(0, "manager");
-                    //startActivityForResult(new Intent(MainActivity.this, CityManagerActivity.class), 0);
-                    break;
-                case R.id.add_city:
-                    drawerLayout.closeDrawers();
-                    setListener(0, "add");
-                    //startActivity(new Intent(MainActivity.this, AddCityActivity.class));
-                    break;
-                case R.id.settings:
-                    drawerLayout.closeDrawers();
-                    setListener(0, "settings");
-                    //startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                    break;
-                case R.id.about:
-                    drawerLayout.closeDrawers();
-                    setListener(0, "about");
-                    //startActivity(new Intent(MainActivity.this, AboutActivity.class));
-                    break;
-                case R.id.exit:
-                    finish();
-                    System.exit(0);
-                    break;
-                default:
-                    break;
-            }
-            return true;
-        }
-    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -958,23 +840,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     bitmap.compress(Bitmap.CompressFormat.PNG, 70, outputStream);
                     outputStream.flush();
                     outputStream.close();
-
-                    /*MyScrollView scrollView = fragmentArrayList.get(getCurrentItem()).getMyScrollView();
-                    int h = 0;
-                    int w = scrollView.getWidth();
-                    for (int i = 0; i < scrollView.getChildCount(); i++){
-                        h += scrollView.getChildAt(i).getHeight();
-                    }
-
-                    //Bitmap b = Bitmap.createBitmap(w,h, Bitmap.Config.RGB_565);
-                    bitmap.setHeight(h);
-                    bitmap.setWidth(w);
-                    Canvas canvas = new Canvas(bitmap);
-                    scrollView.draw(canvas);
-                    FileOutputStream outputStream = new FileOutputStream(imageFile);
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                    outputStream.flush();
-                    outputStream.close();*/
                     Intent intent = new Intent(Intent.ACTION_SEND);
                     intent.setType("image/*");
                     Uri uri = Uri.fromFile(imageFile);
@@ -989,77 +854,120 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }).start();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case 0:
+                if (grantResults.length > 0){
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                        firstStart();
+                    } else {
+                        showSnackbar(container,"授权失败");
 
-  /* public void getWeatherDataFromInternet(){
-       StringBuilder stringBuffer = new StringBuilder();
-       for (int i = 0; i < cityId_list.size(); i++){
-           if (i == cityId_list.size() - 1){
-               stringBuffer.append("cityIds=" + cityId_list.get(i));
-           } else {
-               stringBuffer.append("cityIds=" + cityId_list.get(i) + "&");
-           }
-       }
-       String url = "http://aider.meizu.com/app/weather/listWeather?" + stringBuffer.toString();
-
-       HttpUtil.makeHttpRequest(url, new CallBackListener() {
-           @Override
-           public void onFinish(JSONObject jsonObject) {
-               try {
-                   if (jsonObject.getString("code").equals("200")){
-                       Log.d("fuck","fuck");
-                       JSONArray value = jsonObject.getJSONArray("value");
-                       JSONObject jsonObject1;
-                       for (int i = 0; i < value.length(); i++){
-                           jsonObject1 = value.getJSONObject(i);
-                           fragmentArrayList.get(i).setData(jsonObject1);
-                       }
-                       FileHandle.saveJSONObject(jsonObject,"weather_data");
-                   }
-               } catch (Exception e){
-                   e.printStackTrace();
-               }
-           }
-
-           @Override
-           public void onError(String e) {
-                showSnackbar("网络错误");
-           }
-       });
-
-   }
-
-
-    public void getWeatherDataFromLocal(){
-        JSONObject jsonObject = FileHandle.getJSONObject("weather_data");
-        if (jsonObject != null){
-            try {
-                Log.d("fuck","fuck");
-                if (jsonObject.getString("code").equals("200")){
-                    JSONArray value = jsonObject.getJSONArray("value");
-                    for (int i = 0; i < city_list.size(); i++){
-                        JSONObject jsonObject1 = value.getJSONObject(i);
-                        fragmentArrayList.get(i).setData(jsonObject1);
                     }
                 }
-            } catch (Exception e){
-                e.printStackTrace();
-            }
+
+                break;
+            case 1:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    location();
+                } else {
+                    showSnackbar(container,"授权失败");
+                }
+                break;
         }
 
-
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                getWeatherDataFromInternet();
-            }
-        };
-        Timer timer = new Timer();
-        timer.schedule(timerTask,2000);
     }
 
-    public int getCityCount(){
-        return city_list.size();
-    }*/
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        /*
+        *
+        * 获得抽屉中RecyclerView的位置
+        * 处理滑动冲突
+        *
+        */
+
+        if (hasFocus){
+            int left = recyclerView.getLeft();
+            int top = recyclerView.getTop();
+            int right = recyclerView.getRight();
+            int bottom = recyclerView.getBottom();
+            drawerLayout.setRecyclerView(left,top,right,bottom);
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        int i = item.getItemId();
+        switch (i){
+            case R.id.add_city:
+                DRAWER_LAYOUT_TYPE = DRAWER_LAYOUT_TYPE_0;
+                drawerLayout.closeDrawers();
+                break;
+            case R.id.city_manager:
+                DRAWER_LAYOUT_TYPE = DRAWER_LAYOUT_TYPE_1;
+                drawerLayout.closeDrawers();
+                break;
+            case R.id.settings:
+                DRAWER_LAYOUT_TYPE = DRAWER_LAYOUT_TYPE_2;
+                drawerLayout.closeDrawers();
+                break;
+            case R.id.about:
+                DRAWER_LAYOUT_TYPE = DRAWER_LAYOUT_TYPE_3;
+                drawerLayout.closeDrawers();
+                break;
+            case R.id.exit:
+                DRAWER_LAYOUT_TYPE = DRAWER_LAYOUT_TYPE_4;
+                drawerLayout.closeDrawers();
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
+    public void checkUpdate(){
+        //Toast.makeText(MainActivity.this, "正在检查更新...", Toast.LENGTH_SHORT).show();
+        CheckUpdate cu = new CheckUpdate();
+        cu.sendHttpRequest(new CheckUpdateCallBack() {
+            @Override
+            public void hasUpdate(String newVersionName, String changelog, final String url) {
+                android.support.v7.app.AlertDialog.Builder builder =
+                        new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("发现新版本:" + newVersionName);
+                builder.setMessage(changelog);
+                builder.setPositiveButton("下载", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        DownloadManager dm = (DownloadManager) context.getSystemService(DOWNLOAD_SERVICE);
+                        Uri uri = Uri.parse(url);
+                        DownloadManager.Request request = new DownloadManager.Request(uri);
+                        dm.enqueue(request);
+                    }
+                });
+                builder.setNegativeButton("取消", null);
+            }
+
+            @Override
+            public void noUpdate() {
+                Toast.makeText(MainActivity.this,"已经是最新版本了",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                if (errorCode == 1){
+                    Toast.makeText(MainActivity.this,"网络错误",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this,"未知错误",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
 
 }
 

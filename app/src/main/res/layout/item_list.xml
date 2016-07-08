@@ -1,52 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingRight="20dp"
-    android:paddingLeft="20dp"
-
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
     >
 
 
 
-    <ImageView
-        android:id="@+id/drag_image"
-        android:src="@drawable/ic_sort_black_24dp"
-        android:layout_gravity="center_vertical"
-        android:layout_width="30dp"
-        android:layout_height="30dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
 
-    <TextView
-        android:layout_marginLeft="20dp"
-        android:textColor="@color/white"
-        android:id="@+id/temp_view"
-        android:background="@drawable/yuanxing"
-        android:gravity="center"
-        android:layout_gravity="center_vertical"
-        android:layout_width="35dp"
-        android:layout_height="35dp" />
+        <ImageView
+            android:id="@+id/drag_image"
+            android:src="@drawable/ic_sort_black_24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_width="24dp"
+            android:layout_height="24dp" />
 
-    <TextView
-        android:layout_marginLeft="15dp"
-        android:textColor="@color/black"
-        android:layout_weight="1"
-        android:id="@+id/item_text"
-        android:gravity="center_vertical"
-        android:layout_gravity="center_vertical"
-        android:textSize="15sp"
-        android:layout_width="0dp"
-        android:layout_height="50dp" />
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_marginLeft="20dp"
+                android:id="@+id/tv_city_name"
+                android:textColor="#484848"
+                android:textSize="17sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
 
-    <ImageView
 
-        android:clickable="true"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:id="@+id/item_button"
-        android:layout_width="25dp"
-        android:src="@drawable/ic_delete_black_24dp"
-        android:layout_height="50dp" />
+        </LinearLayout>
+
+
+
+        <ImageView
+
+            android:clickable="true"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:id="@+id/item_button"
+            android:layout_width="24dp"
+            android:src="@drawable/ic_clear_black_24dp"
+            android:layout_height="24dp" />
+
+    </LinearLayout>
+
+
 
 
 

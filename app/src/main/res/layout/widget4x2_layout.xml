@@ -26,6 +26,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textSize="50dp"
+                style=""
                 android:includeFontPadding="false"
                 android:singleLine="true"
                 android:layout_width="wrap_content"

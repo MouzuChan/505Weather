@@ -21,6 +21,7 @@ import com.example.l.myweather.*;
 import com.example.l.myweather.callback.CallBackListener;
 import com.example.l.myweather.callback.LocationCallBack;
 import com.example.l.myweather.util.HttpUtil;
+import com.example.l.myweather.util.adapter.ListAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,12 +32,12 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class AddCityActivity extends AppCompatActivity implements View.OnClickListener{
+public class AddCityActivity extends BaseActivity implements View.OnClickListener{
 
     private EditText editText;
     private Button locationButton;
     private ListView cityListView;
-    private com.example.l.myweather.ListAdapter adapter;
+    private com.example.l.myweather.util.adapter.ListAdapter adapter;
     private List<String> id_list;
     private List<String> city_list;
     private List<String> list;
@@ -50,11 +51,6 @@ public class AddCityActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Window window = getWindow();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
         setContentView(R.layout.activity_add_city);
         initView();
         initLocation();
@@ -69,7 +65,7 @@ public class AddCityActivity extends AppCompatActivity implements View.OnClickLi
         city_list = new ArrayList<>();
         list = new ArrayList<>();
         id_list = new ArrayList<>();
-        adapter = new com.example.l.myweather.ListAdapter(list);
+        adapter = new ListAdapter(list);
         cityListView.setAdapter(adapter);
         toolbar = (Toolbar)findViewById(R.id.add_toolbar);
         setSupportActionBar(toolbar);

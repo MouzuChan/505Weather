@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="关于本软件">
+        <Preference
+            android:key="version"
+            android:title="应用版本"
+            />
+
+        <Preference
+            android:key="check_update"
+            android:title="检查更新"
+            />
+
+        <Preference
+            android:key="app_gh_address"
+            android:title="项目GitHub地址"
+            android:summary="https://github.com/Liuhongan/505Weather"
+            />
+
+        <Preference
+            android:key="rate"
+            android:title="吐槽or点赞"
+            android:summary="点击可以去应用商店评价" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="关于作者" >
+
+        <Preference android:key="mail"
+            android:title="邮箱"
+            android:summary="liuhongan6@gmail.com" />
+
+        <Preference android:key="my_gh_address"
+            android:title="GitHub"
+            android:summary="https://github.com/Liuhongan" />
+
+
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

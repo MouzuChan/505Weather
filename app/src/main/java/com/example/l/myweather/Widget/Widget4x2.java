@@ -23,7 +23,7 @@ import com.example.l.myweather.UpdateService;
 import com.example.l.myweather.util.FileHandle;
 import com.example.l.myweather.util.HandleJSON;
 import com.example.l.myweather.util.TimeAndDate;
-import com.example.l.myweather.WeatherToCode;
+import com.example.l.myweather.util.WeatherToCode;
 
 import org.json.JSONObject;
 

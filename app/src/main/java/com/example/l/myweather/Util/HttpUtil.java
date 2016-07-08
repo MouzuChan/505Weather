@@ -10,6 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.l.myweather.callback.CallBackListener;
 import com.example.l.myweather.callback.ImageCallBack;
@@ -102,4 +103,24 @@ public class HttpUtil {
         mQueue.add(imageRequest);
     }
 
+    /*
+
+    public static void makeStringHttpRequest(String url, final StringHttpRequestCallBack shrc){
+        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String s) {
+                if (shrc != null){
+                    shrc.onFinish(s);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                shrc.onError("");
+            }
+        });
+        stringRequest.setShouldCache(false);
+        mQueue.add(stringRequest);
+    }
+    */
 }
