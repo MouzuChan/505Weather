@@ -12,11 +12,12 @@
 ## 应用截图
 
 ![github](https://github.com/Liuhongan/505Weather/blob/master/Screenshots/Screenshot_0.png)  
-![github](https://github.com/Liuhongan/505Weather/blob/master/Screenshots/Screenshot_2.png)
+![github](https://github.com/Liuhongan/505Weather/blob/master/Screenshots/Screenshot_1.png)
 
 
 ## 其他信息
+酷市场下载链接：http://coolapk.com/apk/com.lha.weather  <br/>
+我的邮箱：liuhongan6@gmail.com <br />
 定位服务：百度地图 <br/>
-[酷市场下载链接](http://coolapk.com/apk/com.lha.weather)<br /> 
-我的邮箱：liuhongan6@gmail.com
+
 
