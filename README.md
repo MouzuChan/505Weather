@@ -11,15 +11,13 @@
 
 ## 应用截图
 
-![github](https://github.com/Liuhongan/505Weather/blob/master/Screenshots/main1.png "主界面")  
-![github](https://github.com/Liuhongan/505Weather/blob/master/Screenshots/main2.png "主界面")
-![github](https://github.com/Liuhongan/505Weather/blob/master/Screenshots/drawer.png "抽屉")
-![github](https://github.com/Liuhongan/505Weather/blob/master/Screenshots/settings.png "设置界面")
-![github](https://github.com/Liuhongan/505Weather/blob/master/Screenshots/cityManager.png "城市管理界面")
-![github](https://github.com/Liuhongan/505Weather/blob/master/Screenshots/widget.png "桌面小部件")
+![github](https://github.com/Liuhongan/505Weather/blob/master/Screenshots/Screenshot_0.png)  
+![github](https://github.com/Liuhongan/505Weather/blob/master/Screenshots/Screenshot_1.png)
+
 
 ## 其他信息
+酷市场下载链接：http://coolapk.com/apk/com.lha.weather  <br/>
+我的邮箱：liuhongan6@gmail.com <br />
 定位服务：百度地图 <br/>
-[酷市场下载链接](http://coolapk.com/apk/com.lha.weather)<br /> 
-我的邮箱：liuhongan6@gmail.com
+
 
