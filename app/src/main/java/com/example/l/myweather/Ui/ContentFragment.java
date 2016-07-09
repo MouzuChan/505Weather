@@ -477,19 +477,6 @@ public class ContentFragment extends Fragment{
         table.setPointCount(hour_layout_temp_ints.length);
         table.setData(hour_layout_time_strings, hour_layout_weather_strings,hour_layout_temp_ints);
 
-
-        /*switch (defaultPreferences.getString("icon_style","单色")){
-            case "单色":
-                table.initBitmap(1);
-                break;
-            case "彩色":
-                table.initBitmap(0);
-                break;
-            default:
-                table.initBitmap(1);
-                break;
-        }*/
-
         for (int i : hour_layout_temp_ints){
 
             if (i > maxTemp){
@@ -507,6 +494,19 @@ public class ContentFragment extends Fragment{
             }
         }
         table.initPoint();
+
+        switch (defaultPreferences.getString("icon_style","单色")){
+            case "单色":
+                table.initBitmap(1);
+                break;
+            case "彩色":
+                table.initBitmap(0);
+                break;
+            default:
+                table.initBitmap(1);
+                break;
+        }
+
         table.invalidate();
 
     }
@@ -536,6 +536,19 @@ public class ContentFragment extends Fragment{
         forecastTable.setPointCount(7);
         forecastTable.setData(forecast_high_temp, forecast_low_temp);
         forecastTable.setHeight(300);
+
+        switch (defaultPreferences.getString("icon_style","单色")){
+            case "单色":
+                forecastTable.initBitmap(1);
+                break;
+            case "彩色":
+                forecastTable.initBitmap(0);
+                break;
+            default:
+                forecastTable.initBitmap(1);
+                break;
+        }
+
         if (maxTemp != minTemp){
             float y = 80 / (maxTemp - minTemp);
             for (int i = 0; i < 7; i++){

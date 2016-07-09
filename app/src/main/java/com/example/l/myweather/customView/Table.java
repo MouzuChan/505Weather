@@ -1,12 +1,16 @@
 package com.example.l.myweather.customView;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.view.View;
 
 import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.util.WeatherToCode;
 
 import java.util.ArrayList;
 
@@ -44,10 +48,9 @@ public class Table extends View {
 
     private int scrollX = 0;
 
-
     private int[] x_ints;
 
-
+    private Bitmap[] bitmaps;
 
     public Table(Context context,int screenWidth){
         super(context);
@@ -64,7 +67,6 @@ public class Table extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         setMeasuredDimension(dp2px((pointCount) * jiange), heightMeasureSpec);
-      //  Log.d("Table", "onMeasure");
 
     }
 
@@ -73,9 +75,7 @@ public class Table extends View {
         super.onDraw(canvas);
 
         drawLine(canvas);
-        drawWeatherText(canvas);
-
-
+        drawWeather(canvas);
 
     }
 
@@ -97,14 +97,38 @@ public class Table extends View {
     }
 
 
-    public void drawWeatherText(Canvas canvas){
+    public void drawWeather(Canvas canvas){
+        RectF rectF = new RectF();
+
         for (int i = 0; i < x_ints.length; i++) {
             if (x_ints[i] > pointX.get(i + 1) - dp2px(30)){
                 x_ints[i] = pointX.get(i + 1) - dp2px(30);
             } else if (x_ints[i] < pointX.get(i) + dp2px(30)){
                 x_ints[i] = pointX.get(i) + dp2px(30);
             }
-            canvas.drawText(weatherName.get(i),x_ints[i],dp2px(120),mPaint);
+            canvas.drawText(weatherName.get(i),x_ints[i],dp2px(140),mPaint);
+            rectF.set(x_ints[i] - dp2px(10),dp2px(105),x_ints[i] + dp2px(10),dp2px(125));
+            if (bitmaps[i] != null){
+                canvas.drawBitmap(bitmaps[i],null,rectF,mPaint);
+            }
+        }
+    }
+
+    public void initBitmap(int f){
+        if (bitmaps == null){
+
+            bitmaps = new Bitmap[weatherName.size()];
+        }
+        WeatherToCode weatherToCode = new WeatherToCode();
+        int id;
+        for (int i = 0; i < weatherName.size(); i++){
+            if (f == 0){
+                id = weatherToCode.getDrawableId(weatherName.get(i),12);
+
+            } else {
+                id = weatherToCode.getDrawableSmallId(weatherName.get(i),12);
+            }
+            bitmaps[i] = BitmapFactory.decodeResource(getResources(),id);
         }
     }
 

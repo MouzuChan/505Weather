@@ -2,14 +2,20 @@ package com.example.l.myweather.customView;
 
 import android.animation.TypeEvaluator;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.Log;
 import android.view.View;
 
 import com.example.l.myweather.MyApplication;
 import com.example.l.myweather.util.TimeAndDate;
+import com.example.l.myweather.util.WeatherToCode;
+
+import java.util.Calendar;
 
 /**
  * Created by L on 2016-03-05.
@@ -30,6 +36,8 @@ public class ForecastTable extends View {
     private String[] date_strings;
     private String[] weatherData;
 
+    private Bitmap[] bitmaps;
+
     public ForecastTable(Context context) {
         super(context);
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -39,6 +47,27 @@ public class ForecastTable extends View {
         mPaint.setTextSize(MyApplication.sp2px(13));
         mPaint.setTextAlign(Paint.Align.CENTER);
         initData();
+    }
+
+    public void initBitmap(int flag){
+        WeatherToCode weatherToCode = new WeatherToCode();
+        if (bitmaps == null){
+            bitmaps = new Bitmap[7];
+        }
+        if (weatherData != null){
+            if (flag == 0){
+                for (int i = 0; i < weatherData.length; i++){
+                    int id = weatherToCode.getDrawableId(weatherData[i],12);
+                    bitmaps[i] = BitmapFactory.decodeResource(getResources(),id);
+                }
+            } else {
+                for (int i = 0; i < weatherData.length; i++){
+                    int id = weatherToCode.getDrawableSmallId(weatherData[i],12);
+                    bitmaps[i] = BitmapFactory.decodeResource(getResources(),id);
+                }
+            }
+
+        }
     }
 
 
@@ -70,7 +99,15 @@ public class ForecastTable extends View {
 
     }
     public void drawBitmap(Canvas canvas){
+        RectF rectF;
+        for (int i = 0; i < bitmaps.length; i++){
+            if (bitmaps[i] != null){
+                rectF = new RectF(minXs[i] - MyApplication.dp2px(10),MyApplication.dp2px(height - 60),
+                        minXs[i] + MyApplication.dp2px(10),MyApplication.dp2px(height - 40));
 
+                canvas.drawBitmap(bitmaps[i],null,rectF,mPaint);
+            }
+        }
     }
 
     public void drawPoint(Canvas canvas){

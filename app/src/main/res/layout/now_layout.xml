@@ -31,7 +31,7 @@
         />
 
     <TextView
-        android:fontFamily="sans-serif-light"
+        android:fontFamily="sans-serif-thin"
         android:layout_gravity="center_horizontal"
         android:textColor="@color/white"
         android:id="@+id/now_temp"
