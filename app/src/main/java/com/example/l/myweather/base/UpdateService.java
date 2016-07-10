@@ -1,4 +1,4 @@
-package com.example.l.myweather;
+package com.example.l.myweather.base;
 
 import android.app.Service;
 import android.appwidget.AppWidgetManager;

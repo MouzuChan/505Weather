@@ -9,7 +9,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.View;
 
-import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.util.WeatherToCode;
 
 import java.util.ArrayList;

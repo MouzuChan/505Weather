@@ -1,4 +1,4 @@
-package com.example.l.myweather;
+package com.example.l.myweather.base;
 
         import android.app.Notification;
         import android.app.NotificationManager;
@@ -13,6 +13,8 @@ package com.example.l.myweather;
         import android.preference.PreferenceManager;
         import android.widget.RemoteViews;
 
+        import com.example.l.myweather.R;
+        import com.example.l.myweather.base.MyApplication;
         import com.example.l.myweather.database.CityDataBase;
         import com.example.l.myweather.ui.MainActivity;
         import com.example.l.myweather.util.FileHandle;
@@ -42,7 +44,7 @@ public class WeatherNotification {
             if (cityName != null){
                 city = cityName;
             }
-            RemoteViews views = new RemoteViews(mContext.getPackageName(),R.layout.notify_layout);
+            RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.notify_layout);
             HandleJSON jsonHandle= new HandleJSON(jsonObject);
             int[] views_id = new int[3];
             views_id[0] = R.id.temp;

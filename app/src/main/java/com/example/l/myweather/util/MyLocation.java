@@ -1,6 +1,5 @@
-package com.example.l.myweather;
+package com.example.l.myweather.util;
 
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -8,9 +7,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.baidu.location.Poi;
-
-import java.util.List;
+import com.example.l.myweather.base.MyApplication;
 
 /**
  * Created by L on 2015/10/6.

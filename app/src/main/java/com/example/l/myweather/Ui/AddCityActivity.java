@@ -4,23 +4,23 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.*;
 
 import com.example.l.myweather.*;
+import com.example.l.myweather.base.BaseActivity;
+import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.callback.CallBackListener;
 import com.example.l.myweather.callback.LocationCallBack;
 import com.example.l.myweather.util.HttpUtil;
+import com.example.l.myweather.util.LocationCityId;
+import com.example.l.myweather.util.MyLocation;
 import com.example.l.myweather.util.adapter.ListAdapter;
 
 import org.json.JSONArray;

@@ -10,11 +10,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.l.myweather.callback.CallBackListener;
 import com.example.l.myweather.callback.ImageCallBack;
-import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.base.MyApplication;
 
 import org.json.JSONObject;
 

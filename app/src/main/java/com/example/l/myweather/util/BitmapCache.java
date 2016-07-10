@@ -1,4 +1,4 @@
-package com.example.l.myweather;
+package com.example.l.myweather.util;
 
 import android.graphics.Bitmap;
 import android.util.LruCache;

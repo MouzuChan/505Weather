@@ -40,26 +40,26 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.l.myweather.BaseActivity;
+import com.example.l.myweather.base.BaseActivity;
 import com.example.l.myweather.callback.CheckUpdateCallBack;
 import com.example.l.myweather.callback.OnRecyclerViewItemClickListener;
 import com.example.l.myweather.customView.MyDrawerLayout;
 import com.example.l.myweather.util.CheckUpdate;
 import com.example.l.myweather.util.City;
+import com.example.l.myweather.util.LocationCityId;
+import com.example.l.myweather.util.MyLocation;
 import com.example.l.myweather.util.WeatherImageUrl;
 import com.example.l.myweather.database.CityDataBase;
 import com.example.l.myweather.callback.ImageCallBack;
 import com.example.l.myweather.callback.LocationCallBack;
-import com.example.l.myweather.LocationCityId;
-import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.util.adapter.HeaderRecyclerViewAdapter;
 import com.example.l.myweather.util.adapter.MyFragmentAdapter;
-import com.example.l.myweather.MyLocation;
 import com.example.l.myweather.R;
-import com.example.l.myweather.UpdateService;
+import com.example.l.myweather.base.UpdateService;
 import com.example.l.myweather.util.FileHandle;
 import com.example.l.myweather.util.HttpUtil;
-import com.example.l.myweather.WeatherNotification;
+import com.example.l.myweather.base.WeatherNotification;
 import com.example.l.myweather.customView.Indicator;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -145,6 +145,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         }else {
             initLocationCity();
         }
+
     }
 
     public void initView(){

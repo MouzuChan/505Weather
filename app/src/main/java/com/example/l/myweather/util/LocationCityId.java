@@ -1,10 +1,10 @@
-package com.example.l.myweather;
+package com.example.l.myweather.util;
 
 import android.widget.Toast;
 
+import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.callback.CallBackListener;
 import com.example.l.myweather.callback.LocationCallBack;
-import com.example.l.myweather.util.HttpUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

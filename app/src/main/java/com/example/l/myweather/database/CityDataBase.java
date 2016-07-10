@@ -3,9 +3,8 @@ package com.example.l.myweather.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.base.MyApplication;
 
 /**
  * Created by L on 2015/10/10.

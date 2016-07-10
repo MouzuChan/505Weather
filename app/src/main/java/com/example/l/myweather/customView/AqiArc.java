@@ -6,13 +6,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 
-import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.base.MyApplication;
 
 /**
  * Created by L on 2016-03-08.

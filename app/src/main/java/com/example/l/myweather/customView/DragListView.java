@@ -1,7 +1,6 @@
 package com.example.l.myweather.customView;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -14,7 +13,7 @@ import android.widget.*;
 
 import com.example.l.myweather.ui.CityManagerActivity;
 import com.example.l.myweather.util.adapter.MyAdapter;
-import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.R;
 
 import java.util.Timer;

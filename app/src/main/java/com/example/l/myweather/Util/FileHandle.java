@@ -3,9 +3,8 @@ package com.example.l.myweather.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 
-import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.base.MyApplication;
 
 import org.json.JSONObject;
 

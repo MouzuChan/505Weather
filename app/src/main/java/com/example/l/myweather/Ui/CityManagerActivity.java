@@ -12,7 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.example.l.myweather.BaseActivity;
+import com.example.l.myweather.base.BaseActivity;
 import com.example.l.myweather.customView.DragListView;
 import com.example.l.myweather.util.adapter.MyAdapter;
 import com.example.l.myweather.R;

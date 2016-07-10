@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.base.MyApplication;
 
 /**
  * Created by L on 2016-04-28.

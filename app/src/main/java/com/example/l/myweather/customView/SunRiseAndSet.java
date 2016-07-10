@@ -7,7 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.View;
-import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.base.MyApplication;
 
 /**
  * Created by L on 2016-03-15.

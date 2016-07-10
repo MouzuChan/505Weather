@@ -1,17 +1,9 @@
-package com.example.l.myweather;
+package com.example.l.myweather.base;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
-
-import org.json.JSONObject;
 
 public class UpdateBroadcast extends BroadcastReceiver {
 

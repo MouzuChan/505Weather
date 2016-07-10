@@ -1,6 +1,5 @@
 package com.example.l.myweather.customView;
 
-import android.animation.TypeEvaluator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,14 +7,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.util.Log;
 import android.view.View;
 
-import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.util.TimeAndDate;
 import com.example.l.myweather.util.WeatherToCode;
-
-import java.util.Calendar;
 
 /**
  * Created by L on 2016-03-05.

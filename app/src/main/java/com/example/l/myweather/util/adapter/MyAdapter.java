@@ -15,8 +15,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.R;
+import com.example.l.myweather.customView.DragListView;
 import com.example.l.myweather.database.CityDataBase;
 import com.example.l.myweather.ui.CityManagerActivity;
 import com.example.l.myweather.ui.MainActivity;
@@ -31,14 +32,14 @@ public class MyAdapter extends BaseAdapter {
 
     private ArrayList<City> cityArrayList;
     private SQLiteDatabase db;
-    private ListView listView;
+    private DragListView listView;
     private boolean isEditState = false;
     private int delete_position;
     public static int CHANGE_FLAG = 0;
     private City deletedCity;
 
     public Context context = MyApplication.getContext();
-    public MyAdapter(ListView listView){
+    public MyAdapter(DragListView listView){
         this.cityArrayList = MainActivity.cityArrayList;
         this.listView = listView;
         CityDataBase cityDataBase = CityDataBase.getInstance();

@@ -1,4 +1,4 @@
-package com.example.l.myweather;
+package com.example.l.myweather.base;
 
 import android.app.Application;
 import android.content.Context;

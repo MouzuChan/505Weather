@@ -7,11 +7,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.l.myweather.MyApplication;
+import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by L on 2016-04-27.
