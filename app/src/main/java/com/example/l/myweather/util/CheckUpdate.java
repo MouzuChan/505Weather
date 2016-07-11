@@ -26,7 +26,7 @@ public class CheckUpdate {
     private String install_url;
 
     public CheckUpdate(){
-        url = "http://api.fir.im/apps/latest/577f4fa2748aac40af00003b?api_token=31c3a4654a8b3bc47d68af9a664466bb";
+        url = "https://api.fir.im/apps/latest/577f4fa2748aac40af00003b?api_token=31c3a4654a8b3bc47d68af9a664466bb";
         mContext = MyApplication.getContext();
         initVersionCode();
     }

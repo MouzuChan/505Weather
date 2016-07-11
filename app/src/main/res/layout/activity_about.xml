@@ -9,35 +9,25 @@
 
     <LinearLayout
         android:orientation="vertical"
+        android:fitsSystemWindows="true"
+        android:background="@color/color_primary"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <RelativeLayout
-            android:fitsSystemWindows="true"
-            android:background="@color/color_primary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <android.support.design.widget.AppBarLayout
-                android:id="@+id/appBarLayout"
+
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/AppTheme.AppBarOverlay">
+                android:layout_height="?attr/actionBarSize"
+                app:title="关于"
+                app:titleTextColor="@color/white"
+                app:theme="@style/AppTheme.AppBarOverlay" />
 
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    app:title="关于"
-                    android:background="@color/color_primary"
-                    app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-            </android.support.design.widget.AppBarLayout>
-
-
-        </RelativeLayout>
 
 
         <FrameLayout
             android:id="@+id/content"
+            android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

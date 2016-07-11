@@ -12,11 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.R;
+import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.customView.DragListView;
 import com.example.l.myweather.database.CityDataBase;
 import com.example.l.myweather.ui.CityManagerActivity;
@@ -38,10 +37,11 @@ public class MyAdapter extends BaseAdapter {
     public static int CHANGE_FLAG = 0;
     private City deletedCity;
 
-    public Context context = MyApplication.getContext();
+    public Context context;
     public MyAdapter(DragListView listView){
         this.cityArrayList = MainActivity.cityArrayList;
         this.listView = listView;
+        context = MyApplication.getContext();
         CityDataBase cityDataBase = CityDataBase.getInstance();
         db = cityDataBase.getWritableDatabase();
 
@@ -68,7 +68,8 @@ public class MyAdapter extends BaseAdapter {
         ViewHolder viewHolder;
         if (convertView == null) {
             viewHolder = new ViewHolder();
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_list,null);
+            //convertView = LayoutInflater.from(context).inflate(R.layout.item_list,null);
+            convertView = View.inflate(context,R.layout.item_list,null);
             viewHolder.itemText = (TextView)convertView.findViewById(R.id.tv_city_name);
             viewHolder.itemButton = (ImageView)convertView.findViewById(R.id.item_button);
             viewHolder.dragImage = (ImageView)convertView.findViewById(R.id.drag_image);

@@ -24,14 +24,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        MyViewHolder myViewHolder = new MyViewHolder(LayoutInflater.from(MyApplication.getContext()).
+        return new MyViewHolder(LayoutInflater.from(MyApplication.getContext()).
                 inflate(R.layout.recycle_view_item,null));
-        return myViewHolder;
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        if (data1 == null || data1[position].isEmpty()){
+        if (data1 == null || data1.length < position + 1 || data1[position].isEmpty()){
             holder.indexDetail.setText("--");
         }else {
             holder.indexDetail.setText(data1[position]);

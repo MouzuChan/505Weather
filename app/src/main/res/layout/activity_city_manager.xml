@@ -11,35 +11,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
-
+            android:fitsSystemWindows="true"
+            android:background="@color/color_primary"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                android:fitsSystemWindows="true"
-                android:background="@color/color_primary"
+            <android.support.v7.widget.Toolbar
+                app:theme="@style/AppTheme.AppBarOverlay"
+                android:id="@+id/manager_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <android.support.v7.widget.Toolbar
-                    app:theme="@style/AppTheme.AppBarOverlay"
-                    android:id="@+id/manager_toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    app:title="城市管理"
-                    app:titleTextColor="@color/white"
-                    />
-            </LinearLayout>
+                android:layout_height="?attr/actionBarSize"
+                app:title="城市管理"
+                app:titleTextColor="@color/white"
+                />
 
             <LinearLayout
+                android:background="@color/white"
                 android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="0dp">
 
                 <com.example.l.myweather.customView.DragListView
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
                     android:layout_marginTop="16dp"
                     android:footerDividersEnabled="true"
                     android:dividerHeight="10dp"

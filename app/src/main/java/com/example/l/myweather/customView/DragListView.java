@@ -1,6 +1,7 @@
 package com.example.l.myweather.customView;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -78,9 +79,11 @@ public class DragListView extends ListView{
                     if (dragPosition != INVALID_POSITION) {
                         View view = getChildAt(position);
                         ImageView imageView = (ImageView) view.findViewById(R.id.drag_image);
-                        if (downX > imageView.getLeft() + view.getPaddingLeft() && downX < imageView.getRight() + view.getPaddingLeft()) {
+                        View parent = (View)imageView.getParent();
+                        if (downX > imageView.getLeft() + parent.getPaddingLeft() && downX < imageView.getRight() + parent.getPaddingLeft()) {
                             adapter = (MyAdapter) getAdapter();
                             itemView = LayoutInflater.from(getContext()).inflate(R.layout.item_list, null);
+                            itemView.setBackgroundColor(Color.WHITE);
                             TextView textView = (TextView) itemView.findViewById(R.id.tv_city_name);
                             textView.setText((String) adapter.getItem(dragPosition));
                             hideItem(position);
@@ -135,7 +138,7 @@ public class DragListView extends ListView{
             layoutParams = new WindowManager.LayoutParams();
         }
         if (itemView != null){
-            layoutParams.alpha = 0.7f;
+            layoutParams.alpha = 1.0f;
             layoutParams.x = x;
             layoutParams.y = y;
             layoutParams.gravity = Gravity.TOP | Gravity.START;
