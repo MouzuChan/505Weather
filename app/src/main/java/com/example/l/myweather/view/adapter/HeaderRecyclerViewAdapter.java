@@ -1,4 +1,4 @@
-package com.example.l.myweather.util.adapter;
+package com.example.l.myweather.view.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

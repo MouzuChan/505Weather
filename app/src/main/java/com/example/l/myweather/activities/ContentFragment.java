@@ -1,4 +1,4 @@
-package com.example.l.myweather.ui;
+package com.example.l.myweather.activities;
 
 
 import android.app.AlertDialog;
@@ -20,11 +20,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.l.myweather.util.adapter.RecyclerViewAdapter;
+import com.example.l.myweather.view.adapter.RecyclerViewAdapter;
 import com.example.l.myweather.callback.CallBackListener;
 import com.example.l.myweather.callback.OnScrollChangedListener;
-import com.example.l.myweather.customView.HourTableHorizontalScrollView;
-import com.example.l.myweather.customView.MyScrollView;
+import com.example.l.myweather.view.HourTableHorizontalScrollView;
+import com.example.l.myweather.view.MyScrollView;
 import com.example.l.myweather.util.Divider;
 import com.example.l.myweather.util.FileHandle;
 import com.example.l.myweather.util.HandleJSON;
@@ -33,10 +33,10 @@ import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.R;
 import com.example.l.myweather.util.TimeAndDate;
 import com.example.l.myweather.base.WeatherNotification;
-import com.example.l.myweather.customView.AqiArc;
-import com.example.l.myweather.customView.ForecastTable;
-import com.example.l.myweather.customView.SunRiseAndSet;
-import com.example.l.myweather.customView.Table;
+import com.example.l.myweather.view.AqiArc;
+import com.example.l.myweather.view.ForecastTable;
+import com.example.l.myweather.view.SunRiseAndSet;
+import com.example.l.myweather.view.Table;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

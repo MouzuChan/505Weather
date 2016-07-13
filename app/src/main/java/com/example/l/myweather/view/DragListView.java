@@ -1,4 +1,4 @@
-package com.example.l.myweather.customView;
+package com.example.l.myweather.view;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.*;
 
-import com.example.l.myweather.ui.CityManagerActivity;
-import com.example.l.myweather.util.adapter.MyAdapter;
+import com.example.l.myweather.activities.CityManagerActivity;
+import com.example.l.myweather.view.adapter.MyAdapter;
 import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.R;
 

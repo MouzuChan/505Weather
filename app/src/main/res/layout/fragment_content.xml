@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.ContentFragment"
+    tools:context=".activities.ContentFragment"
 
     android:orientation="vertical">
     <android.support.v4.widget.SwipeRefreshLayout
@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-            <com.example.l.myweather.customView.MyScrollView
+            <com.example.l.myweather.view.MyScrollView
                 android:id="@+id/scroll_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -29,7 +29,7 @@
 
 
                 </LinearLayout>
-            </com.example.l.myweather.customView.MyScrollView>
+            </com.example.l.myweather.view.MyScrollView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

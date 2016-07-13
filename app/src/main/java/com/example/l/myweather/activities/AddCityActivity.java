@@ -1,4 +1,4 @@
-package com.example.l.myweather.ui;
+package com.example.l.myweather.activities;
 
 import android.Manifest;
 import android.content.Context;
@@ -21,7 +21,7 @@ import com.example.l.myweather.callback.LocationCallBack;
 import com.example.l.myweather.util.HttpUtil;
 import com.example.l.myweather.util.LocationCityId;
 import com.example.l.myweather.util.MyLocation;
-import com.example.l.myweather.util.adapter.ListAdapter;
+import com.example.l.myweather.view.adapter.ListAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,7 +37,7 @@ public class AddCityActivity extends BaseActivity implements View.OnClickListene
     private EditText editText;
     private Button locationButton;
     private ListView cityListView;
-    private com.example.l.myweather.util.adapter.ListAdapter adapter;
+    private com.example.l.myweather.view.adapter.ListAdapter adapter;
     private List<String> id_list;
     private List<String> city_list;
     private List<String> list;

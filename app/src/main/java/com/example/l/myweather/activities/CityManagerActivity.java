@@ -1,4 +1,4 @@
-package com.example.l.myweather.ui;
+package com.example.l.myweather.activities;
 
 
 import android.content.Intent;
@@ -13,8 +13,8 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import com.example.l.myweather.base.BaseActivity;
-import com.example.l.myweather.customView.DragListView;
-import com.example.l.myweather.util.adapter.MyAdapter;
+import com.example.l.myweather.view.DragListView;
+import com.example.l.myweather.view.adapter.MyAdapter;
 import com.example.l.myweather.R;
 
 public class CityManagerActivity extends BaseActivity {

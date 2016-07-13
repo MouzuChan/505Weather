@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp">
 
-                <com.example.l.myweather.customView.DragListView
+                <com.example.l.myweather.view.DragListView
                     android:layout_marginTop="16dp"
                     android:footerDividersEnabled="true"
                     android:dividerHeight="10dp"

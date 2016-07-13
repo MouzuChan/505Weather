@@ -1,11 +1,11 @@
-package com.example.l.myweather.util.adapter;
+package com.example.l.myweather.view.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.ViewGroup;
 
-import com.example.l.myweather.ui.ContentFragment;
+import com.example.l.myweather.activities.ContentFragment;
 
 import java.util.ArrayList;
 

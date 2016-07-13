@@ -1,4 +1,4 @@
-package com.example.l.myweather.ui;
+package com.example.l.myweather.activities;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;

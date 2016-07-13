@@ -1,4 +1,4 @@
-package com.example.l.myweather.util.adapter;
+package com.example.l.myweather.view.adapter;
 
 import android.graphics.Color;
 import android.view.LayoutInflater;

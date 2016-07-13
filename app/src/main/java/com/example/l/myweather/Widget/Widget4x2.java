@@ -18,7 +18,7 @@ import android.widget.RemoteViews;
 import com.example.l.myweather.database.CityDataBase;
 import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.R;
-import com.example.l.myweather.ui.MainActivity;
+import com.example.l.myweather.activities.MainActivity;
 import com.example.l.myweather.base.UpdateService;
 import com.example.l.myweather.util.FileHandle;
 import com.example.l.myweather.util.HandleJSON;

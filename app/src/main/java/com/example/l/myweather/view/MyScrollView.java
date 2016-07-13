@@ -1,8 +1,7 @@
-package com.example.l.myweather.customView;
+package com.example.l.myweather.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ScrollView;
 

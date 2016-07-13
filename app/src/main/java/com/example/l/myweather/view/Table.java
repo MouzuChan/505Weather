@@ -1,4 +1,4 @@
-package com.example.l.myweather.customView;
+package com.example.l.myweather.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -90,7 +90,6 @@ public class Table extends View {
             }
             canvas.drawText(secData[i] + "°", Xs[i], Ys[i] - 30, mPaint);
         }
-
         for (int i = 1; i < pointX.size()- 1; i++){
             canvas.drawLine(pointX.get(i),pointY.get(i),pointX.get(i),getHeight() - dp2px(20),mPaint);
         }
@@ -99,14 +98,16 @@ public class Table extends View {
 
     public void drawWeather(Canvas canvas){
         RectF rectF = new RectF();
-
         for (int i = 0; i < x_ints.length; i++) {
             if (x_ints[i] > pointX.get(i + 1) - dp2px(30)){
                 x_ints[i] = pointX.get(i + 1) - dp2px(30);
             } else if (x_ints[i] < pointX.get(i) + dp2px(30)){
                 x_ints[i] = pointX.get(i) + dp2px(30);
             }
-            canvas.drawText(weatherName.get(i),x_ints[i],dp2px(140),mPaint);
+            if (weatherName.size() > i){
+                canvas.drawText(weatherName.get(i),x_ints[i],dp2px(140),mPaint);
+            }
+
             rectF.set(x_ints[i] - dp2px(10),dp2px(105),x_ints[i] + dp2px(10),dp2px(125));
             if (bitmaps[i] != null){
                 canvas.drawBitmap(bitmaps[i],null,rectF,mPaint);
@@ -116,7 +117,6 @@ public class Table extends View {
 
     public void initBitmap(int f){
         if (bitmaps == null){
-
             bitmaps = new Bitmap[weatherName.size()];
         }
         WeatherToCode weatherToCode = new WeatherToCode();
@@ -150,7 +150,7 @@ public class Table extends View {
         }
         pointX.add(Xs[pointCount - 1]);
         pointY.add(Ys[pointCount - 1]);
-        x_ints = new int[pointX.size() - 1];
+        x_ints = new int[weatherName.size()];
         onScroll();
     }
 

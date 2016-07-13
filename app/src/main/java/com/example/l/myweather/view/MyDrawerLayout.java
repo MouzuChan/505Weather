@@ -1,10 +1,8 @@
-package com.example.l.myweather.customView;
+package com.example.l.myweather.view;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
 
 /**
  * Created by L on 2016-07-07.

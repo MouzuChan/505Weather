@@ -6,7 +6,7 @@
     android:id="@+id/container"
 
     >
-    <com.example.l.myweather.customView.MyDrawerLayout
+    <com.example.l.myweather.view.MyDrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -60,7 +60,7 @@
 
 
 
-        <com.example.l.myweather.customView.Indicator
+        <com.example.l.myweather.view.Indicator
             android:id="@+id/indicator"
             android:layout_below="@+id/viewpager"
             android:layout_width="match_parent"
@@ -78,6 +78,6 @@
             />
 
 
-    </com.example.l.myweather.customView.MyDrawerLayout>
+    </com.example.l.myweather.view.MyDrawerLayout>
 
 </android.support.design.widget.CoordinatorLayout>
