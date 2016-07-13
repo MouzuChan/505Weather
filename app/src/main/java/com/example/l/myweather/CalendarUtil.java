@@ -1,4 +1,4 @@
-package com.example.l.myweather.util;
+package com.example.l.myweather;
 
 /**
  * Created by L on 2015/10/20.

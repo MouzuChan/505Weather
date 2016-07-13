@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
+import com.example.l.myweather.HttpUtil;
 import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.callback.CallBackListener;
 import com.example.l.myweather.callback.CheckUpdateCallBack;

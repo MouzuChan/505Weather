@@ -1,4 +1,4 @@
-package com.example.l.myweather.util;
+package com.example.l.myweather;
 
 import java.util.Calendar;
 

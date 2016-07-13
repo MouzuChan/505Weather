@@ -1,4 +1,4 @@
-package com.example.l.myweather.util;
+package com.example.l.myweather;
 
 import android.content.Context;
 import android.graphics.Bitmap;

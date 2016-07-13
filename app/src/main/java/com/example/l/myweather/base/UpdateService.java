@@ -19,8 +19,8 @@ import android.util.Log;
 
 import com.example.l.myweather.callback.CallBackListener;
 import com.example.l.myweather.database.CityDataBase;
-import com.example.l.myweather.util.FileHandle;
-import com.example.l.myweather.util.HttpUtil;
+import com.example.l.myweather.FileHandle;
+import com.example.l.myweather.HttpUtil;
 import com.example.l.myweather.widget.AppWidget2x1;
 import com.example.l.myweather.widget.NewAppWidget;
 import com.example.l.myweather.widget.Widget4x2;
