@@ -18,7 +18,7 @@ import com.example.l.myweather.base.BaseActivity;
 import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.callback.CallBackListener;
 import com.example.l.myweather.callback.LocationCallBack;
-import com.example.l.myweather.HttpUtil;
+import com.example.l.myweather.util.HttpUtil;
 import com.example.l.myweather.util.LocationCityId;
 import com.example.l.myweather.util.MyLocation;
 import com.example.l.myweather.view.adapter.ListAdapter;

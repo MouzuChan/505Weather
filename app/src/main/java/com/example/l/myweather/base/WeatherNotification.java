@@ -16,8 +16,8 @@ package com.example.l.myweather.base;
         import com.example.l.myweather.R;
         import com.example.l.myweather.database.CityDataBase;
         import com.example.l.myweather.activities.MainActivity;
-        import com.example.l.myweather.FileHandle;
-        import com.example.l.myweather.HandleJSON;
+        import com.example.l.myweather.util.FileHandle;
+        import com.example.l.myweather.util.HandleJSON;
         import com.example.l.myweather.util.WeatherToCode;
 
         import org.json.JSONObject;

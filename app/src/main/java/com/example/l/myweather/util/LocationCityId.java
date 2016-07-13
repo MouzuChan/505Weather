@@ -2,7 +2,6 @@ package com.example.l.myweather.util;
 
 import android.widget.Toast;
 
-import com.example.l.myweather.HttpUtil;
 import com.example.l.myweather.base.MyApplication;
 import com.example.l.myweather.callback.CallBackListener;
 import com.example.l.myweather.callback.LocationCallBack;
