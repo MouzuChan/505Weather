@@ -37,7 +37,8 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".widget.NewAppWidget"
+        <receiver
+            android:name=".widget.NewAppWidget"
             android:process=":background"
             >
             <intent-filter>

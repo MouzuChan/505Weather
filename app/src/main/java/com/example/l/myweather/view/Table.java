@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.View;
 
@@ -27,8 +28,6 @@ public class Table extends View {
     private int[] Xs;
     private int[] Ys;
 
-    //private int[] drawable_ids;
-    //private Bitmap[] bitmaps;
 
     private int jiange = 40;
 
@@ -36,8 +35,6 @@ public class Table extends View {
     private int[] secData;
     private String[] weatherData;
 
-    //private int[] drawable_ids;
-    //private Bitmap[] bitmaps;
 
     private ArrayList<Integer> pointX = new ArrayList<>();
     private ArrayList<Integer> pointY = new ArrayList<>();
@@ -51,6 +48,8 @@ public class Table extends View {
     private int[] x_ints;
 
     private Bitmap[] bitmaps;
+
+    private Rect weatherRect;
 
     public Table(Context context,int screenWidth){
         super(context);
@@ -109,16 +108,15 @@ public class Table extends View {
             }
 
             rectF.set(x_ints[i] - dp2px(10),dp2px(105),x_ints[i] + dp2px(10),dp2px(125));
-            if (bitmaps[i] != null){
+            if (bitmaps.length > i && bitmaps[i] != null){
                 canvas.drawBitmap(bitmaps[i],null,rectF,mPaint);
             }
         }
     }
 
     public void initBitmap(int f){
-        if (bitmaps == null){
-            bitmaps = new Bitmap[weatherName.size()];
-        }
+
+        bitmaps = new Bitmap[weatherName.size()];
         WeatherToCode weatherToCode = new WeatherToCode();
         int id;
         for (int i = 0; i < weatherName.size(); i++){
@@ -145,7 +143,7 @@ public class Table extends View {
                 pointX.add(Xs[i]);
                 pointY.add(Ys[i]);
                 weather = weatherData[i];
-                weatherName.add(weatherData[i]);
+                weatherName.add(weather);
             }
         }
         pointX.add(Xs[pointCount - 1]);
@@ -170,10 +168,9 @@ public class Table extends View {
                 } else {
                     x_ints[i] = (x - scrollX) / 2 + scrollX;
                 }
-
             }
         }
-        invalidate();
+        //invalidate();
     }
 
 
@@ -181,6 +178,10 @@ public class Table extends View {
     public void setX(int scrollX) {
         this.scrollX = scrollX;
         onScroll();
+        if (weatherRect == null){
+            weatherRect = new Rect(0,dp2px(10),screenWidth,dp2px(125));
+        }
+        invalidate(weatherRect);
     }
 
     /*public void startAnim(final int i){

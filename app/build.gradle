@@ -7,8 +7,8 @@ android {
         applicationId "com.lha.weather"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 28
-        versionName "2.2.1"
+        versionCode 29
+        versionName "2.2.2"
     }
     defaultConfig {
         generatedDensities = []

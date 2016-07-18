@@ -280,6 +280,8 @@ public class UpdateService extends Service {
         }
     }
 
+
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
