@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/container"
-
     >
     <com.example.l.myweather.view.MyDrawerLayout
         android:id="@+id/drawer_layout"
@@ -12,10 +11,10 @@
         android:layout_height="match_parent">
         <LinearLayout
             android:orientation="vertical"
-            android:fitsSystemWindows="true"
             android:id="@+id/content_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
             android:background="@drawable/default_background"
             >
 
@@ -56,15 +55,15 @@
                 </RelativeLayout>
 
             </RelativeLayout>
-
-
-
-
-        <com.example.l.myweather.view.Indicator
-            android:id="@+id/indicator"
-            android:layout_below="@+id/viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="20dp" />
+            <com.example.l.myweather.view.Indicator
+                android:id="@+id/indicator"
+                android:layout_below="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="20dp" />
+            <android.support.design.widget.CoordinatorLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/container" />
 
     </LinearLayout>
 
@@ -76,8 +75,6 @@
             app:menu="@menu/menu_drawer"
             app:headerLayout="@layout/header_drawer"
             />
-
-
     </com.example.l.myweather.view.MyDrawerLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+</FrameLayout>
