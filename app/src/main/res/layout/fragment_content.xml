@@ -3,33 +3,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.ContentFragment"
-
     android:orientation="vertical">
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-            <com.example.l.myweather.view.MyScrollView
-                android:id="@+id/scroll_view"
+        <com.example.l.myweather.view.MyScrollView
+            android:id="@+id/scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <include layout="@layout/now_layout"/>
-                    <include layout="@layout/hour_layout"/>
-                    <include layout="@layout/forecast_layout"/>
-                    <include layout="@layout/aqi_layout" />
-                    <include layout="@layout/sun_layout" />
-                    <include layout="@layout/index_layout" />
-
-
-
-                </LinearLayout>
-            </com.example.l.myweather.view.MyScrollView>
+                android:layout_height="wrap_content">
+                <include layout="@layout/now_layout"/>
+                <include layout="@layout/hour_layout"/>
+                <include layout="@layout/forecast_layout"/>
+                <include layout="@layout/aqi_layout" />
+                <include layout="@layout/sun_layout" />
+                <include layout="@layout/index_layout" />
+            </LinearLayout>
+        </com.example.l.myweather.view.MyScrollView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

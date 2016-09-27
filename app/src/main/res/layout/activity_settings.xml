@@ -3,9 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:background="@color/color_primary"
     tools:context=".activities.SettingsActivity"
+    android:background="@color/white"
     android:orientation="vertical">
 
 
@@ -13,6 +12,8 @@
         android:id="@+id/tool_bar"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
+        android:background="@color/color_primary"
         app:title="设置"
         app:theme="@style/AppTheme.AppBarOverlay"
         app:titleTextColor="@color/white"
@@ -44,7 +45,6 @@
 
 
     <FrameLayout
-        android:background="@color/white"
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

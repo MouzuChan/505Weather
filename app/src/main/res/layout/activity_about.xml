@@ -5,29 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/container"
+    android:background="@color/white"
     tools:context=".activities.AboutActivity">
 
     <LinearLayout
         android:orientation="vertical"
-        android:fitsSystemWindows="true"
-        android:background="@color/color_primary"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="wrap_content"
                 app:title="关于"
+                android:background="@color/color_primary"
                 app:titleTextColor="@color/white"
+                android:fitsSystemWindows="true"
                 app:theme="@style/AppTheme.AppBarOverlay" />
-
-
 
         <FrameLayout
             android:id="@+id/content"
-            android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

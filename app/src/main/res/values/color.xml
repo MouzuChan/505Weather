@@ -12,5 +12,5 @@
     <color name="notification_black">#b4000000</color>
     <color name="touming">#00000000</color>
     <color name="divider_line_color">#b4ffffff</color>
-
+    <color name="index_title_color">#b4ffffff</color>
 </resources>

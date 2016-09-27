@@ -107,6 +107,7 @@
             android:launchMode="singleTask"
             android:name=".activities.AddCityActivity"
             android:label="@string/title_activity_add_city"
+            android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

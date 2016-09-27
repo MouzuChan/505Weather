@@ -45,6 +45,7 @@ public class SettingsActivity extends BaseActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        compatNavigationBarColor();
         initView();
         getFragmentManager().beginTransaction().add(R.id.content, settingsFragment).commit();
 

@@ -104,6 +104,11 @@
                 android:entries="@array/icon_style_name"
                 android:defaultValue="单色"
                 />
+            <CheckBoxPreference
+                android:key="draw_navigation_bar_color"
+                android:title="着色导航栏"
+                android:defaultValue="false"
+                />
         </PreferenceCategory>
 
     </PreferenceScreen>

@@ -11,6 +11,7 @@
 
     <TextView
         android:background="@drawable/yuanxing"
+        android:textColor="@color/white"
         android:gravity="center"
         android:layout_gravity="center"
         android:id="@+id/tv_temp"
@@ -22,6 +23,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:id="@+id/tv_city_name"
+        android:textColor="@color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
