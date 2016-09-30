@@ -36,7 +36,6 @@ public class AboutActivity extends BaseActivity{
         compatNavigationBarColor();
         initView();
         getFragmentManager().beginTransaction().add(R.id.content, new AboutPreference()).commit();
-
     }
 
 

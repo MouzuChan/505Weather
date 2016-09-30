@@ -76,7 +76,7 @@ import java.util.TimerTask;
 
 
 public class MainActivity extends BaseActivity implements View.OnClickListener,
-        NavigationView.OnNavigationItemSelectedListener{
+        NavigationView.OnNavigationItemSelectedListener {
 
     private int DRAWER_LAYOUT_TYPE = -1;
 
@@ -117,6 +117,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
 
     public static ArrayList<City> cityArrayList;
 
+    private MyLocation mMyLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,7 +151,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
                 firstStart();
             }
             startCount.edit().putInt("start_count", 2).apply();
-        }else {
+        } else {
             initLocationCity();
         }
 
@@ -405,59 +407,43 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     };
 
     public void firstStart(){
-
-        final MyLocation myLocation = new MyLocation();
-        myLocation.getUserLocation();
         final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
         progressDialog.setMessage("自动定位中...");
         progressDialog.setCancelable(false);
         progressDialog.show();
-        TimerTask timerTask = new TimerTask() {
+        final MyLocation myLocation = new MyLocation();
+        myLocation.setLocationListener(new MyLocation.LocationListener() {
             @Override
-            public void run() {
-                String city = myLocation.getCity();
-                final String district = myLocation.getDistrict();
-                if (city == null ){
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressDialog.dismiss();
-                            Toast.makeText(MainActivity.this, "定位失败", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                }else {
-                    LocationCityId locationCityId = new LocationCityId();
-                    locationCityId.getLocationCityId(city, district, new LocationCallBack() {
-                        @Override
-                        public void onFinish(String return_id, String city_name) {
-                            if (return_id != null) {
-                                location_city = city_name;
-                                location_city_id = return_id;
-                                addCity(city_name, return_id);
-                                Toast.makeText(MainActivity.this, "定位成功：" + city_name , Toast.LENGTH_SHORT).show();
-                                SharedPreferences.Editor editor = preferences.edit();
-                                editor.putString("location_city", city_name);
-                                editor.putString("location_city_id",return_id);
-                                editor.apply();
-                            }
-                            progressDialog.dismiss();
-                        }
-
-                        @Override
-                        public void onError() {
-                            Toast.makeText(MyApplication.getContext(), "定位失败", Toast.LENGTH_SHORT).show();
-                            progressDialog.dismiss();
-                        }
-                    });
+            public void onLocated(String return_id, String city_name) {
+                if (city_name == null || return_id == null) {
+                    Toast.makeText(MyApplication.getContext(), "定位失败", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
+                    return;
                 }
+                addLocationCity(return_id, city_name);
+                progressDialog.dismiss();
+            }
 
-                }
+            @Override
+            public void onError() {
+                Toast.makeText(MyApplication.getContext(), "定位失败", Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+            }
+        });
+        myLocation.getUserLocation();
+    }
 
-        };
-        Timer timer = new Timer();
-        timer.schedule(timerTask, 2000);
-
+    public void addLocationCity(String return_id, String city_name) {
+        if (return_id != null) {
+            location_city = city_name;
+            location_city_id = return_id;
+            addCity(city_name, return_id);
+            Toast.makeText(MainActivity.this, "定位成功：" + city_name , Toast.LENGTH_SHORT).show();
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("location_city", city_name);
+            editor.putString("location_city_id",return_id);
+            editor.apply();
+        }
     }
 
     @Override
@@ -710,53 +696,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
     }
 
     public void location(){
-        final MyLocation myLocation = new MyLocation();
-        myLocation.getUserLocation();
-        TimerTask timerTask = new TimerTask() {
+        if (mMyLocation == null) {
+           mMyLocation = new MyLocation();
+        }
+        mMyLocation.setLocationListener(new MyLocation.LocationListener() {
             @Override
-            public void run() {
-                final String city = myLocation.getCity();
-                final String district = myLocation.getDistrict();
-                if (city != null){
-                    final LocationCityId locationCityId = new LocationCityId();
-                    locationCityId.getLocationCityId(city, district, new LocationCallBack() {
-                        @Override
-                        public void onFinish(String return_id,String city_name) {
-                            if (return_id != null){
-                                if (location_position >= 0){
-                                    if (!location_city.equals(city_name) && !location_city_id.equals(return_id)){
-                                        location_city = city_name;
-                                        location_city_id = return_id;
-                                        changeLocationCity();
-                                        setLocation_position();
-                                    }
-                                } else {
-                                    location_city = city_name;
-                                    location_city_id = return_id;
-                                    setLocation_position();
-                                    if (location_position < 0){
-                                        showDialog();
-                                    }
-                                    SharedPreferences.Editor editor = preferences.edit();
-                                    editor.putString("location_city", location_city);
-                                    editor.putString("location_city_id",location_city_id);
-                                    editor.apply();
-                                }
-
-                            }
-
-                        }
-
-                        @Override
-                        public void onError() {
-
-                        }
-                    });
-                }
+            public void onLocated(String return_id, String return_city) {
+                setLocationCity(return_id, return_city);
             }
-        };
-        Timer timer = new Timer();
-        timer.schedule(timerTask, 3000);
+
+            @Override
+            public void onError() {
+            }
+        });
+        mMyLocation.getUserLocation();
     }
 
     public void setLocation_position(){
@@ -977,5 +930,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener,
         });
     }
 
+    private void setLocationCity(String city_id, String city_name) {
+        if (city_id != null) {
+            if (location_position >= 0) {
+                if (!location_city.equals(city_name) && !location_city_id.equals(city_id)) {
+                    location_city = city_name;
+                    location_city_id = city_id;
+                    changeLocationCity();
+                    setLocation_position();
+                }
+            } else {
+                location_city = city_name;
+                location_city_id = city_id;
+                setLocation_position();
+                if (location_position < 0) {
+                    showDialog();
+                }
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("location_city", location_city);
+                editor.putString("location_city_id", location_city_id);
+                editor.apply();
+            }
+        }
+    }
 }
 

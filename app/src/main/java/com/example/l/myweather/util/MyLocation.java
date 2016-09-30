@@ -1,5 +1,6 @@
 package com.example.l.myweather.util;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -8,6 +9,7 @@ import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.example.l.myweather.base.MyApplication;
+import com.example.l.myweather.callback.LocationCallBack;
 
 /**
  * Created by L on 2015/10/6.
@@ -18,10 +20,18 @@ public class MyLocation {
     private String city;
     private String district;
     private int locType;
+    private LocationListener mLocationListener;
 
+    public interface LocationListener{
+        public void onLocated(String return_id, String return_city);
+        public void onError();
+    }
+
+    public void setLocationListener (LocationListener locationListener) {
+        mLocationListener = locationListener;
+    }
 
     public void getUserLocation(){
-
         BDLocationListener listener = new MyLocationListener();
         locationClient = new LocationClient(MyApplication.getContext());
         initLocation();
@@ -35,21 +45,21 @@ public class MyLocation {
         option.setIsNeedAddress(true);
         option.setIsNeedLocationDescribe(true);
         locationClient.setLocOption(option);
-
     }
 
 
-    public class MyLocationListener implements BDLocationListener{
+    private class MyLocationListener implements BDLocationListener{
 
         @Override
         public void onReceiveLocation(BDLocation bdLocation) {
 
             locType = bdLocation.getLocType();
-            //Log.d("City",bdLocation.getCity());
             if (locType == BDLocation.TypeGpsLocation || locType == BDLocation.TypeNetWorkLocation){
                 city = bdLocation.getCity();
                 district = bdLocation.getDistrict();
-
+                if (TextUtils.isEmpty(city)){
+                    return;
+                }
                 if (city.contains("自治区") || city.contains("自治县")){
                     city = city.replace("自治区","");
                     city = city.replace("自治县","");
@@ -59,13 +69,27 @@ public class MyLocation {
 
 
                 if (district.contains("自治区") || district.contains("自治县")){
-                    district = district.substring(0,district.length() - 3);
+                    district = district.replace("自治区", "");
                 }
                 else {
                     district = district.substring(0,district.length() - 1);
                 }
-                Log.d("City",city);Log.d("District",district);
+                LocationCityId locationCityId = new LocationCityId();
+                locationCityId.getLocationCityId(city, district, new LocationCallBack() {
+                    @Override
+                    public void onFinish(String return_id, String city_name) {
+                        if (mLocationListener != null) {
+                            mLocationListener.onLocated(return_id, city_name);
+                        }
+                    }
 
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+                Log.d("City",city);
+                Log.d("District",district);
             }
             else {
                 Toast.makeText(MyApplication.getContext(),"定位失败...",Toast.LENGTH_SHORT).show();
@@ -131,16 +155,15 @@ public class MyLocation {
             Log.d("BaiduLocationApiDem", sb.toString()); */
 
         }
-
     }
 
-    public String getCity(){
+    public String getCity() {
         return city;
     }
-    public String getDistrict(){
+
+    public String getDistrict() {
         return district;
     }
-
 }
 
 

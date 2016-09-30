@@ -281,49 +281,30 @@ public class AddCityActivity extends BaseActivity implements View.OnClickListene
 
     public void location(){
         final MyLocation myLocation = new MyLocation();
-        myLocation.getUserLocation();
-
-        TimerTask timerTask = new TimerTask() {
+        myLocation.setLocationListener(new MyLocation.LocationListener() {
             @Override
-            public void run() {
-                final String city = myLocation.getCity();
-                final String district = myLocation.getDistrict();
-                if (city == null ){
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            location_city_view.setText("定位失败，点击重新定位");
-                        }
-                    });
-                }else {
-                    LocationCityId locationCityId = new LocationCityId();
-                    locationCityId.getLocationCityId(city, district, new LocationCallBack() {
-                        @Override
-                        public void onFinish(String return_id,String city_name) {
-
-                            if (return_id != null){
-                                location_city = city_name;
-                                location_city_id = return_id;
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        location_city_view.setText("当前位置：" + city + "-" + district);
-                                        locationButton.setVisibility(View.VISIBLE);
-                                    }
-                                });
-
-                            }
-                        }
-
-                        @Override
-                        public void onError() {
-
-                        }
-                    });
+            public void onLocated(final String return_id, final String city_name) {
+                if (city_name == null || return_id == null) {
+                    return;
                 }
+                setLocationView(city_name, return_id);
             }
-        };
-        Timer timer = new Timer();
-        timer.schedule(timerTask,1000);
+
+            @Override
+            public void onError() {
+
+            }
+        });
+        myLocation.getUserLocation();
+    }
+
+    private void setLocationView(String city_name, String return_id) {
+        if (return_id != null){
+            location_city = city_name;
+            location_city_id = return_id;
+            location_city_view.setText("当前位置：" + city_name);
+            locationButton.setVisibility(View.VISIBLE);
+
+        }
     }
 }
